@@ -42,7 +42,6 @@ const Services = () => {
     },
   ];
   return <>
-    <Navbar />
     <div className="container m-auto">
       <div className="flex flex-col items-center">
         <div className="relative text-center w-[100%] h-[80px]  ">

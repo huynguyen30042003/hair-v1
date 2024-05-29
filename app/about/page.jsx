@@ -1,17 +1,26 @@
+"use client"
 import React from "react";
 import img1 from "@data/img/img1.svg";
 import img2 from "@data/img/img2.svg";
 import Image from "next/image";
-import Navbar from "components/Navbar";
+import { useSession } from "next-auth/react";
+import { redirect } from "next/navigation";
 
-const page = () => {
+
+const About =   () => {
+  const { data: session } = useSession()
+  
+  if(!session){
+    redirect('/login')
+    return null;
+  }
+
   return (
     <>
-    <Navbar/>
     <div className="container m-auto">
       <div className="flex flex-col md:flex-row">
         <div className="flex flex-col">
-          <Image src={img2} />
+          <Image src={img2} alt="image"  />
           <p>“Making every woman beautiful one day at a time.”</p>
           <p>
             Opened in 1992, Lucia Harrison opened her hair Salon in Colorado
@@ -25,7 +34,7 @@ const page = () => {
             ways to remedy their issues with their hair.{" "}
           </p>
         </div>
-        <Image src={img1} alt="" />
+        <Image src={img1} alt="image" />
       </div>
     </div>
     </>
@@ -33,4 +42,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default About;
