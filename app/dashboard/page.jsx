@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Button } from "@material-tailwind/react";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
+import TableUser from "../../components/TableUser"
 
 const Dashboard = () => {
 
@@ -86,7 +87,9 @@ const Dashboard = () => {
             <span>Delete</span>
           </Button>
             </div>
-        ))}     
+        ))} 
+
+        <TableUser/>    
     </div>
   );
 };
