@@ -21,7 +21,7 @@ const Login = () => {
 
   const handleLogin = async () => {
     if (!username || !password) {
-      toast.error("Please fill all the input fields");
+      toast("Please fill all the input fields");
       return;
     }
 

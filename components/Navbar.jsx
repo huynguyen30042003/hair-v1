@@ -35,8 +35,8 @@ const Navbar = () => {
               </>
             ) : (
               <>
-                <p className="mb-4">{session.user.username}</p>
-                <button onClick={signOut} className="p-2 rounded-md bg-orange-400">
+                <p className="p-2 rounded-md">{session.user.username}</p>
+                <button onClick={signOut} className="hover:drop-shadow-md p-2 rounded-md bg-orange-400">
                   Log out
                 </button>
               </>
