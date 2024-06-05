@@ -1,3 +1,4 @@
+"user client"
 import Image from "next/image";
 import About from "../components/About";
 import TableUser from "../components/TableUser";
