@@ -143,7 +143,7 @@ export default function ServicesHome() {
   </CardBody>
   <CardFooter className="pt-3">
     <Button size="lg" fullWidth={true} color="blue">
-      Book Nows
+      Book Now
     </Button>
   </CardFooter>
 </Card>
