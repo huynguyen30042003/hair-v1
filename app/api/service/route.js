@@ -1,4 +1,6 @@
 import connectMongoDB from "libs/mongodb";
+import connectDB from "libs/db";
+
 import { NextResponse } from "next/server";
 import Service from "models/service";
 import bcrypt from "bcryptjs"
@@ -11,7 +13,7 @@ export async function POST(request) {
         price,
     } = await request.json();
 
-    await connectMongoDB();
+    await connectDB();
     await Service.create({
         decription,
         rate,
@@ -29,7 +31,7 @@ export async function POST(request) {
 
 export async function GET() {
   try {
-    await connectMongoDB();
+    await connectDB();
     const services = await Service.find();
     return NextResponse.json({ services });
   } catch (error) {
@@ -45,7 +47,7 @@ export async function DELETE(request) {
   try {
     const { id } = await request.json();
 
-    await connectMongoDB();
+    await connectDB();
     await Service.findByIdAndDelete(id);
 
     return NextResponse.json({ message: "Service deleted" }, { status: 200 });

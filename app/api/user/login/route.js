@@ -1,4 +1,5 @@
 import connectMongoDB from "libs/mongodb";
+import connectDB from "libs/db";
 import { NextResponse } from "next/server";
 import User from "models/user";
 import bcrypt from "bcryptjs";
@@ -7,7 +8,7 @@ export async function POST(request) {
   try {
     const { username, password } = await request.json();
 
-    await connectMongoDB();
+    await connectDB();
 
     const user = await User.findOne({ username });
     if (!user) {

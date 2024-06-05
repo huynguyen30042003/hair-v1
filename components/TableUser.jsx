@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+"use client"
+import React, { useState,useEffect } from "react";
+import {  toast } from 'react-toastify';
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { PencilIcon, UserPlusIcon } from "@heroicons/react/24/solid";
+import { PencilIcon, UserPlusIcon,TrashIcon,ReceiptRefundIcon } from "@heroicons/react/24/solid";
 import {
   Card,
   CardHeader,
@@ -24,10 +26,10 @@ const TABS = [
   { label: "Unmonitored", value: "unmonitored" },
 ];
 
-const TABLE_HEAD = ["Member", "Function", "Status", "Employed", ""];
+const TABLE_HEAD = ["Member/Fullname", "Email","Role", "Age", "Employed", "Edit","Delele","Resetpassword"];
 
 const TABLE_ROWS = [
-  {
+    {
     img: "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-3.jpg",
     name: "John Michael",
     email: "john@creative-tim.com",
@@ -35,109 +37,74 @@ const TABLE_ROWS = [
     org: "Organization",
     online: true,
     date: "23/04/18",
-  },
-  {
-    img: "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-3.jpg",
-    name: "John Michael",
-    email: "john@creative-tim.com",
-    job: "Manager",
-    org: "Organization",
-    online: true,
-    date: "23/04/18",
-  },  {
-    img: "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-3.jpg",
-    name: "John Michael",
-    email: "john@creative-tim.com",
-    job: "Manager",
-    org: "Organization",
-    online: true,
-    date: "23/04/18",
-  },  {
-    img: "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-3.jpg",
-    name: "John Michael",
-    email: "john@creative-tim.com",
-    job: "Manager",
-    org: "Organization",
-    online: true,
-    date: "23/04/18",
-  },  {
-    img: "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-3.jpg",
-    name: "John Michael",
-    email: "john@creative-tim.com",
-    job: "Manager",
-    org: "Organization",
-    online: true,
-    date: "23/04/18",
-  },  {
-    img: "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-3.jpg",
-    name: "John Michael",
-    email: "john@creative-tim.com",
-    job: "Manager",
-    org: "Organization",
-    online: true,
-    date: "23/04/18",
-  },  {
-    img: "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-3.jpg",
-    name: "John Michael",
-    email: "john@creative-tim.com",
-    job: "Manager",
-    org: "Organization",
-    online: true,
-    date: "23/04/18",
-  },  {
-    img: "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-3.jpg",
-    name: "John Michael",
-    email: "john@creative-tim.com",
-    job: "Manager",
-    org: "Organization",
-    online: true,
-    date: "23/04/18",
-  },  {
-    img: "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-3.jpg",
-    name: "John Michael",
-    email: "john@creative-tim.com",
-    job: "Manager",
-    org: "Organization",
-    online: true,
-    date: "23/04/18",
-  },  {
-    img: "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-3.jpg",
-    name: "John Michael",
-    email: "john@creative-tim.com",
-    job: "Manager",
-    org: "Organization",
-    online: true,
-    date: "23/04/18",
-  },  {
-    img: "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-3.jpg",
-    name: "John Michael",
-    email: "john@creative-tim.com",
-    job: "Manager",
-    org: "Organization",
-    online: true,
-    date: "23/04/18",
-  },  {
-    img: "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-3.jpg",
-    name: "John Michael",
-    email: "john@creative-tim.com",
-    job: "Manager",
-    org: "Organization",
-    online: true,
-    date: "23/04/18",
-  },
-  // ... các hàng khác
+    },{
+      img: "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-3.jpg",
+
+    }
+
+
 ];
 
 const TableUser = () => {
-  const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 5;
+  const [currentPage, setCurrentPage] = useState(1);
+  const [data, setData] = useState([{}]); // Initialize as an empty array
 
+
+
+
+  const [loading, setLoading] = useState(true);
+  // const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const response = await fetch('/api/user');
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const result = await response.json();
+      setData(result.users);
+    } catch (error) {
+      console.error('Failed to fetch dashboard data:', error);
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
-  const currentRows = TABLE_ROWS.slice(indexOfFirstRow, indexOfLastRow);
-
-  const totalPages = Math.ceil(TABLE_ROWS.length / rowsPerPage);
-
+  const currentRows = data.slice(indexOfFirstRow, indexOfLastRow);
+  const totalPages = Math.ceil(data.length / rowsPerPage);
+  
+  const handleDelete = async (id) => {
+    try {
+      console.log(id);
+      const res = await fetch("/api/user", {
+        method: "DELETE",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ id })
+      });
+  
+      if (res.ok) {
+        toast.success("User successfully deleted.");
+      } else {
+        const data = await res.json();
+        toast.error(
+          data.message || "Something went wrong while deleting the user."
+        );
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
   return (
     <Card className="h-full w-full">
       <CardHeader floated={false} shadow={false} className="rounded-none">
@@ -182,31 +149,31 @@ const TableUser = () => {
           </thead>
           <tbody>
             {currentRows.map(
-              ({ img, name, email, job, org, online, date }, index) => {
+              ({ _id, username, email,fullName,role,createdAt,age }, index) => {
                 const isLast = index === currentRows.length - 1;
                 const classes = isLast
                   ? "p-4"
                   : "p-4 border-b border-blue-gray-50";
 
                 return (
-                  <tr key={name}>
+                  <tr key={username}>
                     <td className={classes}>
                       <div className="flex items-center gap-3">
-                        <Avatar src={img} alt={name} size="sm" />
+                        {/* <Avatar src={img} alt={name} size="sm" /> */}
                         <div className="flex flex-col">
                           <Typography
                             variant="small"
                             color="blue-gray"
                             className="font-normal"
                           >
-                            {name}
+                            {username}
                           </Typography>
                           <Typography
                             variant="small"
                             color="blue-gray"
                             className="font-normal opacity-70"
                           >
-                            {email}
+                            {fullName}
                           </Typography>
                         </div>
                       </div>
@@ -218,25 +185,36 @@ const TableUser = () => {
                           color="blue-gray"
                           className="font-normal"
                         >
-                          {job}
+                          {email}
                         </Typography>
+                      </div>
+                    </td>
+                    <td className={classes}>
+                      <div className="flex flex-col">
                         <Typography
                           variant="small"
                           color="blue-gray"
-                          className="font-normal opacity-70"
+                          className="font-normal"
                         >
-                          {org}
+                          {role}
                         </Typography>
                       </div>
                     </td>
                     <td className={classes}>
                       <div className="w-max">
-                        <Chip
+                        {/* <Chip
                           variant="ghost"
                           size="sm"
                           value={online ? "online" : "offline"}
                           color={online ? "green" : "blue-gray"}
-                        />
+                        /> */}
+                              <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal "
+                        >
+                          {age}
+                        </Typography>
                       </div>
                     </td>
                     <td className={classes}>
@@ -245,13 +223,29 @@ const TableUser = () => {
                         color="blue-gray"
                         className="font-normal"
                       >
-                        {date}
+                        {createdAt}
                       </Typography>
                     </td>
                     <td className={classes}>
                       <Tooltip content="Edit User">
                         <IconButton variant="text">
                           <PencilIcon className="h-4 w-4" />
+                        </IconButton>
+                      </Tooltip>
+                    </td>
+                    <td className={classes}>
+                      <Tooltip content="Delete User">
+                        <IconButton variant="text"
+                        onClick={()=>handleDelete(_id)}
+                        >
+                          <TrashIcon className="h-4 w-4" />
+                        </IconButton>
+                      </Tooltip>
+                    </td>     
+                    <td className={classes}>
+                      <Tooltip content="Reset password">
+                        <IconButton variant="text">
+                          <ReceiptRefundIcon className="h-4 w-4" />
                         </IconButton>
                       </Tooltip>
                     </td>
