@@ -101,7 +101,7 @@ export default function FooterWithSocialLinks() {
             className="mb-4 text-center font-normal text-blue-gray-900 md:mb-0 items-center m-auto"
           >
             &copy; {currentYear} <a href="https://material-tailwind.com/">Material Tailwind</a>. All
-            Rights Reserved.
+            Rights Reserveds.
           </Typography>
         </div>
       </div>
