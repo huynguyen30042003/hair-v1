@@ -2,7 +2,8 @@ import mongoose, { Schema } from "mongoose";
 
 const serviceSchema = new Schema(
   {
-    decription: String,
+    title: String,
+    description: String,
     rate: Number,
     price: Number,
 

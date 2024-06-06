@@ -8,7 +8,10 @@ import TableUser from "../../components/TableUser"
 const Dashboard = () => {
 
   const { data: session } = useSession()
-  
+  if(!session){
+    return null;
+
+  }
   if(session.user.role !== 'admin'){
     redirect('/login')
     return null;

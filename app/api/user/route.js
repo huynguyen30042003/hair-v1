@@ -2,9 +2,12 @@ import connectMongoDB from "libs/mongodb";
 import connectDB from "libs/db";
 import { NextResponse } from "next/server";
 import User from "models/user";
-import bcrypt from "bcryptjs"
+import bcrypt from "bcryptjs";
 
+//register
 export async function POST(request) {
+  const MIN_PASSWORD_LENGTH = 8;
+  const MAX_PASSWORD_LENGTH = 30
   try {
     const {
       username,
@@ -27,9 +30,14 @@ export async function POST(request) {
     }
 
     // Check if password meets length requirements
-    if (password.length < MIN_PASSWORD_LENGTH || password.length > MAX_PASSWORD_LENGTH) {
+    if (
+      password.length < MIN_PASSWORD_LENGTH ||
+      password.length > MAX_PASSWORD_LENGTH
+    ) {
       return NextResponse.json(
-        { error: `Password must be between ${MIN_PASSWORD_LENGTH} and ${MAX_PASSWORD_LENGTH} characters long` },
+        {
+          error: `Password must be between ${MIN_PASSWORD_LENGTH} and ${MAX_PASSWORD_LENGTH} characters long`,
+        },
         { status: 400 }
       );
     }
@@ -63,6 +71,7 @@ export async function POST(request) {
   }
 }
 
+//get All users
 export async function GET() {
   try {
     await connectDB();
@@ -76,18 +85,17 @@ export async function GET() {
     );
   }
 }
+
+//delete user by id
 export async function DELETE(request) {
   try {
-    const {id} = await request.json();
+    const { id } = await request.json();
 
     await connectDB();
     const user = await User.findByIdAndDelete(id);
 
     if (!user) {
-      return NextResponse.json(
-        { message: "User not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ message: "User not found" }, { status: 404 });
     }
 
     return NextResponse.json(
@@ -103,10 +111,11 @@ export async function DELETE(request) {
   }
 }
 
+//reset password by id
 export async function PUT(request) {
   try {
     const { id } = await request.json();
-    const newPassword = "12345"
+    const newPassword = "12345";
 
     if (!id) {
       return NextResponse.json(
@@ -117,13 +126,14 @@ export async function PUT(request) {
 
     await connectDB();
     const hashedPassword = await bcrypt.hash(newPassword, 10);
-    const user = await User.findByIdAndUpdate(id, { password: hashedPassword }, { new: true });
+    const user = await User.findByIdAndUpdate(
+      id,
+      { password: hashedPassword },
+      { new: true }
+    );
 
     if (!user) {
-      return NextResponse.json(
-        { message: "User not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ message: "User not found" }, { status: 404 });
     }
 
     return NextResponse.json(user, { status: 200 });

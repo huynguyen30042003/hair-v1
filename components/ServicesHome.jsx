@@ -19,6 +19,7 @@ export default function ServicesHome() {
   const images = [ServicesImg1, ServicesImg2, ServicesImg3];
 
   return (
+    <div className="container m-auto">
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4 -mt-6 m-5">
       {images.map((image, index) => (
         <Card key={index} className="max-w-[24rem] shadow-lg">
@@ -151,6 +152,7 @@ export default function ServicesHome() {
           </CardFooter>
         </Card>
       ))}
+    </div>
     </div>
   );
 }

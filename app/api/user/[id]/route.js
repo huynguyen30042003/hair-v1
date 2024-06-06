@@ -3,7 +3,8 @@ import { NextResponse } from "next/server";
 import User from "models/user";
 
 
-//get 1 user by id
+
+//get 1 user by id params
 export async function GET(request, { params }) {
   try {
     const { id } = params;
