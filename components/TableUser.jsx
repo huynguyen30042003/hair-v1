@@ -1,27 +1,11 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import {
-  PencilIcon,
-  UserPlusIcon,
-  TrashIcon,
-  ReceiptRefundIcon,
-} from "@heroicons/react/24/solid";
-import {
-  Button,
-  Dialog,
-  DialogHeader,
-  DialogBody,
-  DialogFooter,
-  Card,
-  CardHeader,
-  Typography,
-  CardBody,
-  CardFooter,
-  IconButton,
-  Tooltip,
-} from "@material-tailwind/react";
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, TextField, IconButton, Box, Typography, Checkbox, Avatar } from '@mui/material';
+import { Settings, Delete, Info, MoreVert } from '@mui/icons-material';
+import CircleIcon from '@mui/icons-material/Circle';
+import TableHeader from "components/TableHeader";
+import StatusIndicator from "./StatusIndicator";
 
 const TABS = [
   { label: "All", value: "all" },
@@ -58,9 +42,21 @@ const TABLE_ROWS = [
 const TableUser = () => {
   const rowsPerPage = 5;
   const [currentPage, setCurrentPage] = useState(1);
+  const [id, setId] = useState();
   const [data, setData] = useState([{}]); // Initialize as an empty array
   const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(!open);
+  const [openReset, setOpenReset] = useState(false);
+  const [openEdit, setOpenEdit] = useState(false);
+  
+  const handleOpenDelete = (_id) => {setOpen(!open)
+    setId(_id)
+  };
+  const handleOpenReset = (_id) => {setOpenReset(!openReset)
+    setId(_id)
+  };
+  const handleOpenEdit = (_id) => {setOpenEdit(!openEdit)
+    setId(_id)
+  };
 
   const [loading, setLoading] = useState(true);
   useEffect(() => {
@@ -88,7 +84,7 @@ const TableUser = () => {
   const currentRows = data.slice(indexOfFirstRow, indexOfLastRow);
   const totalPages = Math.ceil(data.length / rowsPerPage);
 
-  const handleDelete = async (id) => {
+  const handleDelete = async () => {
     try {
       console.log(id);
       const res = await fetch("/api/user", {
@@ -107,11 +103,13 @@ const TableUser = () => {
           data.message || "Something went wrong while deleting the user."
         );
       }
+      fetchData()
+      handleOpenDelete(0)
     } catch (error) {
       toast.error(error.message);
     }
   };
-  const handleResetPassword = async (id) => {
+  const handleResetPassword = async () => {
     try {
       console.log(id);
       const res = await fetch("/api/user", {
@@ -129,207 +127,72 @@ const TableUser = () => {
         toast.error(
           data.message || "Something went wrong while reset the user."
         );
-      }
+      }handleOpenReset(0)
     } catch (error) {
       toast.error(error.message);
     }
-  };
+  };console.log(data);
   return (
     <>
-      <Card className="h-full w-full">
-        <CardHeader floated={false} shadow={false} className="rounded-none">
-          <div className="mb-8 flex items-center justify-between gap-8">
-            <div>
-              <Typography variant="h5" color="blue-gray">
-                Members list
-              </Typography>
-              <Typography color="gray" className="mt-1 font-normal">
-                See information about all members
-              </Typography>
-            </div>
-            <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
-              <Button variant="outlined" size="sm">
-                view all
-              </Button>
-              <Button className="flex items-center gap-3" size="sm">
-                <UserPlusIcon strokeWidth={2} className="h-4 w-4" /> Add member
-              </Button>
-            </div>
-          </div>
-        </CardHeader>
-        <CardBody className="overflow-scroll px-0">
-          <table className="mt-4 w-full min-w-max table-auto text-left">
-            <thead>
-              <tr>
-                {TABLE_HEAD.map((head) => (
-                  <th
-                    key={head}
-                    className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4"
-                  >
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-normal leading-none opacity-70"
+      <Paper style={{ padding: '16px' }}>
+      <TableHeader/>
+      <TableContainer>
+        <Table aria-label="simple table">
+          <TableHead>
+            <TableRow>
+              <TableCell padding="checkbox">
+                <Checkbox />
+              </TableCell>
+              <TableCell>Member/FullName</TableCell>
+              <TableCell>Email</TableCell>
+              <TableCell>Role</TableCell>
+              <TableCell>Age</TableCell>
+              <TableCell>Employed</TableCell>
+              <TableCell>Last Update</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {data.map((row) => (
+              <TableRow key={row.username}>
+                <TableCell padding="checkbox">
+                  <Checkbox />
+                </TableCell>
+                {/* <TableCell className="flex">
+                  <Avatar src={row.avatar} />
+                  {row.fullName}
+                </TableCell> */}
+                <TableCell>{row.fullName}</TableCell>
+                <TableCell>{row.email}</TableCell>
+                <TableCell>{row.role}</TableCell>
+                <TableCell>{row.age}</TableCell>
+                <TableCell>{row.createdAt}</TableCell>
+                <TableCell>{row.updatedAt}</TableCell>
+   
+                <TableCell align="center">
+                  <Box display="flex" justifyContent="space-between">
+                    <Button variant="contained" color="primary" size="small" style={{ marginRight: '10px', backgroundColor: '#54B4D3' }}
+                    onClick={()=>handleOpenEdit(row._id)}
                     >
-                      {head}
-                    </Typography>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {currentRows.map(
-                (
-                  { _id, username, email, fullName, role, createdAt, age },
-                  index
-                ) => {
-                  const isLast = index === currentRows.length - 1;
-                  const classes = isLast
-                    ? "p-4"
-                    : "p-4 border-b border-blue-gray-50";
+                      Edit user
+                    </Button>
+                    <Button variant="contained" color="secondary" size="small" style={{ marginRight: '10px', backgroundColor: '#14A44D'  }}
+                      onClick={()=>handleOpenReset(row._id)}>
+                      reset password
+                    </Button><Button variant="contained" color="secondary" size="small" style={{ marginRight: '10px', backgroundColor: '#DC4C64'  }}
+                    onClick={()=>handleOpenDelete(row._id)}
+                    >
+                      Delete user
+                    </Button>
+                  </Box>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Paper>
 
-                  return (
-                    <tr key={username}>
-                      <td className={classes}>
-                        <div className="flex items-center gap-3">
-                          {/* <Avatar src={img} alt={name} size="sm" /> */}
-                          <div className="flex flex-col">
-                            <Typography
-                              variant="small"
-                              color="blue-gray"
-                              className="font-normal"
-                            >
-                              {username}
-                            </Typography>
-                            <Typography
-                              variant="small"
-                              color="blue-gray"
-                              className="font-normal opacity-70"
-                            >
-                              {fullName}
-                            </Typography>
-                          </div>
-                        </div>
-                      </td>
-                      <td className={classes}>
-                        <div className="flex flex-col">
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal"
-                          >
-                            {email}
-                          </Typography>
-                        </div>
-                      </td>
-                      <td className={classes}>
-                        <div className="flex flex-col">
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal"
-                          >
-                            {role}
-                          </Typography>
-                        </div>
-                      </td>
-                      <td className={classes}>
-                        <div className="w-max">
-                          {/* <Chip
-                          variant="ghost"
-                          size="sm"
-                          value={online ? "online" : "offline"}
-                          color={online ? "green" : "blue-gray"}
-                        /> */}
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal "
-                          >
-                            {age}
-                          </Typography>
-                        </div>
-                      </td>
-                      <td className={classes}>
-                        <Typography
-                          variant="small"
-                          color="blue-gray"
-                          className="font-normal"
-                        >
-                          {createdAt}
-                        </Typography>
-                      </td>
-                      <td className={classes}>
-                        <Tooltip content="Edit User">
-                          <IconButton variant="text">
-                            <PencilIcon className="h-4 w-4" />
-                          </IconButton>
-                        </Tooltip>
-                      </td>
-                      <td className={classes}>
-                        <Tooltip content="Delete User">
-                          <IconButton
-                            variant="text"
-                            // onClick={() => handleDelete(_id)}
-                            onClick={handleOpen}
-                          >
-                            <TrashIcon className="h-4 w-4" />
-                          </IconButton>
-                        </Tooltip>
-                      </td>
-                      <td className={classes}>
-                        <Tooltip content="Reset password">
-                          <IconButton
-                            // onClick={() => handleResetPassword(_id)}
-                            onClick={handleOpen}
-                            variant="text"
-                          >
-                            <ReceiptRefundIcon className="h-4 w-4" />
-                          </IconButton>
-                        </Tooltip>
-                      </td>
-                    </tr>
-                  );
-                }
-              )}
-            </tbody>
-          </table>
-        </CardBody>
-        <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
-          <Typography variant="small" color="blue-gray" className="font-normal">
-            Page {currentPage} of {totalPages}
-          </Typography>
-          <div className="flex gap-2">
-            <Button
-              variant="outlined"
-              size="sm"
-              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1}
-            >
-              Previous
-            </Button>
-            <Button
-              variant="outlined"
-              size="sm"
-              onClick={() =>
-                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-              }
-              disabled={currentPage === totalPages}
-            >
-              Next
-            </Button>
-          </div>
-        </CardFooter>
-      </Card> 
 
-      <Button
-        variant="gradient"
-        size="sm"
-        className="hidden lg:inline-block"
-        onClick={handleOpen}
-      >
-        <span>open</span>
-      </Button>
       <div
         className={
           open
@@ -342,11 +205,97 @@ const TableUser = () => {
             variant="gradient"
             size="sm"
             className="hidden lg:inline-block opacity-100"
-            onClick={handleOpen}
+            onClick={()=>handleOpenDelete(0)}
           >
             <span>close</span>
+          </Button>{id}
+          <Button
+            variant="gradient"
+            size="sm"
+            className="hidden lg:inline-block opacity-100"
+            onClick={()=>handleOpenDelete(0)}
+          >
+            <span>no</span>
+          </Button>
+          <Button
+            variant="gradient"
+            size="sm"
+            className="hidden lg:inline-block opacity-100"
+            onClick={handleDelete}
+          >
+            <span>yes</span>
+          </Button>
+        </div>        
+      </div>
+      <div
+        className={
+          openReset
+            ? "fixed bg-[#3b3b3b73] top-0 bottom-0 left-0 right-0 flex items-center justify-center"
+            : "hidden"
+        }
+      >
+        <div className="w-[50%] h-[50%] bg-[#fff]">
+          <Button
+            variant="gradient"
+            size="sm"
+            className="hidden lg:inline-block opacity-100"
+            onClick={()=>handleOpenReset(0)}
+            >
+            <span>reset</span>
+          </Button>{id}
+          <Button
+            variant="gradient"
+            size="sm"
+            className="hidden lg:inline-block opacity-100"
+            onClick={()=>handleOpenReset(0)}
+          >
+            <span>no</span>
+          </Button>
+          <Button
+            variant="gradient"
+            size="sm"
+            className="hidden lg:inline-block opacity-100"
+            onClick={handleResetPassword}
+          >
+            <span>yes</span>
           </Button>
         </div>
+        
+      </div>
+      <div
+        className={
+          openEdit
+            ? "fixed bg-[#3b3b3b73] top-0 bottom-0 left-0 right-0 flex items-center justify-center"
+            : "hidden"
+        }
+      >
+        <div className="w-[50%] h-[50%] bg-[#fff]">
+          <Button
+            variant="gradient"
+            size="sm"
+            className="hidden lg:inline-block opacity-100"
+            onClick={()=>handleOpenEdit(0)}
+            >
+            <span>Edit</span>
+          </Button>{id}
+          <Button
+            variant="gradient"
+            size="sm"
+            className="hidden lg:inline-block opacity-100"
+            onClick={()=>handleOpenEdit(0)}
+          >
+            <span>no</span>
+          </Button>
+          <Button
+            variant="gradient"
+            size="sm"
+            className="hidden lg:inline-block opacity-100"
+            // onClick={handleEdit}
+          >
+            <span>yes</span>
+          </Button>
+        </div>
+        
       </div>
     </>
   );
