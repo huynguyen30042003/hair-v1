@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import imageClose from "../../../data/img/close.svg";
+import imageClose from "@data/img/LogoLG.jpg";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -13,7 +13,7 @@ const Register = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confrimPassword, setConfrimPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const router = useRouter();
   const { data: session, status: sessionStatus } = useSession();
@@ -59,64 +59,102 @@ const Register = () => {
 
   return (
     sessionStatus !== "authenticated" && (
-      <div className="bg-[#fff] w-[100vw] min-h-[100vh]  flex justify-center items-center">
-        <div className="login w-[442px] my-[34px] mx-[64px] flex flex-col">
-          <span className=" leading-[48px] text-[#7797EE] text-[64px] font-bold">
-            Register Now
-          </span>
-          <div className="mt-[12px] flex flex-col ">
-            <span className="leading-[28px] mb-[9px]">Full Name</span>
-            <input
-              type="text"
-              className="h-[66px] bg-[#F0F0F0] rounded-md"
-              onChange={(e) => setFullName(e.target.value)}
-            />
-          </div>
-          <div className="mt-[12px] flex flex-col ">
-            <span className="leading-[28px] mb-[9px]">
-              username or number phone
-            </span>
-            <input
-              type="text"
-              className="h-[66px] bg-[#F0F0F0] rounded-md"
-              onChange={(e) => setUsername(e.target.value)}
-            />
-          </div>
-          <div className="mt-[12px] flex flex-col ">
-            <span className="leading-[28px] mb-[9px]">Email</span>
-            <input
-              type="text"
-              className="h-[66px] bg-[#F0F0F0] rounded-md"
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
-          <div className="mt-[12px] flex flex-col ">
-            <span className="leading-[26px] mb-[9px]">Password</span>
-            <input
-              type="password"
-              className="h-[66px] bg-[#F0F0F0] rounded-md"
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-          <div className="mt-[12px] flex flex-col ">
-            <span className="leading-[26px] mb-[9px]">Confirm Password</span>
-            <input
-              type="password"
-              className="h-[66px] bg-[#F0F0F0] rounded-md"
-              onChange={(e) => setConfrimPassword(e.target.value)}
-            />
-          </div>
-          <button
-            className="mt-[22px] h-[70px] bg-[#4B5A69] text-[20px] font-bold text-[#fff] rounded-md"
-            onClick={hanldeSubmit}
-          >
-            Register Now
-          </button>
-          <div className="flex justify-center mt-[22px] text-[20px] font-bold">
-            <Link href="/login">Login Now</Link>
+      <section className="min-h-screen flex items-center justify-center bg-cyan-700 fixer">
+        <div className="container py-5 h-full flex justify-center items-center">
+          <div className="w-full max-w-4xl">
+            <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+              <div className="flex">
+                <div className="w-full md:w-1/2 flex items-center justify-center">
+                  <div className="p-8 w-full">
+                    <div className="mb-6 flex items-center">
+                      <i className="fas fa-cubes fa-2x text-orange-500 mr-3"></i>
+                      <span className="text-4xl font-bold">Register</span>
+                    </div>
+                    <form className="justify-between">
+                      <div className="mb-4">
+                        <label className="block text-gray-700 mb-2">
+                          Enter Full Name
+                        </label>
+                        <input
+                          type="text"
+                          className="w-full p-2 border border-gray-300 rounded"
+                          onChange={(e) => setFullName(e.target.value)}
+                        />
+                      </div>
+                      <div className="mb-4">
+                        <label className="block text-gray-700 mb-2">
+                          Enter User Name
+                        </label>
+                        <input
+                          type="text"
+                          className="w-full p-2 border border-gray-300 rounded"
+                          onChange={(e) => setUsername(e.target.value)}
+                        />
+                      </div>
+                      <div className="mb-4">
+                        <label className="block text-gray-700 mb-2">
+                          Enter Email
+                        </label>
+                        <input
+                          type="email"
+                          className="w-full p-2 border border-gray-300 rounded"
+                          onChange={(e) => setEmail(e.target.value)}
+                        />
+                      </div>
+                      <div className="mb-4">
+                        <label className="block text-gray-700 mb-2">
+                          Password
+                        </label>
+                        <input
+                          type="password"
+                          className="w-full p-2 border border-gray-300 rounded"
+                          onChange={(e) => setPassword(e.target.value)}
+                        />
+                      </div>
+                      <div className="mb-4">
+                        <label className="block text-gray-700 mb-2">
+                          ConfirmPassword
+                        </label>
+                        <input
+                          type="password"
+                          className="w-full p-2 border border-gray-300 rounded"
+                          onChange={(e) => setConfirmPassword(e.target.value)}
+                        />
+                      </div>
+                      <div className="mb-4">
+                        <button
+                          className="w-full bg-gray-800 text-white p-2 rounded"
+                          type="button"
+                          onClick={hanldeSubmit}
+                        >
+                          Register
+                        </button>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-gray-700">
+                          Back to page{" "}
+                          <Link href="/login-v2" className="text-blue-800">
+                            Login
+                          </Link>
+                        </p>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+                <div className="hidden md:block md:w-1/2">
+                  <Image
+                    src={imageClose}
+                    alt="login form"
+                    className="w-full h-full object-cover"
+                    width={500}
+                    height={600}
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
     )
   );
 };

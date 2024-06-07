@@ -8,7 +8,7 @@ import { signOut,useSession } from "next-auth/react";
 const Navbar = () => {
   const { data: session } = useSession()
   return (
-    <div className="container m-auto">
+    <div className="container m-auto ">
       <div className="flex justify-between">
         <Image src={abc} alt="âdsad" className="w-[50px]" />
         <div className="flex items-center gap-6">
