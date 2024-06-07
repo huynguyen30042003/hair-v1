@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 "use client"
+=======
+>>>>>>> 327ec7c702720e7323d856bfcf9cad3a842757e2
 import { Typography } from "@material-tailwind/react";
 import Image from 'next/image'
 import UrlLogo from "../data/img/logo.svg"
@@ -25,7 +28,11 @@ export default function FooterWithSocialLinks() {
       <div className="mx-auto w-full max-w-7xl px-8">
         <div className="grid grid-cols-1 justify-between gap-4 md:grid-cols-2">
           <div className=" items-center mb-6 items-center"> {/* Thêm flex và items-center để căn giữa ảnh và chữ */}
+<<<<<<< HEAD
               <Image src={UrlLogo} alt="Material Tailwind Logo"className="m-auto" width={200} height={200} /> {/* Thay đổi kích thước ảnh theo mong muốn */}
+=======
+              <Image src={"UrlLogo"} alt="Material Tailwind Logo"className="m-auto" width={200} height={200} /> {/* Thay đổi kích thước ảnh theo mong muốn */}
+>>>>>>> 327ec7c702720e7323d856bfcf9cad3a842757e2
             <div className="flex gap-4 text-blue-gray-900 sm:justify-center mt-3 m-auto">
             <Typography as="a" href="#" className="opacity-80 transition-opacity hover:opacity-100">
               <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -102,7 +109,11 @@ export default function FooterWithSocialLinks() {
             className="mb-4 text-center font-normal text-blue-gray-900 md:mb-0 items-center m-auto"
           >
             &copy; {currentYear} <a href="https://material-tailwind.com/">Material Tailwind</a>. All
+<<<<<<< HEAD
             Rights Reserved.
+=======
+            Rights Reserveds.
+>>>>>>> 327ec7c702720e7323d856bfcf9cad3a842757e2
           </Typography>
         </div>
       </div>
