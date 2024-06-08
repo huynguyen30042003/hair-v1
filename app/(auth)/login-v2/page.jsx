@@ -6,7 +6,8 @@ import { useRouter } from "next/navigation";
 import { signIn, useSession } from "next-auth/react";
 import { toast } from "react-toastify";
 import Logo from "@data/img/LogoLG.jpg";
-import styles from './Login.module.css';
+import styles from "./Login.module.css";
+import banner from "@data/img/bannerFG.webp";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -42,9 +43,12 @@ const Login = () => {
 
   return (
     sessionStatus !== "authenticated" && (
-        <section className={`min-h-screen flex items-center justify-center bg-cyan-700 fixer ${styles.blur}`}>
+      <section className="min-h-screen flex items-center justify-center bg-cyan-700">
+        <div className="min-w-full fixed">
+          <Image src={banner} alt="Banner" />
+        </div>
         <div className="container py-5 h-full flex justify-center items-center">
-          <div className="w-full max-w-4xl">
+          <div className="w-full max-w-4xl relative">
             <div className="bg-white rounded-lg shadow-lg overflow-hidden">
               <div className="flex">
                 <div className="hidden md:block md:w-1/2">
@@ -62,10 +66,14 @@ const Login = () => {
                       <i className="fas fa-cubes fa-2x text-orange-500 mr-3"></i>
                       <span className="text-4xl font-bold">Login</span>
                     </div>
-                    <h5 className="text-xl font-normal mb-6">Sign into your account</h5>
+                    <h5 className="text-xl font-normal mb-6">
+                      Sign into your account
+                    </h5>
                     <form>
                       <div className="mb-4">
-                        <label className="block text-gray-700 mb-2">Username or Phone Number</label>
+                        <label className="block text-gray-700 mb-2">
+                          Username or Phone Number
+                        </label>
                         <input
                           type="text"
                           className="w-full p-2 border border-gray-300 rounded"
@@ -73,7 +81,9 @@ const Login = () => {
                         />
                       </div>
                       <div className="mb-4">
-                        <label className="block text-gray-700 mb-2">Password</label>
+                        <label className="block text-gray-700 mb-2">
+                          Password
+                        </label>
                         <input
                           type="password"
                           className="w-full p-2 border border-gray-300 rounded"
@@ -90,10 +100,20 @@ const Login = () => {
                         </button>
                       </div>
                       <div className="text-right mb-4">
-                        <Link href="/forgotpasscode" className="text-sm text-gray-600">Forgot password?</Link>
+                        <Link
+                          href="/forgotpasscode"
+                          className="text-sm text-gray-600"
+                        >
+                          Forgot password?
+                        </Link>
                       </div>
                       <div className="text-center">
-                        <p className="text-gray-700">Don't have an account? <Link href="/register" className="text-blue-500">Register here</Link></p>
+                        <p className="text-gray-700">
+                          Don't have an account?{" "}
+                          <Link href="/register" className="text-blue-500">
+                            Register here
+                          </Link>
+                        </p>
                       </div>
                       <div className="flex justify-between text-sm text-gray-600 mt-4">
                         <Link href="#!">Terms of use</Link>

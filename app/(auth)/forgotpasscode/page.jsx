@@ -24,10 +24,10 @@ const ForgotPassword = () => {
 
   return (
     <section className="min-h-screen flex flex-col items-center justify-center bg-cyan-700">
-      <div className="w-full h-[250px] ">
+      <div className="min-w-full fixed">
         <Image src={banner} alt="Banner" />
       </div>
-      <div className="container py-5 flex justify-center items-center">
+      <div className="container py-5 flex justify-center items-center relative fixed">
         <div className="w-full max-w-md bg-white rounded-lg shadow-lg overflow-hidden">
           <div className="flex flex-col items-center p-6">
             <div className="w-full bg-gray-800 text-white p-4 rounded-md mb-6">

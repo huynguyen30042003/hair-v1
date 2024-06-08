@@ -1,19 +1,25 @@
 import connectMongoDB from "libs/mongodb";
+import connectDB from "libs/db";
+
 import { NextResponse } from "next/server";
 import Service from "models/service";
 import bcrypt from "bcryptjs"
 
+
+//create a new service
 export async function POST(request) {
   try {
     const {
-        decription,
+        title,
+        description,
         rate,
         price,
     } = await request.json();
 
-    await connectMongoDB();
+    await connectDB();
     await Service.create({
-        decription,
+        title,
+        description,
         rate,
         price,
     });
@@ -21,31 +27,33 @@ export async function POST(request) {
   } catch (error) {
     console.error("Error creating Service:", error);
     return NextResponse.json(
-      { error: "Unable to service user" },
+      { error: "Unable to create service" }, 
       { status: 500 }
     );
   }
 }
 
+//get all service
 export async function GET() {
   try {
-    await connectMongoDB();
+    await connectDB();
     const services = await Service.find();
     return NextResponse.json({ services });
   } catch (error) {
-    console.error("Error fetching service:", error);
+    console.error("Error fetching services:", error); 
     return NextResponse.json(
-      { error: "Unable to fetch service" },
+      { error: "Unable to fetch services" }, 
       { status: 500 }
     );
   }
 }
 
+//delete service
 export async function DELETE(request) {
   try {
     const { id } = await request.json();
 
-    await connectMongoDB();
+    await connectDB();
     await Service.findByIdAndDelete(id);
 
     return NextResponse.json({ message: "Service deleted" }, { status: 200 });

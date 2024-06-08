@@ -1,7 +1,11 @@
+"use client";
 import Navbar from "components/Navbar";
 import Image from "next/image";
 import React from "react";
-import services from "@data/img/Services.svg"
+import ImgService from "@data/img/serviceCuthair.jpg";
+import Banner from "@data/img/banner1.jpg";
+import { Carousel } from "react-responsive-carousel";
+import "react-responsive-carousel/lib/styles/carousel.min.css";
 
 const Services = () => {
   const dataServices = [
@@ -9,49 +13,115 @@ const Services = () => {
       title: "brazilian blowout",
       img: "",
       price: "$155 and up for 180 minutes",
-      more: "Perfect for anyone wanting to smooth and tame frizzy hair.  This is a keratin treatment will cut styling time down and leaves hair with a beautiful shine lasting up to three months.",
+      more: "Perfect for anyone wanting to smooth and tame frizzy hair. This is a keratin treatment will cut styling time down and leaves hair with a beautiful shine lasting up to three months.",
       view: 30,
     },
     {
       title: "Flexi Rods",
       img: "",
       price: "$155 and up for 180 minutes",
-      more: "Perfect for anyone wanting to smooth and tame frizzy hair.  This is a keratin treatment will cut styling time down and leaves hair with a beautiful shine lasting up to three months.",
+      more: "Perfect for anyone wanting to smooth and tame frizzy hair. This is a keratin treatment will cut styling time down and leaves hair with a beautiful shine lasting up to three months.",
       view: 30,
     },
     {
       title: "Double Process Color",
       img: "",
       price: "$155 and up for 180 minutes",
-      more: "Perfect for anyone wanting to smooth and tame frizzy hair.  This is a keratin treatment will cut styling time down and leaves hair with a beautiful shine lasting up to three months.",
+      more: "Perfect for anyone wanting to smooth and tame frizzy hair. This is a keratin treatment will cut styling time down and leaves hair with a beautiful shine lasting up to three months.",
       view: 30,
     },
     {
       title: "Double Process Color",
       img: "",
       price: "$155 and up for 180 minutes",
-      more: "Perfect for anyone wanting to smooth and tame frizzy hair.  This is a keratin treatment will cut styling time down and leaves hair with a beautiful shine lasting up to three months.",
+      more: "Perfect for anyone wanting to smooth and tame frizzy hair. This is a keratin treatment will cut styling time down and leaves hair with a beautiful shine lasting up to three months.",
       view: 30,
     },
     {
       title: "Double Process Color",
       img: "",
       price: "$155 and up for 180 minutes",
-      more: "Perfect for anyone wanting to smooth and tame frizzy hair.  This is a keratin treatment will cut styling time down and leaves hair with a beautiful shine lasting up to three months.",
+      more: "Perfect for anyone wanting to smooth and tame frizzy hair. This is a keratin treatment will cut styling time down and leaves hair with a beautiful shine lasting up to three months.",
       view: 30,
     },
   ];
-  return <>
-    <div className="container m-auto">
-      <div className="flex flex-col items-center">
-        <div className="relative text-center w-[100%] h-[80px]  ">
-          <p className="absolute text-center w-[100%] leading-[75px] text-[#7797EE] bottom-0 opacity-15 text-[100px] border-b-4 border-dashed border-black">Services</p>
-          <p className="absolute text-center w-[100%] leading-[50px] text-[#4B5A69] bottom-0  text-[50px] ">Services</p>
+
+  return (
+    <div className="container m-auto relative">
+      <div className="mb-12">
+        <Carousel
+          autoPlay
+          infiniteLoop
+          showThumbs={false}
+          showStatus={false}
+          interval={3000}
+          className="w-full h-72"
+        >
+          <div className="h-72 relative">
+            <Image
+              src={Banner}
+              alt="image 1"
+              layout="fill"
+              objectFit="cover"
+            />
+          </div>
+          <div className="h-72 relative">
+            <Image
+              src={Banner}
+              alt="image 2"
+              layout="fill"
+              objectFit="cover"
+            />
+          </div>
+          <div className="h-72 relative">
+            <Image
+              src={Banner}
+              alt="image 3"
+              layout="fill"
+              objectFit="cover"
+            />
+          </div>
+        </Carousel>
+      </div>
+      <div className="mt-12">
+        <div className="max-w-6xl mx-auto px-5 lg:px-6 py-10">
+          <h1 className="text-xl font-bold mb-5 text-start">Dịch Vụ Tóc</h1>
+          <div className="flex flex-wrap justify-center space-x-4">
+            <div className="max-w-sm rounded overflow-hidden shadow-lg mb-4">
+              <Image className="w-full" src={ImgService} alt="Cắt tóc" />
+              <div className="px-6 py-4">
+                <div className="font-bold text-xl mb-2">Cắt Tóc</div>
+                <div className="flex">
+                  <p className="text-gray-700 text-base mr-3">Giá từ 150.000đ</p>
+                  <a href="#" className="text-blue-500 hover:underline">Tìm hiểu thêm</a>
+                </div>
+              </div>
+            </div>
+            <div className="max-w-sm rounded overflow-hidden shadow-lg mb-4">
+              <Image className="w-full" src={ImgService} alt="Uốn định hình" />
+              <div className="px-6 py-4">
+                <div className="font-bold text-xl mb-2">Uốn định hình</div>
+                <div className="flex">
+                  <p className="text-gray-700 text-base mr-3">Giá từ 379.000đ</p>
+                  <a href="#" className="text-blue-500 hover:underline">Tìm hiểu thêm</a>
+                </div>
+              </div>
+            </div>
+            <div className="max-w-sm rounded overflow-hidden shadow-lg mb-4">
+              <Image className="w-full" src={ImgService} alt="Thay đổi màu tóc" />
+              <div className="px-6 py-4">
+                <div className="font-bold text-xl mb-2">Thay đổi màu tóc</div>
+                <div className="flex">
+                  <p className="text-gray-700 text-base mr-3">Giá từ 199.000đ</p>
+                  <a href="#" className="text-blue-500 hover:underline">Tìm hiểu thêm</a>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <p className=" text-[36px]">“You can trust me with Your Hair”</p>
       </div>
     </div>
-  </>;
+  );
 };
 
 export default Services;
