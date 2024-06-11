@@ -6,7 +6,7 @@ import bcrypt from "bcryptjs";
 
 //register
 export async function POST(request) {
-  const MIN_PASSWORD_LENGTH = 8;
+  const MIN_PASSWORD_LENGTH = 7;
   const MAX_PASSWORD_LENGTH = 30
   try {
     const {

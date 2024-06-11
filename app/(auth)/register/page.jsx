@@ -3,17 +3,17 @@ import Image from "next/image";
 import imageClose from "../../../data/img/close.svg";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import { useEffect } from "react";
-import toast from "react-toastify";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Register = () => {
   const [fullName, setFullName] = useState("");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confrimPassword, setConfrimPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const router = useRouter();
   const { data: session, status: sessionStatus } = useSession();
@@ -24,47 +24,57 @@ const Register = () => {
     }
   }, [sessionStatus, router]);
 
-  const hanldeSubmit = async () => {
+  const handleSubmit = async () => {
     console.log("====================================");
-    console.log(fullName, username, email, password, confrimPassword);
+    console.log(fullName, username, email, password, confirmPassword);
     console.log("====================================");
-    if (!fullName || !username || !email || !password || !confrimPassword) {
-      toast.error("please fill all the input fields");
+
+    if (!fullName || !username || !email || !password || !confirmPassword) {
+      toast.error("Please fill all the input fields");
       return;
-    } else if (password !== confrimPassword) {
-      ``;
-      toast.error("passwords do not match");
+    } else if (password !== confirmPassword) {
+      toast.error("Passwords do not match");
       return;
     }
+
     try {
       const res = await fetch("/api/user", {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
           fullName,
           username,
           email,
           password,
-          confrimPassword,
+          confirmPassword
         }),
       });
+
       if (res.status === 400) {
-        toast.error("this email is already registered");
+        const errorData = await res.json();
+        toast.error(errorData.error);
       } else if (res.status === 201) {
+        toast.success("register successful");
+
         router.push("/login");
+      } else {
+        toast.error("Something went wrong, please try again");
       }
     } catch (error) {
-      toast.error(error);
+      toast.error("An error occurred: " + error.message);
     }
   };
 
   return (
     sessionStatus !== "authenticated" && (
-      <div className="bg-[#fff] w-[100vw] min-h-[100vh]  flex justify-center items-center">
+      <div className="bg-[#fff] w-[100vw] min-h-[100vh] flex justify-center items-center">
         <div className="login w-[442px] my-[34px] mx-[64px] flex flex-col">
-          <span className=" leading-[48px] text-[#7797EE] text-[64px] font-bold">
+          <span className="leading-[48px] text-[#7797EE] text-[64px] font-bold">
             Register Now
           </span>
-          <div className="mt-[12px] flex flex-col ">
+          <div className="mt-[12px] flex flex-col">
             <span className="leading-[28px] mb-[9px]">Full Name</span>
             <input
               type="text"
@@ -72,17 +82,15 @@ const Register = () => {
               onChange={(e) => setFullName(e.target.value)}
             />
           </div>
-          <div className="mt-[12px] flex flex-col ">
-            <span className="leading-[28px] mb-[9px]">
-              username or number phone
-            </span>
+          <div className="mt-[12px] flex flex-col">
+            <span className="leading-[28px] mb-[9px]">Username or Phone Number</span>
             <input
               type="text"
               className="h-[66px] bg-[#F0F0F0] rounded-md"
               onChange={(e) => setUsername(e.target.value)}
             />
           </div>
-          <div className="mt-[12px] flex flex-col ">
+          <div className="mt-[12px] flex flex-col">
             <span className="leading-[28px] mb-[9px]">Email</span>
             <input
               type="text"
@@ -90,7 +98,7 @@ const Register = () => {
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
-          <div className="mt-[12px] flex flex-col ">
+          <div className="mt-[12px] flex flex-col">
             <span className="leading-[26px] mb-[9px]">Password</span>
             <input
               type="password"
@@ -98,17 +106,17 @@ const Register = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          <div className="mt-[12px] flex flex-col ">
+          <div className="mt-[12px] flex flex-col">
             <span className="leading-[26px] mb-[9px]">Confirm Password</span>
             <input
               type="password"
               className="h-[66px] bg-[#F0F0F0] rounded-md"
-              onChange={(e) => setConfrimPassword(e.target.value)}
+              onChange={(e) => setConfirmPassword(e.target.value)}
             />
           </div>
           <button
             className="mt-[22px] h-[70px] bg-[#4B5A69] text-[20px] font-bold text-[#fff] rounded-md"
-            onClick={hanldeSubmit}
+            onClick={handleSubmit}
           >
             Register Now
           </button>

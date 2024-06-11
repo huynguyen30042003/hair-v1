@@ -1,28 +1,15 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import io from "socket.io-client";
 import { toast } from "react-toastify";
-import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import {
-  PencilIcon,
-  UserPlusIcon,
-  TrashIcon,
-  ReceiptRefundIcon,
-} from "@heroicons/react/24/solid";
-import {
-  Button,
-  Dialog,
-  DialogHeader,
-  DialogBody,
-  DialogFooter,
-  Card,
-  CardHeader,
-  Typography,
-  CardBody,
-  CardFooter,
-  IconButton,
-  Tooltip,
-} from "@material-tailwind/react";
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, TextField, IconButton, Box, Typography, Checkbox, Avatar } from '@mui/material';
+import { Settings, Delete, Info, MoreVert } from '@mui/icons-material';
+import CircleIcon from '@mui/icons-material/Circle';
+import TableHeader from "components/TableHeader";
+import StatusIndicator from "./StatusIndicator";
 
+
+const  SOCKET_SERVER_URL = 'http://localhost:3000'
 const TABS = [
   { label: "All", value: "all" },
   { label: "Monitored", value: "monitored" },
@@ -61,6 +48,25 @@ const TableUser = () => {
   const [data, setData] = useState([{}]); // Initialize as an empty array
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(!open);
+
+  useEffect(() => {
+    const socket = io(SOCKET_SERVER_URL);
+
+    socket.on('connect', () => {
+      console.log('Connected to Socket.IO server');
+    });
+
+    // Listen for updates from the server
+    socket.on('updateData', (newData) => {
+      setData(newData);
+      toast.info('Data updated');
+    });
+
+    // Clean up the connection when the component unmounts
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
 
   const [loading, setLoading] = useState(true);
   useEffect(() => {
@@ -133,194 +139,64 @@ const TableUser = () => {
     } catch (error) {
       toast.error(error.message);
     }
-  };
+  };console.log(data);
   return (
     <>
-      <Card className="h-full w-full">
-        <CardHeader floated={false} shadow={false} className="rounded-none">
-          <div className="mb-8 flex items-center justify-between gap-8">
-            <div>
-              <Typography variant="h5" color="blue-gray">
-                Members list
-              </Typography>
-              <Typography color="gray" className="mt-1 font-normal">
-                See information about all members
-              </Typography>
-            </div>
-            <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
-              <Button variant="outlined" size="sm">
-                view all
-              </Button>
-              <Button className="flex items-center gap-3" size="sm">
-                <UserPlusIcon strokeWidth={2} className="h-4 w-4" /> Add member
-              </Button>
-            </div>
-          </div>
-        </CardHeader>
-        <CardBody className="overflow-scroll px-0">
-          <table className="mt-4 w-full min-w-max table-auto text-left">
-            <thead>
-              <tr>
-                {TABLE_HEAD.map((head) => (
-                  <th
-                    key={head}
-                    className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4"
-                  >
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-normal leading-none opacity-70"
-                    >
-                      {head}
-                    </Typography>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {currentRows.map(
-                (
-                  { _id, username, email, fullName, role, createdAt, age },
-                  index
-                ) => {
-                  const isLast = index === currentRows.length - 1;
-                  const classes = isLast
-                    ? "p-4"
-                    : "p-4 border-b border-blue-gray-50";
-
-                  return (
-                    <tr key={username}>
-                      <td className={classes}>
-                        <div className="flex items-center gap-3">
-                          {/* <Avatar src={img} alt={name} size="sm" /> */}
-                          <div className="flex flex-col">
-                            <Typography
-                              variant="small"
-                              color="blue-gray"
-                              className="font-normal"
-                            >
-                              {username}
-                            </Typography>
-                            <Typography
-                              variant="small"
-                              color="blue-gray"
-                              className="font-normal opacity-70"
-                            >
-                              {fullName}
-                            </Typography>
-                          </div>
-                        </div>
-                      </td>
-                      <td className={classes}>
-                        <div className="flex flex-col">
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal"
-                          >
-                            {email}
-                          </Typography>
-                        </div>
-                      </td>
-                      <td className={classes}>
-                        <div className="flex flex-col">
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal"
-                          >
-                            {role}
-                          </Typography>
-                        </div>
-                      </td>
-                      <td className={classes}>
-                        <div className="w-max">
-                          {/* <Chip
-                          variant="ghost"
-                          size="sm"
-                          value={online ? "online" : "offline"}
-                          color={online ? "green" : "blue-gray"}
-                        /> */}
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal "
-                          >
-                            {age}
-                          </Typography>
-                        </div>
-                      </td>
-                      <td className={classes}>
-                        <Typography
-                          variant="small"
-                          color="blue-gray"
-                          className="font-normal"
-                        >
-                          {createdAt}
-                        </Typography>
-                      </td>
-                      <td className={classes}>
-                        <Tooltip content="Edit User">
-                          <IconButton variant="text">
-                            <PencilIcon className="h-4 w-4" />
-                          </IconButton>
-                        </Tooltip>
-                      </td>
-                      <td className={classes}>
-                        <Tooltip content="Delete User">
-                          <IconButton
-                            variant="text"
-                            // onClick={() => handleDelete(_id)}
-                            onClick={handleOpen}
-                          >
-                            <TrashIcon className="h-4 w-4" />
-                          </IconButton>
-                        </Tooltip>
-                      </td>
-                      <td className={classes}>
-                        <Tooltip content="Reset password">
-                          <IconButton
-                            // onClick={() => handleResetPassword(_id)}
-                            onClick={handleOpen}
-                            variant="text"
-                          >
-                            <ReceiptRefundIcon className="h-4 w-4" />
-                          </IconButton>
-                        </Tooltip>
-                      </td>
-                    </tr>
-                  );
-                }
-              )}
-            </tbody>
-          </table>
-        </CardBody>
-        <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
-          <Typography variant="small" color="blue-gray" className="font-normal">
-            Page {currentPage} of {totalPages}
-          </Typography>
-          <div className="flex gap-2">
-            <Button
-              variant="outlined"
-              size="sm"
-              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1}
-            >
-              Previous
-            </Button>
-            <Button
-              variant="outlined"
-              size="sm"
-              onClick={() =>
-                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-              }
-              disabled={currentPage === totalPages}
-            >
-              Next
-            </Button>
-          </div>
-        </CardFooter>
-      </Card> 
+      <Paper style={{ padding: '16px' }}>
+      <TableHeader/>
+      <TableContainer>
+        <Table aria-label="simple table">
+          <TableHead>
+            <TableRow>
+              <TableCell padding="checkbox">
+                <Checkbox />
+              </TableCell>
+              <TableCell>Member/FullName</TableCell>
+              <TableCell>Email</TableCell>
+              <TableCell>Role</TableCell>
+              <TableCell>Age</TableCell>
+              <TableCell>Employed</TableCell>
+              <TableCell>Last Update</TableCell>
+              <TableCell align="center">Actions</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {data.map((row) => (
+              <TableRow key={row.username}>
+                <TableCell padding="checkbox">
+                  <Checkbox />
+                </TableCell>
+                <TableCell component="th" scope="row" style={{ display: 'flex', alignItems: 'center' }}>
+                  <Avatar alt={row.username} src={row.avatar} style={{ marginRight: '8px' }} />
+                  <Box>
+                    <Typography variant="body2">{row.username}</Typography>
+                    <Typography variant="caption">{row.email}</Typography>
+                  </Box>
+                </TableCell>
+                <TableCell>{row.email}</TableCell>
+                <TableCell>{row.role}</TableCell>
+                <TableCell>{row.age}</TableCell>
+                <TableCell>{row.createdAt}</TableCell>
+                <TableCell>{row.updateAt}</TableCell>
+                <TableCell>
+                  <StatusIndicator status={row.status} />
+                </TableCell>
+                <TableCell align="center">
+                  <Box display="flex" justifyContent="space-between">
+                    <Button variant="contained" color="primary" size="small" style={{ marginRight: '10px' }}>
+                      Edit user
+                    </Button>
+                    <Button variant="contained" color="secondary" size="small">
+                      Delete user
+                    </Button>
+                  </Box>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Paper>
 
       <Button
         variant="gradient"
@@ -345,7 +221,7 @@ const TableUser = () => {
             onClick={handleOpen}
           >
             <span>close</span>
-          </Button>
+          </Button> 
         </div>
       </div>
     </>
