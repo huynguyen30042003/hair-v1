@@ -45,9 +45,21 @@ const TABLE_ROWS = [
 const TableUser = () => {
   const rowsPerPage = 5;
   const [currentPage, setCurrentPage] = useState(1);
+  const [id, setId] = useState();
   const [data, setData] = useState([{}]); // Initialize as an empty array
   const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(!open);
+  const [openReset, setOpenReset] = useState(false);
+  const [openEdit, setOpenEdit] = useState(false);
+  
+  const handleOpenDelete = (_id) => {setOpen(!open)
+    setId(_id)
+  };
+  const handleOpenReset = (_id) => {setOpenReset(!openReset)
+    setId(_id)
+  };
+  const handleOpenEdit = (_id) => {setOpenEdit(!openEdit)
+    setId(_id)
+  };
 
   useEffect(() => {
     const socket = io(SOCKET_SERVER_URL);
@@ -94,7 +106,7 @@ const TableUser = () => {
   const currentRows = data.slice(indexOfFirstRow, indexOfLastRow);
   const totalPages = Math.ceil(data.length / rowsPerPage);
 
-  const handleDelete = async (id) => {
+  const handleDelete = async () => {
     try {
       console.log(id);
       const res = await fetch("/api/user", {
@@ -113,11 +125,13 @@ const TableUser = () => {
           data.message || "Something went wrong while deleting the user."
         );
       }
+      fetchData()
+      handleOpenDelete(0)
     } catch (error) {
       toast.error(error.message);
     }
   };
-  const handleResetPassword = async (id) => {
+  const handleResetPassword = async () => {
     try {
       console.log(id);
       const res = await fetch("/api/user", {
@@ -135,7 +149,7 @@ const TableUser = () => {
         toast.error(
           data.message || "Something went wrong while reset the user."
         );
-      }
+      }handleOpenReset(0)
     } catch (error) {
       toast.error(error.message);
     }
@@ -157,7 +171,6 @@ const TableUser = () => {
               <TableCell>Age</TableCell>
               <TableCell>Employed</TableCell>
               <TableCell>Last Update</TableCell>
-              <TableCell align="center">Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -166,27 +179,30 @@ const TableUser = () => {
                 <TableCell padding="checkbox">
                   <Checkbox />
                 </TableCell>
-                <TableCell component="th" scope="row" style={{ display: 'flex', alignItems: 'center' }}>
-                  <Avatar alt={row.username} src={row.avatar} style={{ marginRight: '8px' }} />
-                  <Box>
-                    <Typography variant="body2">{row.username}</Typography>
-                    <Typography variant="caption">{row.email}</Typography>
-                  </Box>
-                </TableCell>
+                {/* <TableCell className="flex">
+                  <Avatar src={row.avatar} />
+                  {row.fullName}
+                </TableCell> */}
+                <TableCell>{row.fullName}</TableCell>
                 <TableCell>{row.email}</TableCell>
                 <TableCell>{row.role}</TableCell>
                 <TableCell>{row.age}</TableCell>
                 <TableCell>{row.createdAt}</TableCell>
-                <TableCell>{row.updateAt}</TableCell>
-                <TableCell>
-                  <StatusIndicator status={row.status} />
-                </TableCell>
+                <TableCell>{row.updatedAt}</TableCell>
+   
                 <TableCell align="center">
                   <Box display="flex" justifyContent="space-between">
-                    <Button variant="contained" color="primary" size="small" style={{ marginRight: '10px' }}>
+                    <Button variant="contained" color="primary" size="small" style={{ marginRight: '10px', backgroundColor: '#54B4D3' }}
+                    onClick={()=>handleOpenEdit(row._id)}
+                    >
                       Edit user
                     </Button>
-                    <Button variant="contained" color="secondary" size="small">
+                    <Button variant="contained" color="secondary" size="small" style={{ marginRight: '10px', backgroundColor: '#14A44D'  }}
+                      onClick={()=>handleOpenReset(row._id)}>
+                      reset password
+                    </Button><Button variant="contained" color="secondary" size="small" style={{ marginRight: '10px', backgroundColor: '#DC4C64'  }}
+                    onClick={()=>handleOpenDelete(row._id)}
+                    >
                       Delete user
                     </Button>
                   </Box>
@@ -198,14 +214,6 @@ const TableUser = () => {
       </TableContainer>
     </Paper>
 
-      <Button
-        variant="gradient"
-        size="sm"
-        className="hidden lg:inline-block"
-        onClick={handleOpen}
-      >
-        <span>open</span>
-      </Button>
       <div
         className={
           open
@@ -218,11 +226,97 @@ const TableUser = () => {
             variant="gradient"
             size="sm"
             className="hidden lg:inline-block opacity-100"
-            onClick={handleOpen}
+            onClick={()=>handleOpenDelete(0)}
           >
             <span>close</span>
-          </Button> 
+          </Button>{id}
+          <Button
+            variant="gradient"
+            size="sm"
+            className="hidden lg:inline-block opacity-100"
+            onClick={()=>handleOpenDelete(0)}
+          >
+            <span>no</span>
+          </Button>
+          <Button
+            variant="gradient"
+            size="sm"
+            className="hidden lg:inline-block opacity-100"
+            onClick={handleDelete}
+          >
+            <span>yes</span>
+          </Button>
+        </div>        
+      </div>
+      <div
+        className={
+          openReset
+            ? "fixed bg-[#3b3b3b73] top-0 bottom-0 left-0 right-0 flex items-center justify-center"
+            : "hidden"
+        }
+      >
+        <div className="w-[50%] h-[50%] bg-[#fff]">
+          <Button
+            variant="gradient"
+            size="sm"
+            className="hidden lg:inline-block opacity-100"
+            onClick={()=>handleOpenReset(0)}
+            >
+            <span>reset</span>
+          </Button>{id}
+          <Button
+            variant="gradient"
+            size="sm"
+            className="hidden lg:inline-block opacity-100"
+            onClick={()=>handleOpenReset(0)}
+          >
+            <span>no</span>
+          </Button>
+          <Button
+            variant="gradient"
+            size="sm"
+            className="hidden lg:inline-block opacity-100"
+            onClick={handleResetPassword}
+          >
+            <span>yes</span>
+          </Button>
         </div>
+        
+      </div>
+      <div
+        className={
+          openEdit
+            ? "fixed bg-[#3b3b3b73] top-0 bottom-0 left-0 right-0 flex items-center justify-center"
+            : "hidden"
+        }
+      >
+        <div className="w-[50%] h-[50%] bg-[#fff]">
+          <Button
+            variant="gradient"
+            size="sm"
+            className="hidden lg:inline-block opacity-100"
+            onClick={()=>handleOpenEdit(0)}
+            >
+            <span>Edit</span>
+          </Button>{id}
+          <Button
+            variant="gradient"
+            size="sm"
+            className="hidden lg:inline-block opacity-100"
+            onClick={()=>handleOpenEdit(0)}
+          >
+            <span>no</span>
+          </Button>
+          <Button
+            variant="gradient"
+            size="sm"
+            className="hidden lg:inline-block opacity-100"
+            // onClick={handleEdit}
+          >
+            <span>yes</span>
+          </Button>
+        </div>
+        
       </div>
     </>
   );
