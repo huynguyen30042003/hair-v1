@@ -26,8 +26,8 @@ export default function Home() {
   };
 
   return (
-      <div className="container">
-      <button onClick={notify}>Notify!</button>
+      <div className="mx-auto">
+      {/* <button onClick={notify}>Notify!</button> */}
       <About />
       <ServicesHome />
       <Footer />
