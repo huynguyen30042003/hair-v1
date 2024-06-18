@@ -25,7 +25,7 @@ export default async function RootLayout({ children }) {
           <Navbar session={session}/>
           <ToastContainer />
           {children }
-          </SessionProvider>
+        </SessionProvider>
       </body>
     </html>
   );

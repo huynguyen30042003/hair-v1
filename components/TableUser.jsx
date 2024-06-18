@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import io from "socket.io-client";
 import { toast } from "react-toastify";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, TextField, IconButton, Box, Typography, Checkbox, Avatar } from '@mui/material';
 import { Settings, Delete, Info, MoreVert } from '@mui/icons-material';
@@ -7,6 +8,8 @@ import CircleIcon from '@mui/icons-material/Circle';
 import TableHeader from "components/TableHeader";
 import StatusIndicator from "./StatusIndicator";
 
+
+const  SOCKET_SERVER_URL = 'http://localhost:3000'
 const TABS = [
   { label: "All", value: "all" },
   { label: "Monitored", value: "monitored" },
@@ -57,6 +60,25 @@ const TableUser = () => {
   const handleOpenEdit = (_id) => {setOpenEdit(!openEdit)
     setId(_id)
   };
+
+  useEffect(() => {
+    const socket = io(SOCKET_SERVER_URL);
+
+    socket.on('connect', () => {
+      console.log('Connected to Socket.IO server');
+    });
+
+    // Listen for updates from the server
+    socket.on('updateData', (newData) => {
+      setData(newData);
+      toast.info('Data updated');
+    });
+
+    // Clean up the connection when the component unmounts
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
 
   const [loading, setLoading] = useState(true);
   useEffect(() => {
@@ -191,7 +213,6 @@ const TableUser = () => {
         </Table>
       </TableContainer>
     </Paper>
-
 
       <div
         className={
