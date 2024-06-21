@@ -15,24 +15,25 @@ import Img from "next/image";
 import Link from "next/link";
 import Logo from "../data/img/keyLogo.jpg";
 
+
 const Navbar = () => {
-  const [openNav, setOpenNav] = useState(false);
   const [session, setSession] = useState(null);
+  const [openNav, setOpenNav] = useState(false);
 
   useEffect(() => {
     async function fetchSession() {
-      const sessionData = await getServerSession();
-      setSession(sessionData);
+      const response = await fetch('/api/get-session');
+      if (response.ok) {
+        const data = await response.json();
+        setSession(data.session);
+      }
     }
     fetchSession();
-
-    const handleResize = () => {
-      if (window.innerWidth >= 960) setOpenNav(false);
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  
+
+  
 
   const navList = (
     <ul className="mt-2 mb-4 flex flex-col gap-2 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6">
@@ -89,7 +90,8 @@ const Navbar = () => {
     </ul>
   );
 
-  return (
+  return (    
+      <nav>          
     <SessionProvider session={session}>
       <MaterialNavbar className="sticky top-0 z-10 h-max max-w-full rounded-none px-4 py-2 lg:px-8 lg:py-4 bg-[#9cc7db]">
         <div className="flex items-center justify-between text-blue-gray-900">
@@ -126,36 +128,46 @@ const Navbar = () => {
               ripple={false}
               onClick={() => setOpenNav(!openNav)}
             >
-              {openNav ? (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  className="h-6 w-6"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              ) : (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M4 6h16M4 12h16M4 18h16"
-                  />
-                </svg>
-              )}
+              <button onClick={() => setOpenNav(!openNav)}>
+        {openNav ? (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            className="h-6 w-6"
+          >
+            {/* SVG path for close icon */}
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        ) : (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            className="h-6 w-6"
+          >
+            {/* SVG path for menu icon */}
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M4 6h16M4 12h16M4 18h16"
+            />
+          </svg>
+        )}
+      </button>
+      {openNav && (
+        <div className="nav-content">
+          {/* Your navigation content here */}
+          </div>
+      )}
             </IconButton>
           </div>
         </div>
@@ -177,6 +189,7 @@ const Navbar = () => {
       </MaterialNavbar>
       <ToastContainer />
     </SessionProvider>
+    </nav>
   );
 };
 
