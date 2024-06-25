@@ -12,8 +12,8 @@ import banner from "@data/img/bannerFG.webp";
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const router = useRouter();
   const { data: session, status: sessionStatus } = useSession();
+  const router = useRouter();
 
   useEffect(() => {
     if (sessionStatus === "authenticated") {

@@ -52,11 +52,6 @@ export default function Home() {
   }, []);
   return (
     <>
-      <button onClick={notify}>Notify!</button>
-      <div>
-      <p>Status: { isConnected ? "connected" : "disconnected" }</p>
-      <p>Transport: { transport }</p>
-    </div>
       <About />
       <ServicesHome />
       <Footer />
@@ -64,4 +59,3 @@ export default function Home() {
     </>
   );
 }
-

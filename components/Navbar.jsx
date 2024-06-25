@@ -14,7 +14,6 @@ import "react-toastify/dist/ReactToastify.css";
 import Img from "next/image";
 import Link from "next/link";
 import Logo from "../data/img/keyLogo.jpg";
-
 const Navbar = () => {
   const [openNav, setOpenNav] = useState(false);
   const [session, setSession] = useState(null);
@@ -42,7 +41,7 @@ const Navbar = () => {
         color="blue-gray"
         className="p-1 font-normal"
       >
-        <a href="#" className="flex items-center">
+        <a href="/" className="flex items-center">
           Home
         </a>
       </Typography>
@@ -91,7 +90,7 @@ const Navbar = () => {
 
   return (
     <SessionProvider session={session}>
-      <MaterialNavbar className="sticky top-0 z-10 h-max max-w-full rounded-none px-4 py-2 lg:px-8 lg:py-4 bg-[#9cc7db]">
+      <MaterialNavbar className="sticky h-max max-w-full rounded-none px-4 py-2 lg:px-8 lg:py-4 bg-[#9cc7db]">
         <div className="flex items-center justify-between text-blue-gray-900">
           <Img
             src={Logo}
