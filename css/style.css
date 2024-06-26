@@ -236,10 +236,9 @@ header.header-bg {
 
 header.transparent {
   background: none;
+  /* background-color: blue; */
 
- 
 }
-
 
 body:not(.side-layout) header:not(.smaller):not(.header-mobile).header-light.transparent {
   background: rgba(255, 255, 255, 0.0);

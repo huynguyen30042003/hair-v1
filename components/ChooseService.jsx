@@ -1,3 +1,4 @@
+"use client"
 import React from 'react'
 import '../css/bootstrap.min.css';
 import '../css/mdb.min.css';
@@ -35,7 +36,7 @@ const ChooseService = () => {
                     <div className="de-flex-col">
                         {/* <!-- logo begin --> */}
                         <div id="logo">
-                            <a href="index.html">
+                            <a href="/">
                                 <Image className="logo-main" src={logo} alt="" />
                                 {/* <Image className="logo-mobile" src={logoMobile} alt="" /> */}
                             </a>
@@ -59,13 +60,9 @@ const ChooseService = () => {
                                 <li><a className="menu-item" href="service-single.html">Service Single</a></li>
                             </ul>
                         </li>
-                        <li><a className="menu-item" href="about.html">About</a>
-                            <ul>
-                                <li><a className="menu-item" href="about.html">About Us</a></li>
-                                <li><a className="menu-item" href="team.html">Our Team</a></li>
-                            </ul>
+                        <li><a className="menu-item" href="/about">About</a>
                         </li>
-                        <li><a className="menu-item" href="book.html">Book Now</a></li>
+                        <li><a className="menu-item" href="/booking">Book Now</a></li>
                         <li><a className="menu-item" href="blog.html">Blog</a></li>
                         <li><a className="menu-item" href="#">Extras</a>
                             <ul>
@@ -79,7 +76,7 @@ const ChooseService = () => {
                 </div>
                 <div className="de-flex-col">
                     <div className="menu_side_area">
-                        <a href="book.html" className="btn-main">Book Now</a>
+                        <a href="/booking" className="btn-main">Book Now</a>
                         <span id="menu-btn"></span>
                     </div>
                 </div>
@@ -97,7 +94,9 @@ const ChooseService = () => {
 
 <section id="subheader" className="jarallax">
       <div className="jarallax-img">
-        <Image src={background6} alt="" />
+        <div id="jarallax-container-0">
+            <Image src={background6} alt=""  layout="fill" objectFit="cover"  />
+        </div>
       </div>
     <div className="container">
         <div className="row">
