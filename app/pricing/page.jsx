@@ -1,13 +1,13 @@
 "use client"
 import React from 'react'
-import AboutService from '../../components/AboutService';
+import Pricing from '../../components/Pricing';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'mdbreact/dist/css/mdb.css';
 import 'node_modules/mdbreact/dist/css/mdb.css';
 const page = () => {
   return (
     <>
-      <AboutService/>
+      <Pricing/>
     </>
   )
 }
