@@ -22,7 +22,7 @@ export default async function RootLayout({ children }) {
     <html lang="en">
       <body className={inter.className}>
         <SessionProvider session={session}>
-          <Navbar session={session}/>
+          {/* <Navbar session={session}/> */}
           <ToastContainer />
           {children }
         </SessionProvider>
