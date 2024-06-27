@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 import User from "models/user";
 import bcrypt from "bcryptjs";
 
-//register
+// register
 export async function POST(request) {
   const MIN_PASSWORD_LENGTH = 7;
   const MAX_PASSWORD_LENGTH = 30
@@ -76,7 +76,7 @@ export async function GET() {
   try {
     await connectDB();
     const users = await User.find();
-    return NextResponse.json({ users });
+    return NextResponse.json({ data: users,message:"" },{ status: 200});
   } catch (error) {
     console.error("Error fetching topics:", error);
     return NextResponse.json(
@@ -110,6 +110,37 @@ export async function DELETE(request) {
     );
   }
 }
+
+// export default async function DELETE(request) {
+//   try {
+//     const { id } = await request.json();
+
+//     await connectDB();
+//     const user = await User.findByIdAndDelete(id);
+
+//     if (!user) {
+//       return new Response(
+//         JSON.stringify({ message: "User not found" }),
+//         { status: 404, headers: { 'Content-Type': 'application/json' } }
+//       );
+//     }
+
+//     const deletedUserData = { id: user._id }; // Trả về id của người dùng đã bị xóa
+//     const message = { message: "User deleted successfully", deletedUserData };
+    
+//     return new Response(
+//       JSON.stringify(message),
+//       { status: 200, headers: { 'Content-Type': 'application/json' } }
+//     );
+//   } catch (error) {
+//     console.error("Error deleting User:", error);
+//     return new Response(
+//       JSON.stringify({ error: "Unable to delete User" }),
+//       { status: 500, headers: { 'Content-Type': 'application/json' } }
+//     );
+//   }
+// }
+
 
 //reset password by id
 export async function PUT(request) {

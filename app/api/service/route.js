@@ -10,6 +10,7 @@ import bcrypt from "bcryptjs"
 export async function POST(request) {
   try {
     const {
+        serviceName,
         title,
         description,
         rate,
@@ -18,12 +19,13 @@ export async function POST(request) {
 
     await connectDB();
     await Service.create({
+        serviceName,
         title,
         description,
         rate,
         price,
     });
-    return NextResponse.json({ message: "Service created" }, { status: 201 });
+    return NextResponse.json({ message: "Service created"}, { status: 201 });
   } catch (error) {
     console.error("Error creating Service:", error);
     return NextResponse.json(
