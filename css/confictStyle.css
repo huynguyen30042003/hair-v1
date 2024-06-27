@@ -1,0 +1,28 @@
+.header-center transparent header{
+    background-color: black;
+}
+
+#menu-btn {
+    display: none;
+    cursor: pointer;
+  }
+  
+  @media (max-width: 768px) {
+    #menu-btn {
+      display: inline-block;
+    }
+  
+    .header-col-mid {
+      display: none;
+    }
+  
+    .header-col-mid.open {
+      display: block;
+    }
+  
+    .de-flex {
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+  
