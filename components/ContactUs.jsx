@@ -79,11 +79,11 @@ const ContactUs = () => {
         <div className="row gx-5">
           <div className="col-lg-6 offset-lg-3">
             <div className="d-sch-table">
-              <h2 className="wow fadeIn text-center">Message Us</h2>
+              <h2 className="wow fadeIn text-center">Gửi lời nhắn cho chúng tôi</h2>
               <div className="de-separator" />
               <p className="lead text-center">
-                If you got any questions, please do not hestitae to send us a
-                message.
+              Nếu bạn có bất kỳ câu hỏi nào, xin vui lòng gửi cho chúng tôi một
+              tin nhắn.
               </p>
               <form
                 name="contactForm"
@@ -100,7 +100,7 @@ const ContactUs = () => {
                         name="Name"
                         id="name"
                         className="form-control"
-                        placeholder="Your Name"
+                        placeholder="Tên của bạn"
                         required=""
                       />
                     </div>
@@ -112,7 +112,7 @@ const ContactUs = () => {
                         name="Email"
                         id="email"
                         className="form-control"
-                        placeholder="Your Email"
+                        placeholder="Email"
                         required=""
                       />
                     </div>
@@ -124,7 +124,7 @@ const ContactUs = () => {
                         name="phone"
                         id="phone"
                         className="form-control"
-                        placeholder="Your Phone"
+                        placeholder="SĐT"
                         required=""
                       />
                     </div>
@@ -135,7 +135,7 @@ const ContactUs = () => {
                     name="message"
                     id="message"
                     className="form-control"
-                    placeholder="Your Message"
+                    placeholder="Lời nhắn của bạn"
                     required=""
                     defaultValue={""}
                   />
@@ -174,7 +174,7 @@ const ContactUs = () => {
             <h4>Follow Us</h4>
             <div className="spacer-20" />
             <div className="social-icons big">
-              <a href="#">
+              <a href="https://www.facebook.com/asdfghjktih1/" target="_blank">
                 <i className="fa fa-facebook fa-lg" />
               </a>
               <a href="#">

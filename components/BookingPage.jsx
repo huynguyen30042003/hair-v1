@@ -1,15 +1,14 @@
 "use client"
-import React from 'react'
+import React, { useState } from 'react';
 import '../css/bootstrap.min.css';
 import '../css/mdb.min.css';
 import 'jarallax';
 import 'jarallax/dist/jarallax.css'; // Import the Jarallax CSS file
-// import '../css/plugins.css';
 import '../css/style.css';
 import '../css/coloring.css';
 import '../css/colors/scheme-01.css';
-import '../css/confictStyle.css'
-import Head from 'next/head'
+import '../css/confictStyle.css';
+import Head from 'next/head';
 import Image from 'next/image';
 import logo from '@data/images/logo.png';
 import logoMobile from '@data/images/logo-mobile.png';
@@ -18,76 +17,36 @@ import team1 from '@data/images/team/1.jpg';
 import team2 from '@data/images/team/2.jpg';
 import team3 from '@data/images/team/3.jpg';
 import team4 from '@data/images/team/4.jpg';
-import icon from '@data/images/icon.png'
+import icon from '@data/images/icon.png';
+
 const ChooseService = () => {
+  const [selectedStaff, setSelectedStaff] = useState('Tinh');
+  const [selectedTime, setSelectedTime] = useState('8:00 AM');
+  const [formSubmitted, setFormSubmitted] = useState(false);
+
+  const handleStaffChange = (event) => {
+      setSelectedStaff(event.target.value);
+  };
+
+  const handleTimeChange = (event) => {
+      setSelectedTime(event.target.value);
+  };
+
+  const handleSubmit = async (event) => {
+      event.preventDefault();
+      // Simulate form submission process (replace with actual form submission logic)
+      try {
+          // Simulating form submission delay
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          setFormSubmitted(true); // Set formSubmitted to true after successful submission
+      } catch (error) {
+          console.error('Error submitting form:', error);
+      }
+  };
+
   return (
     <body className='dark-scheme'>
     <div id="de-loader"></div>
-         
-        
-
-{/* <!-- header begin --> */}
-<div className="transparent" >            
-<div className="container">
-    <div className="row">
-        <div className="col-md-12">
-            <div className="de-flex sm-pt10">
-                <div className="de-flex-col">
-                    <div className="de-flex-col">
-                        {/* <!-- logo begin --> */}
-                        <div id="logo">
-                            <a href="/">
-                                <Image className="logo-main" src={logo} alt="" />
-                                {/* <Image className="logo-mobile" src={logoMobile} alt="" /> */}
-                            </a>
-                        </div>
-                        {/* <!-- logo close --> */}
-                    </div>
-                </div>
-                <div className="de-flex-col header-col-mid">
-                    <ul id="mainmenu">
-                        <li><a className="menu-item" href="index.html">Home</a>
-                            <ul>
-                                <li><a className="menu-item" href="index.html">Home 1</a></li>
-                                <li><a className="menu-item" href="index-2.html">Home 2</a></li>
-                                <li><a className="menu-item" href="index-3.html">Home 3</a></li>
-                                <li><a className="menu-item" href="index-4.html">Home 4</a></li>
-                            </ul>
-                        </li>
-                        <li><a className="menu-item" href="services.html">Services</a>
-                            <ul>
-                                <li><a className="menu-item" href="services.html">All Services</a></li>
-                                <li><a className="menu-item" href="service-single.html">Service Single</a></li>
-                            </ul>
-                        </li>
-                        <li><a className="menu-item" href="/about">About</a>
-                        </li>
-                        <li><a className="menu-item" href="/booking">Book Now</a></li>
-                        <li><a className="menu-item" href="blog.html">Blog</a></li>
-                        <li><a className="menu-item" href="#">Extras</a>
-                            <ul>
-                                <li><a className="menu-item" href="contact.html">Contact</a></li>
-                                <li><a className="menu-item" href="gallery.html">Gallery</a></li>
-                                <li><a className="menu-item" href="pricing.html">Pricing</a></li>
-                                <li><a className="menu-item" href="testimonials.html">Testimonials</a></li>
-                            </ul>
-                        </li>
-                    </ul>
-                </div>
-                <div className="de-flex-col">
-                    <div className="menu_side_area">
-                        <a href="/booking" className="btn-main">Book Now</a>
-                        <span id="menu-btn"></span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-</div>
-{/* <!-- header close -->
-<!-- content begin --> */}
-
     <div className="no-bottom no-top" id="content">
         <div id="top"></div>
 {/* <!-- section begin --> */}
@@ -222,83 +181,227 @@ const ChooseService = () => {
                         {/* <!-- step 2 --> */}
 
                         <div className="row">
-                            <div className="col-lg-6 mb-sm-30">
-                                <h3 className="s2">Choose Staff</h3>
+                      <div className="col-lg-6 mb-sm-30">
+                        <h3 className="s2">Choose Staff</h3>
 
-                                <div className="de_form de_radio">
-                                    <div className="radio-img">
-                                        <input id="radio-1a" name="Staff" type="radio" value="Steven" checked="checked"/>
-                                        <label for="radio-1a"><Image src={team1} alt=""/>Tinh</label>
-                                    </div>
+                        <div className="de_form de_radio">
+                          <div className="radio-img">
+                            <input
+                              id="radio-1a"
+                              name="Staff"
+                              type="radio"
+                              value="Tinh"
+                              checked={selectedStaff === "Tinh"}
+                              onChange={handleStaffChange}
+                            />
+                            <label htmlFor="radio-1a">
+                              <Image src={team1} alt="" /> Tinh
+                            </label>
+                          </div>
 
-                                    <div className="radio-img">
-                                        <input id="radio-1b" name="Staff" type="radio" value="Huey"/>
-                                        <label for="radio-1b"><Image src={team2} alt=""/>Minh</label>
-                                    </div>
+                          <div className="radio-img">
+                            <input
+                              id="radio-1b"
+                              name="Staff"
+                              type="radio"
+                              value="Minh"
+                              checked={selectedStaff === "Minh"}
+                              onChange={handleStaffChange}
+                            />
+                            <label htmlFor="radio-1b">
+                              <Image src={team2} alt="" /> Minh
+                            </label>
+                          </div>
 
-                                    <div className="radio-img">
-                                        <input id="radio-1c" name="Staff" type="radio" value="Harry"/>
-                                        <label for="radio-1c"><Image src={team3} alt=""/>Mich</label>
-                                    </div>
+                          <div className="radio-img">
+                            <input
+                              id="radio-1c"
+                              name="Staff"
+                              type="radio"
+                              value="Mich"
+                              checked={selectedStaff === "Mich"}
+                              onChange={handleStaffChange}
+                            />
+                            <label htmlFor="radio-1c">
+                              <Image src={team3} alt="" /> Mich
+                            </label>
+                          </div>
 
-                                    <div className="radio-img">
-                                        <input id="radio-1d" name="Staff" type="radio" value="Axe"/>
-                                        <label for="radio-1d"><Image src={team4} alt=""/>Khanh</label>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="col-lg-6">
-                                <h3 className="s2">Chọn ngày Giờ</h3>
-                                <input type="date" name="date" id="date" className="form-control" min="1997-01-01" required />
-                                <div className="spacer-single"></div>
-                                <h3 className="s2">Select Time</h3>
-                                <div className="custom_radio">
-                                  <div className="radio-opt">
-                                      <input type="radio" id="choose_8AM" value="8:00 AM" name="select_time" checked/><label for="choose_8AM">8:00 AM</label>
-                                  </div>
-                                  <div className="radio-opt">
-                                      <input type="radio" id="choose_9AM" value="9:00 AM" name="select_time"/><label for="choose_9AM">9:00 AM</label>
-                                  </div>
-                                  <div className="radio-opt">
-                                      <input type="radio" id="choose_10AM" value="10:00 AM" name="select_time"/><label for="choose_10AM">10:00 AM</label>
-                                  </div>
-                                  <div className="radio-opt">
-                                      <input type="radio" id="choose_11AM" value="11:00 AM" name="select_time"/><label for="choose_11AM">11:00 AM</label>
-                                  </div>
-                                  <div className="radio-opt">
-                                      <input type="radio" id="choose_12AM" value="12:00 AM" name="select_time"/><label for="choose_12AM">12:00 AM</label>
-                                  </div>
-                                  <div className="radio-opt">
-                                      <input type="radio" id="choose_1PM" value="1:00 PM" name="select_time"/><label for="choose_1PM">1:00 PM</label>
-                                  </div>
-                                  <div className="radio-opt">
-                                      <input type="radio" id="choose_2PM" value="2:00 PM" name="select_time"/><label for="choose_2PM">2:00 PM</label>
-                                  </div>
-                                  <div className="radio-opt">
-                                      <input type="radio" id="choose_3PM" value="2:00 PM" name="select_time"/><label for="choose_3PM">2:00 PM</label>
-                                  </div>
-                                  <div className="radio-opt">
-                                      <input type="radio" id="choose_4PM" value="3:00 PM" name="select_time"/><label for="choose_4PM">3:00 PM</label>
-                                  </div>
-                                  <div className="radio-opt">
-                                      <input type="radio" id="choose_5PM" value="4:00 PM" name="select_time"/><label for="choose_5PM">4:00 PM</label>
-                                  </div>
-                                  <div className="radio-opt">
-                                      <input type="radio" id="choose_6PM" value="5:00 PM" name="select_time"/><label for="choose_6PM">5:00 PM</label>
-                                  </div>
-                                  <div className="radio-opt">
-                                      <input type="radio" id="choose_7PM" value="6:00 PM" name="select_time"/><label for="choose_7PM">6:00 PM</label>
-                                  </div>
-                                  <div className="radio-opt">
-                                      <input type="radio" id="choose_8PM" value="7:00 PM" name="select_time"/><label for="choose_8PM">7:00 PM</label>
-                                  </div>
-                                  <div className="radio-opt">
-                                      <input type="radio" id="choose_9PM" value="8:00 PM" name="select_time"/><label for="choose_9PM">8:00 PM</label>
-                                  </div>
-                                </div>
-                            </div>
+                          <div className="radio-img">
+                            <input
+                              id="radio-1d"
+                              name="Staff"
+                              type="radio"
+                              value="Khanh"
+                              checked={selectedStaff === "Khanh"}
+                              onChange={handleStaffChange}
+                            />
+                            <label htmlFor="radio-1d">
+                              <Image src={team4} alt="" /> Khanh
+                            </label>
+                          </div>
                         </div>
+                      </div>
+
+                      <div className="col-lg-6">
+                        <h3 className="s2">Choose Date & Time</h3>
+                        <input
+                          type="date"
+                          name="date"
+                          id="date"
+                          className="form-control"
+                          min="1997-01-01"
+                          required
+                        />
+                        <div className="spacer-single"></div>
+                        <h3 className="s2">Select Time</h3>
+                        <div className="custom_radio">
+                                <div className="radio-opt">
+                                    <input
+                                    type="radio"
+                                    id="choose_8AM"
+                                    value="8:00 AM"
+                                    name="select_time"
+                                    checked={selectedTime === "8:00 AM"}
+                                    onChange={handleTimeChange}
+                                    />
+                                    <label htmlFor="choose_8AM">8:00 AM</label>
+                                </div>
+                                <div className="radio-opt">
+                                    <input
+                                    type="radio"
+                                    id="choose_9AM"
+                                    value="9:00 AM"
+                                    name="select_time"
+                                    checked={selectedTime === "9:00 AM"}
+                                    onChange={handleTimeChange}
+                                    />
+                                    <label htmlFor="choose_9AM">9:00 AM</label>
+                                </div>
+                                <div className="radio-opt">
+                                    <input
+                                    type="radio"
+                                    id="choose_10AM"
+                                    value="10:00 AM"
+                                    name="select_time"
+                                    checked={selectedTime === "10:00 AM"}
+                                    onChange={handleTimeChange}
+                                    />
+                                    <label htmlFor="choose_10AM">10:00 AM</label>
+                                </div>
+                                <div className="radio-opt">
+                                    <input
+                                    type="radio"
+                                    id="choose_11AM"
+                                    value="11:00 AM"
+                                    name="select_time"
+                                    checked={selectedTime === "11:00 AM"}
+                                    onChange={handleTimeChange}
+                                    />
+                                    <label htmlFor="choose_11AM">11:00 AM</label>
+                                </div>
+                                <div className="radio-opt">
+                                    <input
+                                    type="radio"
+                                    id="choose_12PM"
+                                    value="12:00 PM"
+                                    name="select_time"
+                                    checked={selectedTime === "12:00 PM"}
+                                    onChange={handleTimeChange}
+                                    />
+                                    <label htmlFor="choose_12PM">12:00 PM</label>
+                                </div>
+                                <div className="radio-opt">
+                                    <input
+                                    type="radio"
+                                    id="choose_1PM"
+                                    value="1:00 PM"
+                                    name="select_time"
+                                    checked={selectedTime === "1:00 PM"}
+                                    onChange={handleTimeChange}
+                                    />
+                                    <label htmlFor="choose_1PM">1:00 PM</label>
+                                </div>
+                                <div className="radio-opt">
+                                    <input
+                                    type="radio"
+                                    id="choose_2PM"
+                                    value="2:00 PM"
+                                    name="select_time"
+                                    checked={selectedTime === "2:00 PM"}
+                                    onChange={handleTimeChange}
+                                    />
+                                    <label htmlFor="choose_2PM">2:00 PM</label>
+                                </div>
+                                <div className="radio-opt">
+                                    <input
+                                    type="radio"
+                                    id="choose_3PM"
+                                    value="3:00 PM"
+                                    name="select_time"
+                                    checked={selectedTime === "3:00 PM"}
+                                    onChange={handleTimeChange}
+                                    />
+                                    <label htmlFor="choose_3PM">3:00 PM</label>
+                                </div>
+                                <div className="radio-opt">
+                                    <input
+                                    type="radio"
+                                    id="choose_4PM"
+                                    value="4:00 PM"
+                                    name="select_time"
+                                    checked={selectedTime === "4:00 PM"}
+                                    onChange={handleTimeChange}
+                                    />
+                                    <label htmlFor="choose_4PM">4:00 PM</label>
+                                </div>
+                                <div className="radio-opt">
+                                    <input
+                                    type="radio"
+                                    id="choose_5PM"
+                                    value="5:00 PM"
+                                    name="select_time"
+                                    checked={selectedTime === "5:00 PM"}
+                                    onChange={handleTimeChange}
+                                    />
+                                    <label htmlFor="choose_5PM">5:00 PM</label>
+                                </div>
+                                <div className="radio-opt">
+                                    <input
+                                    type="radio"
+                                    id="choose_6PM"
+                                    value="6:00 PM"
+                                    name="select_time"
+                                    checked={selectedTime === "6:00 PM"}
+                                    onChange={handleTimeChange}
+                                    />
+                                    <label htmlFor="choose_6PM">6:00 PM</label>
+                                </div>
+                                <div className="radio-opt">
+                                    <input
+                                    type="radio"
+                                    id="choose_7PM"
+                                    value="7:00 PM"
+                                    name="select_time"
+                                    checked={selectedTime === "7:00 PM"}
+                                    onChange={handleTimeChange}
+                                    />
+                                    <label htmlFor="choose_7PM">7:00 PM</label>
+                                </div>
+                                <div className="radio-opt">
+                                    <input
+                                    type="radio"
+                                    id="choose_8PM"
+                                    value="8:00 PM"
+                                    name="select_time"
+                                    checked={selectedTime === "8:00 PM"}
+                                    onChange={handleTimeChange}
+                                    />
+                                    <label htmlFor="choose_8PM">8:00 PM</label>
+                                </div>
+                                </div>  
+                      </div>
+                    </div>
 
                         <div className="spacer-single"></div>
 
@@ -337,8 +440,7 @@ const ChooseService = () => {
                             </div>
                         </div> 
 
-                    </div>
-                    
+                    </div> 
                 </form>
                 <div id="success_message" className='success'>
                     Your message has been sent successfully. Refresh this page if you want to send more messages.
@@ -346,9 +448,7 @@ const ChooseService = () => {
                 <div id="error_message" className='error'>
                     Sorry there was an error sending your form.
                 </div>
-
             </div>
-
         </div>
 
    
@@ -371,10 +471,10 @@ const ChooseService = () => {
             </div>
         </div>
         <div className="col-lg-4 text-lg-center text-center">
-            <Image src={logo} className="" alt=""/>
+            <Image src={logo} className="image" alt=""/>
         </div>
         <div className="col-lg-4 text-lg-end text-center">
-            Copyright 2024 - StyleCuts
+            Copyright 2024 - StyleCuts BaberShop
         </div>
     </div>
 </div>

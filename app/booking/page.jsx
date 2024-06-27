@@ -1,5 +1,5 @@
 "use client"
-import ChooseService from 'components/ChooseService'
+import BookingPage from 'components/BookingPage'
 import React from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'mdbreact/dist/css/mdb.css';
@@ -9,7 +9,7 @@ const page = () => {
     
 <>
 
- <ChooseService/>  
+ <BookingPage/>  
 
 </>
    

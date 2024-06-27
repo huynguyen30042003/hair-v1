@@ -1,7 +1,7 @@
 "use client"
 import React, { useEffect } from 'react';
 import WOW from 'wowjs';
-
+import Rating from './Rating';
 import '../css/bootstrap.min.css';
 import '../css/mdb.min.css';
 import 'jarallax';
@@ -27,6 +27,11 @@ import people5 from '@data/images/people/5.jpg';
 import people6 from '@data/images/people/6.jpg';
 import icon from '@data/images/icon.png'
 const FeedbackService = () => {
+  const handleRating = (rate) => {
+    console.log(`Rated: ${rate} stars`);
+    // You can handle the rating submission here, e.g., send to a server
+  };
+
   return (
    <>
    <body class="dark-scheme">
@@ -200,6 +205,7 @@ const FeedbackService = () => {
     {/* footer begin */}
     <footer>
       <div className="container">
+      <Rating onRate={handleRating} />
         <div className="row g-4">
           <div className="col-lg-4 text-lg-start text-center">
             <div className="social-icons">
