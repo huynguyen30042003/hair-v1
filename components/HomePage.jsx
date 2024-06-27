@@ -11,7 +11,6 @@ import ScheduleLocationSection from "./ScheduleLocationSection";
 import AboutPage from "./AboutPage";
 import GalleryPage from "./GalleryPage";
 import ServicesHome from "./ServicesHome";
-
 const Navbar = () => {
   useEffect(() => {
     const wow = new WOW.WOW({

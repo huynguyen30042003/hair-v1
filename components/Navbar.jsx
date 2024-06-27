@@ -60,21 +60,9 @@ const Header = () => {
                     <a className="menu-item" href="/about">
                       About
                     </a>
-                    <ul>
-                      <li>
-                        <a className="menu-item" href="/about">
-                          About Us
-                        </a>
-                      </li>
-                      <li>
-                        <a className="menu-item" href="/team">
-                          Our Team
-                        </a>
-                      </li>
-                    </ul>
                   </li>
                   <li>
-                    <a className="menu-item" href="/book">
+                    <a className="menu-item" href="/booking">
                       Book Now
                     </a>
                   </li>
@@ -104,8 +92,8 @@ const Header = () => {
                         </a>
                       </li>
                       <li>
-                        <a className="menu-item" href="/testimonials">
-                          Testimonials
+                        <a className="menu-item" href="/feedback">
+                          Feedback
                         </a>
                       </li>
                     </ul>
@@ -114,7 +102,7 @@ const Header = () => {
               </div>
               <div className="de-flex-col">
                 <div className="menu_side_area">
-                  <a href="/login" className="btn-main">
+                  <a href="/login-v2" className="btn-main">
                     Login
                   </a>
                   <span id="menu-btn" onClick={toggleMenu}></span>
