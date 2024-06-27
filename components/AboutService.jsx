@@ -24,17 +24,17 @@ import team3 from '@data/images/team/3.jpg';
 import team4 from '@data/images/team/4.jpg';
 import icon from '@data/images/icon.png'
 const AboutService = () => {
-    useEffect(() => {
-        const wow = new WOW.WOW();
-        wow.init();
-        
-        if (typeof window !== 'undefined') {
-          const { jarallax } = require('jarallax');
-          jarallax(document.querySelectorAll('.jarallax'), {
-            speed: 0.2,
-          });
-        }
-      }, []);
+  useEffect(() => {
+    const wow = new WOW.WOW();
+    wow.init();
+    
+    if (typeof window !== 'undefined') {
+      const { jarallax } = require('jarallax');
+      jarallax(document.querySelectorAll('.jarallax'), {
+        speed: 0.2,
+      });
+    }
+  }, []);
   return (
     <body class="dark-scheme">
     <div id="wrapper">

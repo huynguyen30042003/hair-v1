@@ -43,3 +43,71 @@
     margin-left: auto; /* Căn lề trái tự động */
     margin-right: auto; /* Căn lề phải tự động */
   }
+ /* CSS for the scrolling marquee effect */
+.de-marquee-list {
+  overflow: hidden;
+  position: relative;
+  white-space: nowrap;
+  padding-top: 20px;
+  line-height: 100px; 
+}
+
+.d-item {
+  display: inline-block;
+  padding-left: 100%;
+  animation: marquee 40s linear infinite; /* Slowed down the animation */
+  vertical-align: middle; /* Ensure the items are vertically aligned */
+}
+
+@keyframes marquee {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(-100%, 0); }
+}
+
+.d-item-txt {
+  display: inline-block;
+  padding: 0 15px;
+  font-size: 36px; /* Increased the font size */
+  line-height: 100px; /* Ensure the text is vertically aligned in the middle */
+  vertical-align: middle; /* Ensure the text is vertically aligned */
+}
+
+.d-item-display {
+  display: inline-block;
+  vertical-align: middle; /* Ensure the separators are vertically aligned */
+}
+
+
+.de-marquee-list .d-item-block {
+  width: 100px;
+  transform: translateY(-30px);
+  
+}
+.d-item-block {
+  width: 80px;
+  height: 3px;
+  margin: 0 20px;
+  margin-right: 60px;
+  padding: 0px;
+  border-radius: 50%;
+  display: inline-block;
+  transform: translateY(-50px);
+  background: var(--primary-color);
+}
+
+.de-marquee-list .d-item-block{
+  border-radius: 0;
+}
+
+/* CSS for the horizontal lines */
+.de-marquee-list .separator {
+  display: inline-block;
+  width: 30px; /* Adjust the width of the lines as needed */
+  height: 2px; /* Adjust the height of the lines as needed */
+  background-color: #D8A47F; /* Change the color of the lines if needed */
+  vertical-align: middle; /* Vertically align the lines */
+  margin: 0 15px; /* Adjust the spacing between lines and text */
+  position: relative;
+  top: 50%; /* Align the line vertically in the middle */
+  transform: translateY(-50%); /* Center align the lines */
+}
