@@ -60,8 +60,7 @@ export default function Home() {
       <About />
       <ServicesHome />
       <Footer />
-      {/* <TableUser/> */}
-      {/* <Inbox/> */}
+      <TableUser/>
     </>
   );
 }

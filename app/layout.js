@@ -3,6 +3,8 @@ import "./globals.css";
 import { getServerSession } from "next-auth";
 import SessionProvider from "../utils/SessionProvider";
 import Navbar from "components/Navbar";
+// import Nav from "components/Nav";
+
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -20,7 +22,7 @@ export default async function RootLayout({ children }) {
     <html lang="en">
       <body className={inter.className}>
         <SessionProvider session={session}>
-          <Navbar session={session}/>
+          {/* <Navbar session={session}/> */}
           <ToastContainer />
           {children }
         </SessionProvider>

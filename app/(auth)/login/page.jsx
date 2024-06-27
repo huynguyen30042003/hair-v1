@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { signIn , useSession } from "next-auth/react";
 import { toast } from "react-toastify";
+import banner from "@data/img/bannerFG.webp"
 
 const Login = () => {
 
@@ -41,7 +42,10 @@ const Login = () => {
   return  (sessionStatus !== 'authenticated' &&(
 
     <div className="bg-[#fff] w-[100vw] h-[100vh] flex justify-center items-center">
-      <div className="login w-[442px] max-sm:mx-[24px] flex flex-col">
+      <div className="w-[442px] max-sm:mx-[24px] flex flex-col">
+        <div className="min-w-full fixed">
+          <Image src={banner} alt="Banner" />
+        </div>
         <span className=" leading-[48px] text-[#7797EE] text-[64px] font-bold">
           Login
         </span>
