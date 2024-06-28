@@ -1,17 +1,16 @@
 "use client"
 import { socket } from "./socket";
-import Image from "next/image";
-import About from "../components/About";
-import TableUser from "../components/TableUser";
-import TableService from "../components/TableService";
+import HomePage from "../components/HomePage";
 import Footer from "../components/Footer";
-import ServicesHome from "../components/ServicesHome";
+// import 'bootstrap/dist/css/bootstrap.min.css';
+// import '../css/mdb.min.css';
+// // import '../css/plugins.css';
+// // import '../css/style.css';
+// import '../css/coloring.css';
+// import '../css/colors/scheme-01.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import React, { useEffect, useState } from 'react';
-import {
-  Button,
-} from "@material-tailwind/react";
 
 export default function Home() {
   const [open, setOpen] = useState(false);
@@ -52,16 +51,9 @@ export default function Home() {
   }, []);
   return (
     <>
-      <button onClick={notify}>Notify!</button>
-      <div>
-      <p>Status: { isConnected ? "connected" : "disconnected" }</p>
-      <p>Transport: { transport }</p>
-    </div>
-      <About />
-      <ServicesHome />
+      <HomePage />
       <Footer />
       <ToastContainer />
     </>
   );
 }
-

@@ -4,6 +4,12 @@ import { getServerSession } from "next-auth";
 import SessionProvider from "../utils/SessionProvider";
 import Navbar from "components/Navbar";
 // import Nav from "components/Nav";
+import "../css/style.css"; // Thêm .css để import file CSS
+import "../css/colors/scheme-01.css";
+import "../css/bootstrap.min.css";
+import "../css/mdb.min.css";
+// import "../css/plugins.css"
+import "../css/coloring.css";
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -22,8 +28,8 @@ export default async function RootLayout({ children }) {
     <html lang="en">
       <body className={inter.className}>
         <SessionProvider session={session}>
-          {/* <Navbar session={session}/> */}
-          <ToastContainer />
+          <Navbar session={session}/>
+          <ToastContainer/>
           {children }
         </SessionProvider>
       </body>
