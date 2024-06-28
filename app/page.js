@@ -2,8 +2,7 @@
 import { socket } from "./socket";
 import Image from "next/image";
 import About from "../components/About";
-import TableUser from "../components/TableUser";
-import TableService from "../components/TableService";
+// import TableService from "../components/TableService";
 import Footer from "../components/Footer";
 import ServicesHome from "../components/ServicesHome";
 import { ToastContainer, toast } from 'react-toastify';
@@ -50,6 +49,9 @@ export default function Home() {
       socket.off("disconnect", onDisconnect);
     };
   }, []);
+  const handleClick = () => {
+    console.log("handleClick");
+  }
   return (
     <>
       <button onClick={notify}>Notify!</button>
@@ -60,7 +62,7 @@ export default function Home() {
       <About />
       <ServicesHome />
       <Footer />
-      <TableUser/>
+      <button onClick={handleClick}>Connect</button>
     </>
   );
 }
