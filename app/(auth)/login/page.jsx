@@ -42,6 +42,8 @@ const Login = () => {
   return  (sessionStatus !== 'authenticated' &&(
 
     <div className="bg-[#fff] w-[100vw] h-[100vh] flex justify-center items-center">
+    <button onClick={console.log('minhminh') } className='bg-[#fff] p-5'>click </button>
+
       <div className="w-[442px] max-sm:mx-[24px] flex flex-col">
         <div className="min-w-full fixed">
           <Image src={banner} alt="Banner" />
