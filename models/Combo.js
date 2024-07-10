@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const serviceSchema = new mongoose.Schema({
+const comboSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true
@@ -12,17 +12,15 @@ const serviceSchema = new mongoose.Schema({
     images: {
         type: [String]
     },
+    services: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Service'
+        }
+    ],
     description: {
         type: String
     },
-    duration: {
-        type: Number,
-        required: true // Duration in minutes
-    },
-    reviews: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Review'
-    }],
     status: {
         type: Boolean,
         default: true
@@ -31,6 +29,5 @@ const serviceSchema = new mongoose.Schema({
     timestamps: true
 });
 
-const Service = mongoose.model('Service', serviceSchema);
-
-module.exports = Service;
+const Combo = mongoose.model('Combo', comboSchema);
+module.exports = Combo;
