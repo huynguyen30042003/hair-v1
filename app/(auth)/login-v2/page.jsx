@@ -4,40 +4,25 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { signIn, useSession } from "next-auth/react";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Logo from "@data/img/LogoLG.jpg";
-import styles from "./Login.module.css";
 import banner from "@data/img/bannerFG.webp";
+import { login } from "api/route";
 
 const Login = () => {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { data: session, status: sessionStatus } = useSession();
   const router = useRouter();
 
-  useEffect(() => {
-    if (sessionStatus === "authenticated") {
-      router.push("/");
-    }
-  }, [sessionStatus, router]);
-
   const handleLogin = async () => {
-    if (!username || !password) {
-      toast("Please fill all the input fields");
-      return;
-    }
-
-    const res = await signIn("credentials", {
-      redirect: false,
-      username,
-      password,
-    });
-
-    if (res.error) {
-      toast.error("Invalid username or password");
-    } else {
-      router.push("/about");
-      toast.success("Login successful");
+    try {
+      const data = await login(email, password);
+      toast.success("Login successful!");
+      router.push("/"); 
+    } catch (error) {
+      toast.error("Login failed!");
     }
   };
 
@@ -72,12 +57,12 @@ const Login = () => {
                     <form>
                       <div className="mb-4">
                         <label className="block text-gray-700 mb-2">
-                          Username or Phone Number
+                          Email
                         </label>
                         <input
                           type="text"
                           className="w-full p-2 border border-gray-300 rounded"
-                          onChange={(e) => setUsername(e.target.value)}
+                          onChange={(e) => setEmail(e.target.value)}
                         />
                       </div>
                       <div className="mb-4">
@@ -126,6 +111,7 @@ const Login = () => {
             </div>
           </div>
         </div>
+        <ToastContainer />
       </section>
     )
   );
