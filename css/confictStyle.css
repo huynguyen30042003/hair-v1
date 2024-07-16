@@ -111,3 +111,28 @@
   top: 50%; /* Align the line vertically in the middle */
   transform: translateY(-50%); /* Center align the lines */
 }
+.rating {
+  text-align: center; /* Căn giữa nội dung */
+  margin-bottom: 20px;
+}
+
+h2 {
+  margin-bottom: 10px; /* Khoảng cách phía dưới của heading */
+}
+
+.rating-stars {
+  display: flex;
+  justify-content: center; /* Căn giữa ngang các ngôi sao */
+}
+
+.star {
+  font-size: 30px;
+  cursor: pointer;
+  margin: 0 5px;
+  color: #d8a47f; /* Màu sắc ngôi sao không được đánh giá */
+
+}
+
+.star.filled {
+  color: #ffdf00; /* Màu sắc của ngôi sao đã được điền */
+}

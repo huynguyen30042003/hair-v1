@@ -1,212 +1,550 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect } from "react";
+import "wowjs/css/libs/animate.css"; // Import animate.css for Wow.js animations
+import WOW from "wowjs";
+import "jarallax";
+import "jarallax/dist/jarallax.css"; // Import the Jarallax CSS file
 import Image from "next/image";
-import ImgService from "@data/img/serviceCuthair.jpg";  
-import Banner from "@data/img/banner1.jpg";
-import { Carousel } from "react-responsive-carousel";
-import "react-responsive-carousel/lib/styles/carousel.min.css";
-import { Button, IconButton } from "@material-tailwind/react";
-import { ArrowRightIcon, ArrowLeftIcon } from "@heroicons/react/24/outline";
+import Head from "next/head";
 
-const Services = () => {
-  const dataServices = [
-    {
-      title: "Cắt tóc",
-      img: ImgService,
-      price: "Giá từ 150.000đ",
-      more: "Dịch vụ cắt tóc với nhiều kiểu dáng và phong cách khác nhau.",
-      view: 30,
-    },
-    {
-      title: "Uốn định hình",
-      img: ImgService,
-      price: "Giá từ 379.000đ",
-      more: "Uốn tóc để tạo kiểu và giữ nếp suốt thời gian dài.",
-      view: 30,
-    },
-    {
-      title: "Thay đổi màu tóc",
-      img: ImgService,
-      price: "Giá từ 199.000đ",
-      more: "Dịch vụ nhuộm tóc với nhiều lựa chọn màu sắc và phong cách.",
-      view: 30,
-    },
-    {
-      title: "Gội đầu",
-      img: ImgService,
-      price: "Giá từ 100.000đ",
-      more: "Dịch vụ gội đầu với các sản phẩm chăm sóc tóc chuyên nghiệp.",
-      view: 30,
-    },
-    {
-      title: "Sấy tóc",
-      img: ImgService,
-      price: "Giá từ 50.000đ",
-      more: "Dịch vụ sấy tóc để tạo kiểu nhanh chóng và hiệu quả.",
-      view: 30,
-    },
-    {
-      title: "Massage da đầu",
-      img: ImgService,
-      price: "Giá từ 200.000đ",
-      more: "Dịch vụ massage da đầu giúp thư giãn và kích thích tuần hoàn máu.",
-      view: 30,
-    },
-  ];
+import "../../css/bootstrap.min.css";
+import "../../css/mdb.min.css";
+import "../../css/plugins.css";
+import "../../css/style.css";
+import "../../css/coloring.css";
+import "../../css/colors/scheme-01.css";
+import "../../css/confictStyle.css";
 
-  const dataSpaRelax = [
-    {
-      title: "Massage thư giãn",
-      img: ImgService,
-      price: "Giá từ 300.000đ",
-      more: "Dịch vụ massage thư giãn để giảm căng thẳng và thư giãn cơ thể.",
-      view: 20,
-    },
-    {
-      title: "Chăm sóc da mặt",
-      img: ImgService,
-      price: "Giá từ 500.000đ",
-      more: "Dịch vụ chăm sóc da mặt với các liệu pháp làm sạch và dưỡng ẩm.",
-      view: 25,
-    },
-    {
-      title: "Chăm sóc toàn thân",
-      img: ImgService,
-      price: "Giá từ 800.000đ",
-      more: "Dịch vụ chăm sóc toàn thân bao gồm massage và xông hơi thư giãn.",
-      view: 15,
-    },
-  ];
+import logo from "@data/images/logo.png";
+import logoMobile from "@data/images/logo-mobile.png";
+import background1 from "@data/images/background/1.jpg";
+import background2 from "@data/images/background/2.jpg";
+import service1 from "@data/images/services/1.jpg";
+import service2 from "@data/images/services/2.jpg";
+import service3 from "@data/images/services/3.jpg";
+import service4 from "@data/images/services/4.jpg";
 
-  const itemsPerPage = 3;
-  const totalPages = Math.ceil(dataServices.length / itemsPerPage);
-  const [currentPage, setCurrentPage] = useState(1);
-
-  const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  const handlePrevPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  const getCurrentPageItems = () => {
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    return dataServices.slice(startIndex, endIndex);
-  };
-
-  const pagesWithServices = Array.from(Array(totalPages), (_, index) => index + 1)
-    .filter(page => {
-      const startIndex = (page - 1) * itemsPerPage;
-      const endIndex = startIndex + itemsPerPage;
-      return dataServices.slice(startIndex, endIndex).some(service => !!service.title);
+const Home = () => {
+  useEffect(() => {
+    const wow = new WOW.WOW({
+      boxClass: "wow",
+      animateClass: "animated",
+      offset: 0,
+      mobile: true,
+      live: true,
     });
+    wow.init();
 
-  const getItemProps = (index) => ({
-    variant: currentPage === index ? "filled" : "text",
-    color: "gray",
-    onClick: () => setCurrentPage(index),
-    className: "rounded-full",
-  });
+    if (typeof window !== "undefined") {
+      const { jarallax } = require("jarallax");
+      jarallax(document.querySelectorAll(".jarallax"), {
+        speed: 0.2,
+      });
+    }
+  }, []);
 
   return (
-    <section className="container mx-auto">
-      <div className="mb-12 relative">
-        <Carousel
-          autoPlay
-          infiniteLoop
-          showThumbs={false}
-          showStatus={false}
-          interval={3000}
-          className="w-full h-72 border border-gray-300 rounded-md overflow-hidden"
-        >
-          <div className="h-72 relative">
-            <Image src={Banner} alt="image 1" layout="fill" objectFit="cover" />
-          </div>
-          <div className="h-72 relative">
-            <Image src={Banner} alt="image 2" layout="fill" objectFit="cover" />
-          </div>
-          <div className="h-72 relative">
-            <Image src={Banner} alt="image 3" layout="fill" objectFit="cover" />
-          </div>
-        </Carousel>
-      </div>
-      <div className="mt-12">
-        <div className="max-w-6xl mx-auto px-5 lg:px-6 py-10">
-          <h1 className="text-xl font-bold mb-5 relative inline-block text-center ">
-            <span className="relative z-10 px-4 bg-white text-black ">Dịch Vụ Tóc Nam</span>
-            <span className="absolute inset-0 z-0 bg-gradient-to-r from-blue-400 to-blue-600 transform skew-x-6 -rotate-3 opacity-75 hover:rotate-0 transition duration-300"></span>
-          </h1>
-          <div className="flex flex-wrap justify-center space-x-4">
-            {getCurrentPageItems().map((service, index) => (
-              <div key={index} className="max-w-sm rounded-lg overflow-hidden shadow-lg mb-4 border border-gray-300 hover:border-blue-500 transition duration-300">
-                <div className="relative group">
-                  <Image className="w-full transition duration-300 transform group-hover:scale-105" src={service.img} alt={service.title} />
-                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                </div>
-                <div className="px-6 py-4">
-                  <div className="font-bold text-xl mb-2">{service.title}</div>
-                  <div className="flex">
-                    <p className="text-gray-700 text-base mr-3">{service.price}</p>
-                    <a href="#" className="text-blue-500 hover:underline">Tìm hiểu thêm</a>
+    <>
+      <Head>
+        <title>StyleCuts - Barbershop</title>
+        <link
+          rel="icon"
+          href="/images/icon.png"
+          type="image/gif"
+          sizes="16x16"
+        />
+        <meta content="text/html;charset=utf-8" http-equiv="Content-Type" />
+        <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+        <meta
+          content="Blaxcut - Barbershop Website Template"
+          name="description"
+        />
+      </Head>
+      <body className="dark-scheme">
+        <div id="wrapper">
+          <div id="de-loader"></div>
+          <header className="transparent">
+            <div className="container">
+              <div className="row">
+                <div className="col-md-12">
+                  <div className="de-flex sm-pt10">
+                    <div className="de-flex-col">
+                      <div id="logo">
+                        <a href="index.html">
+                          <Image className="logo-main" src={logo} alt="" />
+                          <Image
+                            className="logo-mobile"
+                            src={logoMobile}
+                            alt=""
+                          />
+                        </a>
+                      </div>
+                    </div>
+                    <div className="de-flex-col header-col-mid">
+                      <ul id="mainmenu">
+                        <li>
+                          <a className="menu-item" href="index.html">
+                            Home
+                          </a>
+                          <ul>
+                            <li>
+                              <a className="menu-item" href="index.html">
+                                Home 1
+                              </a>
+                            </li>
+                            <li>
+                              <a className="menu-item" href="index-2.html">
+                                Home 2
+                              </a>
+                            </li>
+                            <li>
+                              <a className="menu-item" href="index-3.html">
+                                Home 3
+                              </a>
+                            </li>
+                            <li>
+                              <a className="menu-item" href="index-4.html">
+                                Home 4
+                              </a>
+                            </li>
+                          </ul>
+                        </li>
+                        <li>
+                          <a className="menu-item" href="services.html">
+                            Services
+                          </a>
+                          <ul>
+                            <li>
+                              <a className="menu-item" href="services.html">
+                                All Services
+                              </a>
+                            </li>
+                            <li>
+                              <a
+                                className="menu-item"
+                                href="service-single.html"
+                              >
+                                Service Single
+                              </a>
+                            </li>
+                          </ul>
+                        </li>
+                        <li>
+                          <a className="menu-item" href="about.html">
+                            About
+                          </a>
+                          <ul>
+                            <li>
+                              <a className="menu-item" href="about.html">
+                                About Us
+                              </a>
+                            </li>
+                            <li>
+                              <a className="menu-item" href="team.html">
+                                Our Team
+                              </a>
+                            </li>
+                          </ul>
+                        </li>
+                        <li>
+                          <a className="menu-item" href="book.html">
+                            Book Now
+                          </a>
+                        </li>
+                        <li>
+                          <a className="menu-item" href="blog.html">
+                            Blog
+                          </a>
+                        </li>
+                        <li>
+                          <a className="menu-item" href="#">
+                            Extras
+                          </a>
+                          <ul>
+                            <li>
+                              <a className="menu-item" href="contact.html">
+                                Contact
+                              </a>
+                            </li>
+                            <li>
+                              <a className="menu-item" href="gallery.html">
+                                Gallery
+                              </a>
+                            </li>
+                            <li>
+                              <a className="menu-item" href="pricing.html">
+                                Pricing
+                              </a>
+                            </li>
+                            <li>
+                              <a className="menu-item" href="testimonials.html">
+                                Testimonials
+                              </a>
+                            </li>
+                          </ul>
+                        </li>
+                      </ul>
+                    </div>
+                    <div className="de-flex-col">
+                      <div className="menu_side_area">
+                        <a href="book.html" className="btn-main">
+                          Book Now
+                        </a>
+                        <span id="menu-btn"></span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
-          <h1 className="text-xl font-bold mb-5 relative inline-block text-center mt-12">
-            <span className="relative z-10 px-4 bg-white text-black">Dịch Vụ Spa và Relax</span>
-            <span className="absolute inset-0 z-0 bg-gradient-to-r from-blue-400 to-blue-600 transform skew-x-6 -rotate-3 opacity-75 hover:rotate-0 transition duration-300"></span>
-          </h1>
-          <div className="flex flex-wrap justify-center space-x-4">
-            {dataSpaRelax.map((service, index) => (
-              <div key={index} className="max-w-sm rounded-lg overflow-hidden shadow-lg mb-4 border border-gray-300 hover:border-blue-500 transition duration-300">
-                <div className="relative group">
-                  <Image className="w-full transition duration-300 transform group-hover:scale-105" src={service.img} alt={service.title} />
-                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                </div>
-                <div className="px-6 py-4">
-                  <div className="font-bold text-xl mb-2">{service.title}</div>
-                  <div className="flex">
-                    <p className="text-gray-700 text-base mr-3">{service.price}</p>
-                    <a href="#" className="text-blue-500 hover:underline">Tìm hiểu thêm</a>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-          <div className="flex justify-center mt-6">
-            <Button
-              variant="text"
-              className="flex items-center gap-2 rounded-full"
-              onClick={handlePrevPage}
-              disabled={currentPage === 1}
-            >
-              <ArrowLeftIcon strokeWidth={2} className="h-4 w-4" /> Previous
-            </Button>
-            <div className="flex items-center gap-2">
-              {pagesWithServices.map(page => (
-                <IconButton key={page} {...getItemProps(page)}>{page}</IconButton>
-              ))}
             </div>
-            <Button
-              variant="text"
-              className="flex items-center gap-2 rounded-full"
-              onClick={handleNextPage}
-              disabled={currentPage === totalPages}
-            >
-              Next <ArrowRightIcon strokeWidth={2} className="h-4 w-4" />
-            </Button>
+          </header>
+
+          <div className="no-bottom no-top" id="content">
+            <div id="top"></div>
+
+            <section id="subheader" className="jarallax">
+              <Image src={background2} className="jarallax-img" alt="" />
+              <div className="container">
+                <div className="row">
+                  <div className="col-lg-6 offset-lg-3 text-center">
+                    <h1>Services</h1>
+                    <div className="de-separator"></div>
+                  </div>
+                </div>
+              </div>
+              <div className="de-gradient-edge-bottom"></div>
+            </section>
+
+            <section aria-label="section" className="no-top no-bottom">
+              <div className="container">
+                <div className="row">
+                  <div className="col-lg-12" data-jarallax-element="-20">
+                    <p className="lead big wow fadeInUp">
+                      Step into our stylish and comfortable space, where the
+                      blend of vintage and contemporary decor sets the perfect
+                      backdrop for your grooming journey. We pay attention to
+                      every detail, from the moment you walk through our doors
+                      until you leave with a fresh, confident look.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section id="section-pricing" aria-label="section">
+              <div className="container">
+                <div className="row g-5" id="gallery">
+                  <div className="col-lg-6 item">
+                    <div className="sc-wrap">
+                      <h3>Haircut</h3>
+                      <div className="def-list-dots">
+                        <dl>
+                          <dt>
+                            <span>Regular Haircut</span>
+                          </dt>
+                          <dd>$37</dd>
+                        </dl>
+                        <dl>
+                          <dt>
+                            <span>Scissors Haircut</span>
+                          </dt>
+                          <dd>$40</dd>
+                        </dl>
+                        <dl>
+                          <dt>
+                            <span>Kids Haircut</span>
+                          </dt>
+                          <dd>$30</dd>
+                        </dl>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="col-lg-6 item">
+                    <div className="sc-wrap">
+                      <h3>Shave</h3>
+                      <div className="def-list-dots">
+                        <dl>
+                          <dt>
+                            <span>Head Shave</span>
+                          </dt>
+                          <dd>$27</dd>
+                        </dl>
+                        <dl>
+                          <dt>
+                            <span>Royal Shave</span>
+                          </dt>
+                          <dd>$33</dd>
+                        </dl>
+                        <dl>
+                          <dt>
+                            <span>Royal Head Shave</span>
+                          </dt>
+                          <dd>$33</dd>
+                        </dl>
+                        <dl>
+                          <dt>
+                            <span>Beard Trim No Shave</span>
+                          </dt>
+                          <dd>$35</dd>
+                        </dl>
+                        <dl>
+                          <dt>
+                            <span>Beard Trim Shave</span>
+                          </dt>
+                          <dd>$35</dd>
+                        </dl>
+                        <dl>
+                          <dt>
+                            <span>Beard Shave Up</span>
+                          </dt>
+                          <dd>$30</dd>
+                        </dl>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="col-lg-6 item">
+                    <div className="sc-wrap">
+                      <h3>Facial</h3>
+                      <div className="def-list-dots">
+                        <dl>
+                          <dt>
+                            <span>Deep Pore Cleansing</span>
+                          </dt>
+                          <dd>$50</dd>
+                        </dl>
+                        <dl>
+                          <dt>
+                            <span>Aromatherapy Facial</span>
+                          </dt>
+                          <dd>$45</dd>
+                        </dl>
+                        <dl>
+                          <dt>
+                            <span>Acne Problem Facial</span>
+                          </dt>
+                          <dd>$60</dd>
+                        </dl>
+                        <dl>
+                          <dt>
+                            <span>European Facial</span>
+                          </dt>
+                          <dd>$50</dd>
+                        </dl>
+                        <dl>
+                          <dt>
+                            <span>Glycolic Peel Facial</span>
+                          </dt>
+                          <dd>$35</dd>
+                        </dl>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="col-lg-6 item">
+                    <div className="sc-wrap">
+                      <h3>Package</h3>
+                      <div className="def-list-dots">
+                        <dl>
+                          <dt>
+                            <span>Haircut + Shave</span>
+                          </dt>
+                          <dd>$50</dd>
+                        </dl>
+                        <dl>
+                          <dt>
+                            <span>Haircut + Beard Trim</span>
+                          </dt>
+                          <dd>$50</dd>
+                        </dl>
+                        <dl>
+                          <dt>
+                            <span>Haircut + Beard Trim Shave</span>
+                          </dt>
+                          <dd>$55</dd>
+                        </dl>
+                        <dl>
+                          <dt>
+                            <span>Haircut + Beard Shape Up</span>
+                          </dt>
+                          <dd>$60</dd>
+                        </dl>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section aria-label="section" className="no-top">
+              <div className="container">
+                <div className="row">
+                  <div
+                    className="col-lg-3 text-center"
+                    data-jarallax-element="-20"
+                  >
+                    <div className="de-box-a">
+                      <div className="d-image">
+                        <Image src={service1} alt="" />
+                      </div>
+                      <div className="d-deco-1"></div>
+                      <div className="d-deco-2"></div>
+                    </div>
+                    <div className="spacer-20"></div>
+                    <h4>Haircuts</h4>
+                  </div>
+                  <div
+                    className="col-lg-3 text-center"
+                    data-jarallax-element="-60"
+                  >
+                    <div className="de-box-a">
+                      <div className="d-image">
+                        <Image src={service2} alt="" />
+                      </div>
+                      <div className="d-deco-1"></div>
+                      <div className="d-deco-2"></div>
+                    </div>
+                    <div className="spacer-20"></div>
+                    <h4>Beard</h4>
+                  </div>
+                  <div
+                    className="col-lg-3 text-center"
+                    data-jarallax-element="-40"
+                  >
+                    <div className="de-box-a">
+                      <div className="d-image">
+                        <Image src={service3} alt="" />
+                      </div>
+                      <div className="d-deco-1"></div>
+                      <div className="d-deco-2"></div>
+                    </div>
+                    <div className="spacer-20"></div>
+                    <h4>Shaving</h4>
+                  </div>
+                  <div
+                    className="col-lg-3 text-center"
+                    data-jarallax-element="-10"
+                  >
+                    <div className="de-box-a">
+                      <div className="d-image">
+                        <Image src={service4} alt="" />
+                      </div>
+                      <div className="d-deco-1"></div>
+                      <div className="d-deco-2"></div>
+                    </div>
+                    <div className="spacer-20"></div>
+                    <h4>Razor Blade</h4>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section className="jarallax no-top">
+              <div className="de-gradient-edge-top"></div>
+              <Image src={background1} className="jarallax-img" alt="" />
+              <div className="container relative z1000">
+                <div className="row gx-5">
+                  <div
+                    className="col-lg-6 text-center"
+                    data-jarallax-element="-50"
+                  >
+                    <div className="d-sch-table">
+                      <h2 className="wow fadeIn">We're Open</h2>
+                      <div className="de-separator"></div>
+                      <div className="d-col">
+                        <div className="d-title">Mon - Thu</div>
+                        <div className="d-content id-color">
+                          7:30AM - 6:30PM
+                        </div>
+                      </div>
+                      <div className="d-col">
+                        <div className="d-title">Friday</div>
+                        <div className="d-content id-color">
+                          8:30AM - 8:30PM
+                        </div>
+                      </div>
+                      <div className="d-col">
+                        <div className="d-title">Sat - Sun</div>
+                        <div className="d-content id-color">
+                          9:30AM - 5:30PM
+                        </div>
+                      </div>
+                      <div className="d-deco"></div>
+                    </div>
+                  </div>
+                  <div
+                    className="col-lg-6 text-center"
+                    data-jarallax-element="-100"
+                  >
+                    <div className="d-sch-table">
+                      <h2 className="wow fadeIn">Location</h2>
+                      <div className="de-separator"></div>
+                      <div className="d-col">
+                        <div className="d-title">Address</div>
+                        <div className="d-content id-color">
+                          100 Mainstreet Center, NY
+                        </div>
+                      </div>
+                      <div className="d-col">
+                        <div className="d-title">Phone</div>
+                        <div className="d-content id-color">
+                          +1 333 8080 1000
+                        </div>
+                      </div>
+                      <div className="d-col">
+                        <div className="d-title">Email</div>
+                        <div className="d-content id-color">
+                          contact@blaxcut.com
+                        </div>
+                      </div>
+                      <div className="d-deco"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="de-gradient-edge-bottom"></div>
+            </section>
           </div>
+          <a href="#" id="back-to-top"></a>
+
+          <footer>
+            <div className="container">
+              <div className="row g-4">
+                <div className="col-lg-4 text-lg-start text-center">
+                  <div className="social-icons">
+                    <a href="#">
+                      <i className="fa fa-facebook fa-lg"></i>
+                    </a>
+                    <a href="#">
+                      <i className="fa fa-twitter fa-lg"></i>
+                    </a>
+                    <a href="#">
+                      <i className="fa fa-linkedin fa-lg"></i>
+                    </a>
+                    <a href="#">
+                      <i className="fa fa-pinterest fa-lg"></i>
+                    </a>
+                    <a href="#">
+                      <i className="fa fa-rss fa-lg"></i>
+                    </a>
+                  </div>
+                </div>
+                <div className="col-lg-4 text-lg-center text-center">
+                  <Image src={logo} className="image" alt="" />
+                </div>
+                <div className="col-lg-4 text-lg-end text-center">
+                  Copyright 2024 - StyleCuts BaberShop
+                </div>
+              </div>
+            </div>
+          </footer>
         </div>
-      </div>
-    </section>
+        <script src="js/plugins.js"></script>
+        <script src="js/designesia.js"></script>
+      </body>
+    </>
   );
 };
 
-export default Services;
+export default Home;
