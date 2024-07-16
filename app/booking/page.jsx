@@ -12,7 +12,7 @@ const page = () => {
     
 <>
 <button
-onClick={handleLog()}
+onClick={handleLog}
 >
   Book Now
  
