@@ -1,6 +1,6 @@
 import axios from "axios";
 import FormData from "form-data";
-const BASE_URL = "https://haircut-nodejs-reactjs-mongo-be.onrender.com/api";
+const BASE_URL = "http://127.0.0.1:5000/api";
 
 //Auth
 export const login = async (email, password) => {
