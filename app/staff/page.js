@@ -7,7 +7,7 @@ const StaffHome = () => {
   const router = useRouter();
 
   useEffect(() => {
-    router.push('/admin/financial');
+    router.push('/staff/dashboard');
   }, [router]);
 
   return null;

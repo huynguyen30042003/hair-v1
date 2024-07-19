@@ -2,14 +2,28 @@
 import React, { useState, useEffect } from "react";
 import io from "socket.io-client";
 import { toast } from "react-toastify";
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, TextField, IconButton, Box, Typography, Checkbox, Avatar } from '@mui/material';
-import { Settings, Delete, Info, MoreVert } from '@mui/icons-material';
-import CircleIcon from '@mui/icons-material/Circle';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Button,
+  TextField,
+  IconButton,
+  Box,
+  Typography,
+  Checkbox,
+  Avatar,
+} from "@mui/material";
+import { Settings, Delete, Info, MoreVert } from "@mui/icons-material";
+import CircleIcon from "@mui/icons-material/Circle";
 import TableHeader from "components/TableHeader";
 import StatusIndicator from "./StatusIndicator";
 
 
-const  SOCKET_SERVER_URL = 'http://localhost:3000'
 const TABS = [
   { label: "All", value: "all" },
   { label: "Monitored", value: "monitored" },
@@ -50,56 +64,59 @@ const TableUser = () => {
   const [open, setOpen] = useState(false);
   const [openReset, setOpenReset] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
-  
-  const handleOpenDelete = (_id) => {setOpen(!open)
-    setId(_id)
+
+  const handleOpenDelete = (_id) => {
+    setOpen(!open);
+    setId(_id);
   };
-  const handleOpenReset = (_id) => {setOpenReset(!openReset)
-    setId(_id)
+  const handleOpenReset = (_id) => {
+    setOpenReset(!openReset);
+    setId(_id);
   };
-  const handleOpenEdit = (_id) => {setOpenEdit(!openEdit)
-    setId(_id)
+  const handleOpenEdit = (_id) => {
+    setOpenEdit(!openEdit);
+    setId(_id);
   };
 
-  useEffect(() => {
-    const socket = io(SOCKET_SERVER_URL);
+  // useEffect(() => {
+  //   const socket = io(SOCKET_SERVER_URL);
 
-    socket.on('connect', () => {
-      console.log('Connected to Socket.IO server');
-    });
+  //   socket.on("connect", () => {
+  //     console.log("Connected to Socket.IO server");
+  //   });
 
-    // Listen for updates from the server
-    socket.on('updateData', (newData) => {
-      setData(newData);
-      toast.info('Data updated');
-    });
+  //   // Listen for updates from the server
+  //   socket.on("updateData", (newData) => {
+  //     setData(newData);
+  //     toast.info("Data updated");
+  //   });
 
-    // Clean up the connection when the component unmounts
-    return () => {
-      socket.disconnect();
-    };
-  }, []);
+  //   // Clean up the connection when the component unmounts
+  //   return () => {
+  //     socket.disconnect();
+  //   };
+  // }, []);
 
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     fetchData();
   }, []);
 
-  const fetchData = async () => {
-    try {
-      const response = await fetch("/api/user");
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      const result = await response.json();
-      setData(result.users);
-    } catch (error) {
-      console.error("Failed to fetch dashboard data:", error);
-      setError(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // const fetchData = async () => {
+  //   try {
+  //     const response = await fetch("/api/user");
+  //     if (!response.ok) {
+  //       throw new Error("Network response was not ok");
+  //     }
+  //     const result = await response.json();
+  //     setData(result.users);
+  //   } catch (error) {
+  //     console.error("Failed to fetch dashboard data:", error);
+  //     setError(error.message);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
@@ -125,8 +142,8 @@ const TableUser = () => {
           data.message || "Something went wrong while deleting the user."
         );
       }
-      fetchData()
-      handleOpenDelete(0)
+      fetchData();
+      handleOpenDelete(0);
     } catch (error) {
       toast.error(error.message);
     }
@@ -149,70 +166,95 @@ const TableUser = () => {
         toast.error(
           data.message || "Something went wrong while reset the user."
         );
-      }handleOpenReset(0)
+      }
+      handleOpenReset(0);
     } catch (error) {
       toast.error(error.message);
     }
-  };console.log(data);
+  };
+  console.log(data);
   return (
     <>
-      <Paper style={{ padding: '16px' }}>
-      <TableHeader/>
-      <TableContainer>
-        <Table aria-label="simple table">
-          <TableHead>
-            <TableRow>
-              <TableCell padding="checkbox">
-                <Checkbox />
-              </TableCell>
-              <TableCell>Member/FullName</TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell>Role</TableCell>
-              <TableCell>Age</TableCell>
-              <TableCell>Employed</TableCell>
-              <TableCell>Last Update</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {data.map((row) => (
-              <TableRow key={row.username}>
+      <Paper style={{ padding: "16px" }}>
+        <TableHeader />
+        <TableContainer>
+          <Table aria-label="simple table">
+            <TableHead>
+              <TableRow>
                 <TableCell padding="checkbox">
                   <Checkbox />
                 </TableCell>
-                {/* <TableCell className="flex">
+                <TableCell>Member/FullName</TableCell>
+                <TableCell>Email</TableCell>
+                <TableCell>Role</TableCell>
+                <TableCell>Age</TableCell>
+                <TableCell>Employed</TableCell>
+                <TableCell>Last Update</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {data.map((row) => (
+                <TableRow key={row.username}>
+                  <TableCell padding="checkbox">
+                    <Checkbox />
+                  </TableCell>
+                  {/* <TableCell className="flex">
                   <Avatar src={row.avatar} />
                   {row.fullName}
                 </TableCell> */}
-                <TableCell>{row.fullName}</TableCell>
-                <TableCell>{row.email}</TableCell>
-                <TableCell>{row.role}</TableCell>
-                <TableCell>{row.age}</TableCell>
-                <TableCell>{row.createdAt}</TableCell>
-                <TableCell>{row.updatedAt}</TableCell>
-   
-                <TableCell align="center">
-                  <Box display="flex" justifyContent="space-between">
-                    <Button variant="contained" color="primary" size="small" style={{ marginRight: '10px', backgroundColor: '#54B4D3' }}
-                    onClick={()=>handleOpenEdit(row._id)}
-                    >
-                      Edit user
-                    </Button>
-                    <Button variant="contained" color="secondary" size="small" style={{ marginRight: '10px', backgroundColor: '#14A44D'  }}
-                      onClick={()=>handleOpenReset(row._id)}>
-                      reset password
-                    </Button><Button variant="contained" color="secondary" size="small" style={{ marginRight: '10px', backgroundColor: '#DC4C64'  }}
-                    onClick={()=>handleOpenDelete(row._id)}
-                    >
-                      Delete user
-                    </Button>
-                  </Box>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </Paper>
+                  <TableCell>{row.fullName}</TableCell>
+                  <TableCell>{row.email}</TableCell>
+                  <TableCell>{row.role}</TableCell>
+                  <TableCell>{row.age}</TableCell>
+                  <TableCell>{row.createdAt}</TableCell>
+                  <TableCell>{row.updatedAt}</TableCell>
+
+                  <TableCell align="center">
+                    <Box display="flex" justifyContent="space-between">
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        size="small"
+                        style={{
+                          marginRight: "10px",
+                          backgroundColor: "#54B4D3",
+                        }}
+                        onClick={() => handleOpenEdit(row._id)}
+                      >
+                        Edit user
+                      </Button>
+                      <Button
+                        variant="contained"
+                        color="secondary"
+                        size="small"
+                        style={{
+                          marginRight: "10px",
+                          backgroundColor: "#14A44D",
+                        }}
+                        onClick={() => handleOpenReset(row._id)}
+                      >
+                        reset password
+                      </Button>
+                      <Button
+                        variant="contained"
+                        color="secondary"
+                        size="small"
+                        style={{
+                          marginRight: "10px",
+                          backgroundColor: "#DC4C64",
+                        }}
+                        onClick={() => handleOpenDelete(row._id)}
+                      >
+                        Delete user
+                      </Button>
+                    </Box>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Paper>
 
       <div
         className={
@@ -226,15 +268,16 @@ const TableUser = () => {
             variant="gradient"
             size="sm"
             className="hidden lg:inline-block opacity-100"
-            onClick={()=>handleOpenDelete(0)}
+            onClick={() => handleOpenDelete(0)}
           >
             <span>close</span>
-          </Button>{id}
+          </Button>
+          {id}
           <Button
             variant="gradient"
             size="sm"
             className="hidden lg:inline-block opacity-100"
-            onClick={()=>handleOpenDelete(0)}
+            onClick={() => handleOpenDelete(0)}
           >
             <span>no</span>
           </Button>
@@ -246,7 +289,7 @@ const TableUser = () => {
           >
             <span>yes</span>
           </Button>
-        </div>        
+        </div>
       </div>
       <div
         className={
@@ -260,15 +303,16 @@ const TableUser = () => {
             variant="gradient"
             size="sm"
             className="hidden lg:inline-block opacity-100"
-            onClick={()=>handleOpenReset(0)}
-            >
+            onClick={() => handleOpenReset(0)}
+          >
             <span>reset</span>
-          </Button>{id}
+          </Button>
+          {id}
           <Button
             variant="gradient"
             size="sm"
             className="hidden lg:inline-block opacity-100"
-            onClick={()=>handleOpenReset(0)}
+            onClick={() => handleOpenReset(0)}
           >
             <span>no</span>
           </Button>
@@ -281,7 +325,6 @@ const TableUser = () => {
             <span>yes</span>
           </Button>
         </div>
-        
       </div>
       <div
         className={
@@ -295,15 +338,16 @@ const TableUser = () => {
             variant="gradient"
             size="sm"
             className="hidden lg:inline-block opacity-100"
-            onClick={()=>handleOpenEdit(0)}
-            >
+            onClick={() => handleOpenEdit(0)}
+          >
             <span>Edit</span>
-          </Button>{id}
+          </Button>
+          {id}
           <Button
             variant="gradient"
             size="sm"
             className="hidden lg:inline-block opacity-100"
-            onClick={()=>handleOpenEdit(0)}
+            onClick={() => handleOpenEdit(0)}
           >
             <span>no</span>
           </Button>
@@ -316,7 +360,6 @@ const TableUser = () => {
             <span>yes</span>
           </Button>
         </div>
-        
       </div>
     </>
   );
