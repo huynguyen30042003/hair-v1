@@ -1,129 +1,85 @@
-'use client';
-
-import { useState } from 'react';
-import Layout from '../components/Layout';
-import { Bar, Line, Pie } from 'react-chartjs-2';
+"use client";
+import { useState, useEffect } from "react";
+import { getUsers, getAppointments } from "../../../api/route";
+import { useSession } from "next-auth/react";
 import {
-  Button, Card, CardBody, Typography, Select, Option,
-} from '@material-tailwind/react';
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement, PointElement, LineElement } from 'chart.js';
-import Chance from 'chance';
-
-const chance = new Chance();
-
-// Đăng ký các thành phần của Chart.js
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-  ArcElement,
-  PointElement,
-  LineElement
-);
+  ChartBarIcon,
+  UserCircleIcon,
+  CalendarDaysIcon,
+} from "@heroicons/react/24/outline";
 
 const DashboardPage = () => {
-  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
+  const { data: session } = useSession();
+  const [users, setUsers] = useState([]);
+  const [appointments, setAppointments] = useState([]);
 
-  const years = [2021, 2022, 2023, 2024]; // Các năm cho bộ lọc
-  const months = Array.from({ length: 12 }, (_, i) => i + 1); // Các tháng từ 1 đến 12
+  useEffect(() => {
+    if (session) {
+      const fetchUsers = async () => {
+        const usersData = await getUsers(session.token);
+        setUsers(usersData);
+      };
 
-  const [employeeData, setEmployeeData] = useState({
-    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
-    datasets: [
-      {
-        label: 'Employees',
-        data: [12, 19, 3, 5, 2, 3, 9],
-        backgroundColor: 'rgba(75, 192, 192, 0.6)',
-      },
-    ],
-  });
+      const fetchAppointments = async () => {
+        const appointmentsData = await getAppointments(session.token);
+        setAppointments(appointmentsData);
+      };
 
-  const [serviceData, setServiceData] = useState({
-    labels: ['Haircut', 'Shave', 'Facial', 'Manicure'],
-    datasets: [
-      {
-        label: 'Services',
-        data: [55, 23, 34, 12],
-        backgroundColor: [
-          'rgba(255, 99, 132, 0.6)',
-          'rgba(54, 162, 235, 0.6)',
-          'rgba(255, 206, 86, 0.6)',
-          'rgba(75, 192, 192, 0.6)',
-        ],
-      },
-    ],
-  });
-
-  const [revenueData, setRevenueData] = useState({
-    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
-    datasets: [
-      {
-        label: 'Revenue',
-        data: Array.from({ length: 7 }, () => chance.integer({ min: 1000, max: 5000 })),
-        borderColor: 'rgba(75, 192, 192, 1)',
-        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-      },
-    ],
-  });
-
-  const handleYearChange = (event) => {
-    setSelectedYear(event.target.value);
-    // Cập nhật dữ liệu biểu đồ theo năm
-  };
-
-  const handleMonthChange = (event) => {
-    setSelectedMonth(event.target.value);
-    // Cập nhật dữ liệu biểu đồ theo tháng
-  };
+      fetchUsers();
+      fetchAppointments();
+    }
+  }, [session]);
 
   return (
-    <Layout>
-      <div className="container mx-auto p-4">
-        <Typography variant="h1" className="mb-4">Staff Dashboard</Typography>
-
-        <div className="flex space-x-4 mb-6">
-          <Select label="Select year" value={selectedYear} onChange={handleYearChange}>
-            {years.map((year) => (
-              <Option key={year} value={year}>{year}</Option>
-            ))}
-          </Select>
-          <Select label="Select month" value={selectedMonth} onChange={handleMonthChange}>
-            {months.map((month) => (
-              <Option key={month} value={month}>{month}</Option>
-            ))}
-          </Select>
+    <div>
+      <h1 className="text-2xl font-bold mb-4">Bảng điều khiển nhân viên</h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="bg-white p-4 rounded-lg shadow-md flex items-center">
+          <UserCircleIcon className="h-12 w-12 text-blue-500 mr-4" />
+          <div>
+            <h2 className="text-xl font-semibold">Tổng số người dùng</h2>
+            <p className="text-2xl">{users.length}</p>
+          </div>
         </div>
-
-        <Card className="mb-6">
-          <CardBody>
-            <Typography variant="h2">Staff statistics</Typography>
-            <div className="relative h-64">
-              <Bar data={employeeData} options={{ maintainAspectRatio: false }} />
-            </div>
-          </CardBody>
-        </Card>
-        <Card className="mb-6">
-          <CardBody>
-            <Typography variant="h2">Service statistics</Typography>
-            <div className="relative h-64">
-              <Pie data={serviceData} options={{ maintainAspectRatio: false }} />
-            </div>
-          </CardBody>
-        </Card>
-        <Card className="mb-6">
-          <CardBody>
-            <Typography variant="h2">Revenue</Typography>
-            <div className="relative h-64">
-              <Line data={revenueData} options={{ maintainAspectRatio: false }} />
-            </div>
-          </CardBody>
-        </Card>
+        <div className="bg-white p-4 rounded-lg shadow-md flex items-center">
+          <CalendarDaysIcon className="h-12 w-12 text-green-500 mr-4" />
+          <div>
+            <h2 className="text-xl font-semibold">Tổng số lịch hẹn</h2>
+            <p className="text-2xl">{appointments.length}</p>
+          </div>
+        </div>
+        <div className="bg-white p-4 rounded-lg shadow-md flex items-center">
+          <ChartBarIcon className="h-12 w-12 text-yellow-500 mr-4" />
+          <div>
+            <h2 className="text-xl font-semibold">Doanh thu tháng này</h2>
+            <p className="text-2xl">$10,000</p>
+          </div>
+        </div>
       </div>
-    </Layout>
+      <div className="bg-white p-4 rounded-lg shadow-md mt-4">
+        <h2 className="text-xl font-semibold mb-2">
+          Danh sách lịch hẹn sắp tới
+        </h2>
+        <ul>
+          {appointments.slice(0, 5).map((appointment) => (
+            <li
+              key={appointment.id}
+              className="flex items-center justify-between p-2 border-b"
+            >
+              <div>
+                <p className="font-semibold">{appointment.title}</p>
+                <p>
+                  {appointment.date} - {appointment.time}
+                </p>
+              </div>
+              <div className="flex items-center">
+                <CalendarDaysIcon className="h-5 w-5 text-gray-500 mr-2" />
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
   );
 };
 

@@ -1,16 +1,18 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import Header from "./components/Header";
+import Sidebar from "./components/Sidebar";
 
-const StaffHome = () => {
-  const router = useRouter();
-
-  useEffect(() => {
-    router.push('/staff/dashboard');
-  }, [router]);
-
-  return null;
+const StaffPage = ({ children }) => {
+  return (
+    <div>
+      <Header />
+      <div style={{ display: "flex" }}>
+        <Sidebar />
+        <main style={{ padding: "20px", flexGrow: 1 }}>{children}</main>
+      </div>
+    </div>
+  );
 };
 
-export default StaffHome;
+export default StaffPage;

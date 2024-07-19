@@ -1,146 +1,108 @@
-'use client';
-
-import { useState } from 'react';
-import { PencilIcon, TrashIcon, PlusIcon, CheckIcon } from '@heroicons/react/24/outline';
-import { Button, Dialog, DialogHeader, DialogBody, DialogFooter, Input, Card, CardBody, Typography } from '@material-tailwind/react';
-import Layout from '../components/Layout';
-
-const sampleData = [
-  { id: 1, customer: 'kien', date: '2023-07-20', time: '10:00 AM', status: 'Confirmed' },
-  { id: 2, customer: 'mic', date: '2023-07-21', time: '02:00 PM', status: 'Pending' },
-];
+"use client";
+import { useState, useEffect } from "react";
+import { getAppointments, createAppointment, updateAppointment, deleteAppointment } from "../../../api/route";
+import { useSession } from "next-auth/react";
+import { Button, Input } from "@material-tailwind/react";
+import { PlusCircleIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 
 const AppointmentsPage = () => {
-  const [appointments, setAppointments] = useState(sampleData);
-  const [openDialog, setOpenDialog] = useState(false);
-  const [currentAppointment, setCurrentAppointment] = useState(null);
-  const [isEditing, setIsEditing] = useState(false);
+  const { data: session } = useSession();
+  const [appointments, setAppointments] = useState([]);
+  const [formData, setFormData] = useState({ title: "", date: "", time: "" });
+  const [editingId, setEditingId] = useState(null);
 
-  const handleAddClick = () => {
-    setIsEditing(false);
-    setCurrentAppointment({ id: null, customer: '', date: '', time: '', status: 'Pending' });
-    setOpenDialog(true);
-  };
-
-  const handleEditClick = (appointment) => {
-    setIsEditing(true);
-    setCurrentAppointment(appointment);
-    setOpenDialog(true);
-  };
-
-  const handleDeleteClick = (appointmentId) => {
-    setAppointments(appointments.filter(appointment => appointment.id !== appointmentId));
-  };
-
-  const handleConfirmClick = (appointmentId) => {
-    setAppointments(appointments.map(appointment => 
-      appointment.id === appointmentId ? { ...appointment, status: 'Confirmed' } : appointment
-    ));
-  };
-
-  const handleSave = () => {
-    if (isEditing) {
-      setAppointments(appointments.map(appointment => 
-        (appointment.id === currentAppointment.id ? currentAppointment : appointment)
-      ));
-    } else {
-      setAppointments([...appointments, { ...currentAppointment, id: appointments.length + 1 }]);
+  useEffect(() => {
+    if (session) {
+      const fetchAppointments = async () => {
+        const data = await getAppointments(session.token);
+        setAppointments(data);
+      };
+      fetchAppointments();
     }
-    setOpenDialog(false);
+  }, [session]);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevState) => ({ ...prevState, [name]: value }));
+  };
+
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    if (editingId) {
+      await updateAppointment(editingId, formData, session.token);
+      setEditingId(null);
+    } else {
+      await createAppointment(formData, session.token);
+    }
+    const data = await getAppointments(session.token);
+    setAppointments(data);
+    setFormData({ title: "", date: "", time: "" });
+  };
+
+  const handleEdit = (appointment) => {
+    setEditingId(appointment.id);
+    setFormData({ title: appointment.title, date: appointment.date, time: appointment.time });
+  };
+
+  const handleDelete = async (id) => {
+    await deleteAppointment(id, session.token);
+    const data = await getAppointments(session.token);
+    setAppointments(data);
   };
 
   return (
-    <Layout>
-      <div className="container mx-auto p-4">
-        <div className="flex justify-between items-center mb-4">
-          <Typography variant="h1">Appointment Management</Typography>
-          <Button color="green" onClick={handleAddClick}>
-            <PlusIcon className="h-5 w-5 mr-2" />
-            Add Appointment
+    <div>
+      <h1 className="text-2xl font-bold mb-4">Quản lý lịch hẹn</h1>
+      <div className="bg-white p-4 rounded-lg shadow-md mb-4">
+        <h2 className="text-xl font-semibold mb-2">{editingId ? "Chỉnh sửa lịch hẹn" : "Tạo lịch hẹn"}</h2>
+        <form onSubmit={handleFormSubmit}>
+          <Input
+            type="text"
+            name="title"
+            label="Tiêu đề"
+            value={formData.title}
+            onChange={handleInputChange}
+            required
+          />
+          <Input
+            type="date"
+            name="date"
+            label="Ngày"
+            value={formData.date}
+            onChange={handleInputChange}
+            required
+          />
+          <Input
+            type="time"
+            name="time"
+            label="Giờ"
+            value={formData.time}
+            onChange={handleInputChange}
+            required
+          />
+          <Button type="submit" className="mt-2">
+            {editingId ? "Cập nhật" : "Tạo mới"}
           </Button>
-        </div>
-        <Card>
-          <CardBody>
-            <table className="min-w-full bg-white">
-              <thead>
-                <tr>
-                  <th className="w-1/4 px-4 py-2">Customer</th>
-                  <th className="w-1/4 px-4 py-2">Day</th>
-                  <th className="w-1/4 px-4 py-2">Time</th>
-                  <th className="w-1/4 px-4 py-2">Status</th>
-                  <th className="px-4 py-2">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {appointments.map((appointment) => (
-                  <tr key={appointment.id}>
-                    <td className="border px-4 py-2">{appointment.customer}</td>
-                    <td className="border px-4 py-2">{appointment.date}</td>
-                    <td className="border px-4 py-2">{appointment.time}</td>
-                    <td className="border px-4 py-2">{appointment.status}</td>
-                    <td className="border px-4 py-2 flex space-x-2">
-                      <Button color="blue" size="sm" onClick={() => handleEditClick(appointment)}>
-                        <PencilIcon className="h-5 w-5" />
-                      </Button>
-                      <Button color="red" size="sm" onClick={() => handleDeleteClick(appointment.id)}>
-                        <TrashIcon className="h-5 w-5" />
-                      </Button>
-                      {appointment.status !== 'Confirmed' && (
-                        <Button color="green" size="sm" onClick={() => handleConfirmClick(appointment.id)}>
-                          <CheckIcon className="h-5 w-5" />
-                        </Button>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </CardBody>
-        </Card>
-
-        <Dialog open={openDialog} handler={setOpenDialog}>
-          <DialogHeader>{isEditing ? 'Edit Appointment' : 'Add Appointment'}</DialogHeader>
-          <DialogBody divider>
-            <div className="space-y-4">
-              <Input
-                type="text"
-                label="Customer"
-                value={currentAppointment?.customer}
-                onChange={(e) => setCurrentAppointment({ ...currentAppointment, customer: e.target.value })}
-              />
-              <Input
-                type="date"
-                label="Day"
-                value={currentAppointment?.date}
-                onChange={(e) => setCurrentAppointment({ ...currentAppointment, date: e.target.value })}
-              />
-              <Input
-                type="time"
-                label="Time"
-                value={currentAppointment?.time}
-                onChange={(e) => setCurrentAppointment({ ...currentAppointment, time: e.target.value })}
-              />
-              <select
-                className="form-select mt-1 block w-full"
-                value={currentAppointment?.status}
-                onChange={(e) => setCurrentAppointment({ ...currentAppointment, status: e.target.value })}
-              >
-                <option value="Pending">Pending</option>
-                <option value="Confirmed">Confirmed</option>
-              </select>
-            </div>
-          </DialogBody>
-          <DialogFooter>
-            <Button variant="text" color="red" onClick={() => setOpenDialog(false)}>
-              Cancel
-            </Button>
-            <Button variant="gradient" color="green" onClick={handleSave}>
-              Save
-            </Button>
-          </DialogFooter>
-        </Dialog>
+        </form>
       </div>
-    </Layout>
+      <div className="bg-white p-4 rounded-lg shadow-md">
+        <h2 className="text-xl font-semibold mb-2">Danh sách lịch hẹn</h2>
+        <ul>
+          {appointments.map((appointment) => (
+            <li key={appointment.id} className="flex items-center justify-between p-2 border-b">
+              <div>
+                <p className="font-semibold">{appointment.title}</p>
+                <p>{appointment.date} - {appointment.time}</p>
+              </div>
+              <div className="flex items-center">
+                <PencilIcon className="h-5 w-5 text-blue-500 mr-2 cursor-pointer" onClick={() => handleEdit(appointment)} />
+                <TrashIcon className="h-5 w-5 text-red-500 cursor-pointer" onClick={() => handleDelete(appointment.id)} />
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
   );
 };
 

@@ -1,102 +1,51 @@
-'use client';
-
-import { useState } from "react";
-import Link from "next/link";
-import { Drawer, IconButton, Typography } from "@material-tailwind/react";
-import {
-  Bars3Icon,
-  XMarkIcon,
-  UserCircleIcon,
-  Cog6ToothIcon,
-  StarIcon,
-  CalendarDaysIcon,
-  ChartBarIcon,
-  MagnifyingGlassIcon,
-} from "@heroicons/react/24/outline";
-import styles from "./Sidebar.module.css";
+"use client";
+import { useState } from 'react';
+import Link from 'next/link';
+import { Bars3Icon, XMarkIcon, UserCircleIcon, Cog6ToothIcon, StarIcon, CalendarDaysIcon, ChartBarIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 
 const Sidebar = () => {
-  const [open, setOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
 
-  const toggleDrawer = () => {
-    setOpen(!open);
+  const toggleSidebar = () => {
+    setIsOpen(!isOpen);
   };
 
   return (
-    <div className={styles.container}>
-      <IconButton onClick={toggleDrawer} className={styles.iconButton}>
-        {open ? (
-          <XMarkIcon className="h-6 w-6" />
-        ) : (
-          <Bars3Icon className="h-6 w-6" />
-        )}
-      </IconButton>
-      <div className={`${styles.drawer} ${open ? styles.open : styles.closed}`}>
-        <div className="p-4 bg-gray-100 h-full">
-          <div className="mb-6">
-            <Typography variant="h5" color="blue-gray" className="text-center">
-              Menu
-            </Typography>
-          </div>
-          <ul>
-            <li className="mb-4 flex items-center hover:bg-gray-200 p-2 rounded-md">
-              <UserCircleIcon className="h-5 w-5 mr-2" />
-              <Link
-                href="/staff/account"
-                className="text-blue-500 hover:underline"
-              >
-                Account Management
-              </Link>
-            </li>
-            <li className="mb-4 flex items-center hover:bg-gray-200 p-2 rounded-md">
-              <Cog6ToothIcon className="h-5 w-5 mr-2" />
-              <Link
-                href="/staff/services"
-                className="text-blue-500 hover:underline"
-              >
-                Service Management
-              </Link>
-            </li>
-            <li className="mb-4 flex items-center hover:bg-gray-200 p-2 rounded-md">
-              <StarIcon className="h-5 w-5 mr-2" />
-              <Link
-                href="/staff/reviews"
-                className="text-blue-500 hover:underline"
-              >
-                Feedback Management
-              </Link>
-            </li>
-            <li className="mb-4 flex items-center hover:bg-gray-200 p-2 rounded-md">
-              <CalendarDaysIcon className="h-5 w-5 mr-2" />
-              <Link
-                href="/staff/appointments"
-                className="text-blue-500 hover:underline"
-              >
-                Appointment Management
-              </Link>
-            </li>
-            <li className="mb-4 flex items-center hover:bg-gray-200 p-2 rounded-md">
-              <ChartBarIcon className="h-5 w-5 mr-2" />
-              <Link
-                href="/staff/dashboard"
-                className="text-blue-500 hover:underline"
-              >
-                Dashboard
-              </Link>
-            </li>
-            <li className="mb-4 flex items-center hover:bg-gray-200 p-2 rounded-md">
-              <MagnifyingGlassIcon className="h-5 w-5 mr-2" />
-              <Link
-                href="/staff/search"
-                className="text-blue-500 hover:underline"
-              >
-                Search
-              </Link>
-            </li>
-          </ul>
-        </div>
+    <aside className={`bg-gray-800 text-white ${isOpen ? 'w-64' : 'w-20'} h-screen transition-width duration-300`}>
+      <div className="flex items-center justify-between p-4">
+        <button onClick={toggleSidebar}>
+          {isOpen ? <XMarkIcon className="h-6 w-6" /> : <Bars3Icon className="h-6 w-6" />}
+        </button>
       </div>
-    </div>
+      <nav className="mt-5">
+        <ul>
+          <li className="flex items-center p-2 hover:bg-gray-700">
+            <UserCircleIcon className="h-6 w-6" />
+            {isOpen && <Link href="/staff/account" className="ml-3">Quản lý tài khoản</Link>}
+          </li>
+          <li className="flex items-center p-2 hover:bg-gray-700">
+            <Cog6ToothIcon className="h-6 w-6" />
+            {isOpen && <Link href="/staff/services" className="ml-3">Quản lý dịch vụ và sản phẩm</Link>}
+          </li>
+          <li className="flex items-center p-2 hover:bg-gray-700">
+            <StarIcon className="h-6 w-6" />
+            {isOpen && <Link href="/staff/reviews" className="ml-3">Quản lý đánh giá và rate</Link>}
+          </li>
+          <li className="flex items-center p-2 hover:bg-gray-700">
+            <CalendarDaysIcon className="h-6 w-6" />
+            {isOpen && <Link href="/staff/appointments" className="ml-3">Quản lý lịch hẹn</Link>}
+          </li>
+          <li className="flex items-center p-2 hover:bg-gray-700">
+            <ChartBarIcon className="h-6 w-6" />
+            {isOpen && <Link href="/staff/dashboard" className="ml-3">Bảng điều khiển nhân viên</Link>}
+          </li>
+          <li className="flex items-center p-2 hover:bg-gray-700">
+            <MagnifyingGlassIcon className="h-6 w-6" />
+            {isOpen && <Link href="/staff/search" className="ml-3">Chức năng tìm kiếm</Link>}
+          </li>
+        </ul>
+      </nav>
+    </aside>
   );
 };
 

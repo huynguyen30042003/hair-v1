@@ -1,8 +1,9 @@
 "use client";
 import React, { useEffect } from "react";
-import "animate.css"; 
-import {jarallax} from "jarallax";
-import "jarallax/dist/jarallax.css"; 
+import "wowjs/css/libs/animate.css"; // Import animate.css for Wow.js animations
+import WOW from "wowjs";
+import "jarallax";
+import "jarallax/dist/jarallax.css"; // Import the Jarallax CSS file
 import Image from "next/image";
 import Head from "next/head";
 
@@ -34,17 +35,17 @@ import service4 from "@data/images/services/4.jpg";
 
 const Home = () => {
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const WOW = require('wowjs');
-      const wow = new WOW.WOW({
-        boxClass: "wow",
-        animateClass: "animated",
-        offset: 0,
-        mobile: true,
-        live: true,
-      });
-      wow.init();
+    const wow = new WOW.WOW({
+      boxClass: "wow",
+      animateClass: "animated",
+      offset: 0,
+      mobile: true,
+      live: true,
+    });
+    wow.init();
 
+    if (typeof window !== "undefined") {
+      const { jarallax } = require("jarallax");
       jarallax(document.querySelectorAll(".jarallax"), {
         speed: 0.2,
       });
@@ -61,8 +62,8 @@ const Home = () => {
           type="image/gif"
           sizes="16x16"
         />
-        <meta charSet="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta content="text/html;charset=utf-8" http-equiv="Content-Type" />
+        <meta content="width=device-width, initial-scale=1.0" name="viewport" />
         <meta
           content="Blaxcut - Barbershop Website Template"
           name="description"
@@ -83,11 +84,11 @@ const Home = () => {
                       {/* Logo */}
                       <div id="logo">
                         <a href="index.html">
-                          <Image className="logo-main" src={logo} alt="Logo" />
+                          <Image className="logo-main" src={logo} alt="" />
                           <Image
                             className="logo-mobile"
                             src={logoMobile}
-                            alt="Logo Mobile"
+                            alt=""
                           />
                         </a>
                       </div>
@@ -165,7 +166,7 @@ const Home = () => {
               id="section-hero"
               className="jarallax no-top no-bottom v-center"
             >
-              <Image src={background8} className="jarallax-img" alt="Background" />
+              <Image src={background8} className="jarallax-img" alt="" />
               <div className="container z1000">
                 <div className="row align-items-center">
                   <div className="col-lg-6">
@@ -189,7 +190,7 @@ const Home = () => {
                       className="img-fluid wow fadeInLeft"
                       data-wow-delay=".3s"
                       data-wow-duration="1.5s"
-                      alt="Man"
+                      alt=""
                     />
                   </div>
                 </div>
@@ -250,7 +251,7 @@ const Home = () => {
                                 <Image
                                   src={src}
                                   className="lazy img-fluid"
-                                  alt={`Hairstyle ${index + 1}`}
+                                  alt=""
                                 />
                               </div>
                             </a>
@@ -272,14 +273,14 @@ const Home = () => {
 
             <section className="no-top jarallax">
               <div className="de-gradient-edge-top"></div>
-              <Image src={background1} className="jarallax-img" alt="Background" />
+              <Image src={background1} className="jarallax-img" alt="" />
               <div className="container relative z1000">
                 <div className="row align-items-center">
                   <div className="col-lg-6" data-jarallax-element="-30">
                     <Image
                       src={man2}
                       className="img-fluid wow fadeInRight"
-                      alt="Man"
+                      alt=""
                     />
                   </div>
                   <div className="col-lg-6" data-jarallax-element="-60">
@@ -324,7 +325,7 @@ const Home = () => {
                       >
                         <div className="de-box-a">
                           <div className="d-image">
-                            <Image src={src} alt={`Service ${index + 1}`} />
+                            <Image src={src} alt="" />
                           </div>
                           <div className="d-deco-1"></div>
                           <div className="d-deco-2"></div>
@@ -352,7 +353,7 @@ const Home = () => {
 
             <section className="jarallax no-top">
               <div className="de-gradient-edge-top"></div>
-              <Image src={background1} className="jarallax-img" alt="Background" />
+              <Image src={background1} className="jarallax-img" alt="" />
               <div className="container relative z1000">
                 <div className="row gx-5">
                   <div
@@ -462,7 +463,7 @@ const Home = () => {
                   </div>
                 </div>
                 <div className="col-lg-4 text-lg-center text-center">
-                  <Image src={logo} className="image" alt="Logo" />
+                  <Image src={logo} className="image" alt="" />
                 </div>
                 <div className="col-lg-4 text-lg-end text-center">
                   Copyright 2024 - StyleCuts BaberShop

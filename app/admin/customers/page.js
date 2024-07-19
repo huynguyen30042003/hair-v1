@@ -1,123 +1,115 @@
-'use client';
-
-import { useState } from 'react';
-import { PencilIcon, TrashIcon, PlusIcon } from '@heroicons/react/24/outline';
-import { Button, Dialog, DialogHeader, DialogBody, DialogFooter, Input, Card, CardBody, Typography, Textarea } from '@material-tailwind/react';
-import Layout from '../components/Layout';
-
-const sampleData = [
-  { id: 1, name: 'mic', email: 'mic@example.com', phone: '0123456789' },
-  { id: 2, name: 'kien', email: 'kien@example.com', phone: '0987654321' },
-];
+"use client";
+import { useState, useEffect } from "react";
+import { getCustomers, createCustomer, updateCustomer, deleteCustomer } from "../../../api/route"; // Thêm các hàm API tương ứng
+import { useSession } from "next-auth/react";
+import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { Button, Input } from "@material-tailwind/react";
 
 const CustomersPage = () => {
-  const [items, setItems] = useState(sampleData);
-  const [openDialog, setOpenDialog] = useState(false);
-  const [currentItem, setCurrentItem] = useState(null);
-  const [isEditing, setIsEditing] = useState(false);
+  const { data: session } = useSession();
+  const [customers, setCustomers] = useState([]);
+  const [formData, setFormData] = useState({ name: "", email: "", phone: "" });
+  const [editingId, setEditingId] = useState(null);
 
-  const handleAddClick = () => {
-    setIsEditing(false);
-    setCurrentItem({ id: null, name: '', email: '', phone: '' });
-    setOpenDialog(true);
-  };
-
-  const handleEditClick = (item) => {
-    setIsEditing(true);
-    setCurrentItem(item);
-    setOpenDialog(true);
-  };
-
-  const handleDeleteClick = (itemId) => {
-    setItems(items.filter(item => item.id !== itemId));
-  };
-
-  const handleSave = () => {
-    if (isEditing) {
-      setItems(items.map(item => (item.id === currentItem.id ? currentItem : item)));
-    } else {
-      setItems([...items, { ...currentItem, id: items.length + 1 }]);
+  useEffect(() => {
+    if (session) {
+      const fetchCustomers = async () => {
+        const customersData = await getCustomers(session.token);
+        setCustomers(customersData);
+      };
+      fetchCustomers();
     }
-    setOpenDialog(false);
+  }, [session]);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevState) => ({ ...prevState, [name]: value }));
+  };
+
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    if (editingId) {
+      await updateCustomer(editingId, formData, session.token);
+      setEditingId(null);
+    } else {
+      await createCustomer(formData, session.token);
+    }
+    const customersData = await getCustomers(session.token);
+    setCustomers(customersData);
+    setFormData({ name: "", email: "", phone: "" });
+  };
+
+  const handleEdit = (customer) => {
+    setEditingId(customer.id);
+    setFormData({ name: customer.name, email: customer.email, phone: customer.phone });
+  };
+
+  const handleDelete = async (id) => {
+    await deleteCustomer(id, session.token);
+    const customersData = await getCustomers(session.token);
+    setCustomers(customersData);
   };
 
   return (
-    <Layout>
-      <div className="container mx-auto p-4">
-        <div className="flex justify-between items-center mb-4">
-          <Typography variant="h1">Customer Management</Typography>
-          <Button color="green" onClick={handleAddClick}>
-            <PlusIcon className="h-5 w-5 mr-2" />
-            Add Customer
+    <div>
+      <h1 className="text-2xl font-bold mb-4">Quản lý khách hàng</h1>
+      <div className="bg-white p-4 rounded-lg shadow-md mb-4">
+        <h2 className="text-xl font-semibold mb-2">{editingId ? "Chỉnh sửa khách hàng" : "Thêm khách hàng mới"}</h2>
+        <form onSubmit={handleFormSubmit}>
+          <Input
+            type="text"
+            name="name"
+            label="Tên"
+            value={formData.name}
+            onChange={handleInputChange}
+            required
+          />
+          <Input
+            type="email"
+            name="email"
+            label="Email"
+            value={formData.email}
+            onChange={handleInputChange}
+            required
+          />
+          <Input
+            type="text"
+            name="phone"
+            label="Số điện thoại"
+            value={formData.phone}
+            onChange={handleInputChange}
+            required
+          />
+          <Button type="submit" className="mt-2">
+            {editingId ? "Cập nhật" : "Thêm mới"}
           </Button>
-        </div>
-        <Card>
-          <CardBody>
-            <table className="min-w-full bg-white">
-              <thead>
-                <tr>
-                  <th className="w-1/4 px-4 py-2">Customer name</th>
-                  <th className="w-1/4 px-4 py-2">Email</th>
-                  <th className="w-1/4 px-4 py-2">Phone number</th>
-                  <th className="px-4 py-2">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {items.map((item) => (
-                  <tr key={item.id}>
-                    <td className="border px-4 py-2">{item.name}</td>
-                    <td className="border px-4 py-2">{item.email}</td>
-                    <td className="border px-4 py-2">{item.phone}</td>
-                    <td className="border px-4 py-2 flex space-x-2">
-                      <Button color="blue" size="sm" onClick={() => handleEditClick(item)}>
-                        <PencilIcon className="h-5 w-5" />
-                      </Button>
-                      <Button color="red" size="sm" onClick={() => handleDeleteClick(item.id)}>
-                        <TrashIcon className="h-5 w-5" />
-                      </Button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </CardBody>
-        </Card>
-
-        <Dialog open={openDialog} handler={setOpenDialog}>
-          <DialogHeader>{isEditing ? 'Edit Customer' : 'Add Customer'}</DialogHeader>
-          <DialogBody divider>
-            <div className="space-y-4">
-              <Input
-                type="text"
-                label="Customer name"
-                value={currentItem?.name}
-                onChange={(e) => setCurrentItem({ ...currentItem, name: e.target.value })}
-              />
-              <Input
-                type="email"
-                label="Email"
-                value={currentItem?.email}
-                onChange={(e) => setCurrentItem({ ...currentItem, email: e.target.value })}
-              />
-              <Input
-                type="text"
-                label="phone number"
-                value={currentItem?.phone}
-                onChange={(e) => setCurrentItem({ ...currentItem, phone: e.target.value })}
-              />
-            </div>
-          </DialogBody>
-          <DialogFooter>
-            <Button variant="text" color="red" onClick={() => setOpenDialog(false)}>
-              Hủy bỏ
-            </Button>
-            <Button variant="gradient" color="green" onClick={handleSave}>
-              Lưu
-            </Button>
-          </DialogFooter>
-        </Dialog>
+        </form>
       </div>
-    </Layout>
+      <div className="bg-white p-4 rounded-lg shadow-md">
+        <h2 className="text-xl font-semibold mb-2">Danh sách khách hàng</h2>
+        <ul>
+          {customers.map((customer) => (
+            <li key={customer.id} className="flex items-center justify-between p-2 border-b">
+              <div>
+                <p className="font-semibold">{customer.name}</p>
+                <p>Email: {customer.email}</p>
+                <p>Số điện thoại: {customer.phone}</p>
+              </div>
+              <div className="flex items-center">
+                <PencilIcon
+                  className="h-5 w-5 text-blue-500 mr-2 cursor-pointer"
+                  onClick={() => handleEdit(customer)}
+                />
+                <TrashIcon
+                  className="h-5 w-5 text-red-500 cursor-pointer"
+                  onClick={() => handleDelete(customer.id)}
+                />
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
   );
 };
 

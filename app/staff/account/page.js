@@ -1,124 +1,115 @@
-'use client';
-
-import { useState } from 'react';
-import { PencilIcon, TrashIcon, PlusIcon } from '@heroicons/react/24/outline';
-import { Button, Dialog, DialogHeader, DialogBody, DialogFooter, Input, Card, CardBody, Typography } from '@material-tailwind/react';
-import Layout from '../components/Layout';
-
-const sampleData = [
-  { id: 1, name: 'kien', email: 'kien@example.com', phone: '0123456789' },
-  { id: 2, name: 'mic', email: 'mic@example.com', phone: '0987654321' },
-];
+"use client";
+import {
+  UserCircleIcon,
+  PencilIcon,
+  TrashIcon,
+} from "@heroicons/react/24/outline";
+import { Button, Input } from "@material-tailwind/react";
+import { useState } from "react";
 
 const AccountPage = () => {
-  const [accounts, setAccounts] = useState(sampleData);
-  const [openDialog, setOpenDialog] = useState(false);
-  const [currentAccount, setCurrentAccount] = useState(null);
-  const [isEditing, setIsEditing] = useState(false);
+  const profile = {
+    name: "Nguyễn Văn A",
+    email: "nguyenvana@example.com",
+    phone: "0123456789",
+  };
+  const users = [
+    { id: 1, name: "Nguyễn Văn B", email: "nguyenvanb@example.com" },
+    { id: 2, name: "Trần Thị C", email: "tranthic@example.com" },
+    { id: 3, name: "Lê Văn D", email: "levand@example.com" },
+  ];
+  const [editingProfile, setEditingProfile] = useState(false);
+  const [formData, setFormData] = useState({
+    name: profile.name,
+    email: profile.email,
+    phone: profile.phone,
+  });
 
-  const handleAddClick = () => {
-    setIsEditing(false);
-    setCurrentAccount({ id: null, name: '', email: '', phone: '' });
-    setOpenDialog(true);
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
   };
 
-  const handleEditClick = (account) => {
-    setIsEditing(true);
-    setCurrentAccount(account);
-    setOpenDialog(true);
-  };
-
-  const handleDeleteClick = (accountId) => {
-    setAccounts(accounts.filter(account => account.id !== accountId));
-  };
-
-  const handleSave = () => {
-    if (isEditing) {
-      setAccounts(accounts.map(acc => (acc.id === currentAccount.id ? currentAccount : acc)));
-    } else {
-      setCurrentAccount(prev => ({ ...prev, id: accounts.length + 1 }));
-      setAccounts([...accounts, { ...currentAccount, id: accounts.length + 1 }]);
-    }
-    setOpenDialog(false);
+  const handleProfileUpdate = () => {
+    setEditingProfile(false);
+    // Cập nhật logic ở đây
   };
 
   return (
-    <Layout>
-      <div className="container mx-auto p-4">
-        <div className="flex justify-between items-center mb-4">
-          <Typography variant="h1">Account Management</Typography>
-          <Button color="green" onClick={handleAddClick}>
-            <PlusIcon className="h-5 w-5 mr-2" />
-            Add Account
-          </Button>
-        </div>
-        <Card>
-          <CardBody>
-            <table className="min-w-full bg-white">
-              <thead>
-                <tr>
-                  <th className="w-1/3 px-4 py-2">Name</th>
-                  <th className="w-1/3 px-4 py-2">Email</th>
-                  <th className="w-1/3 px-4 py-2">Phone number</th>
-                  <th className="px-4 py-2">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {accounts.map((account) => (
-                  <tr key={account.id}>
-                    <td className="border px-4 py-2">{account.name}</td>
-                    <td className="border px-4 py-2">{account.email}</td>
-                    <td className="border px-4 py-2">{account.phone}</td>
-                    <td className="border px-4 py-2 flex space-x-2">
-                      <Button color="blue" size="sm" onClick={() => handleEditClick(account)}>
-                        <PencilIcon className="h-5 w-5" />
-                      </Button>
-                      <Button color="red" size="sm" onClick={() => handleDeleteClick(account.id)}>
-                        <TrashIcon className="h-5 w-5" />
-                      </Button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </CardBody>
-        </Card>
-
-        <Dialog open={openDialog} handler={setOpenDialog}>
-          <DialogHeader>{isEditing ? 'Edit Account' : 'Add Account'}</DialogHeader>
-          <DialogBody divider>
-            <div className="space-y-4">
-              <Input
-                type="text"
-                label="Name"
-                value={currentAccount?.name}
-                onChange={(e) => setCurrentAccount({ ...currentAccount, name: e.target.value })}
-              />
-              <Input
-                type="email"
-                label="Email"
-                value={currentAccount?.email}
-                onChange={(e) => setCurrentAccount({ ...currentAccount, email: e.target.value })}
-              />
-              <Input
-                type="text"
-                label="Phone number"
-                value={currentAccount?.phone}
-                onChange={(e) => setCurrentAccount({ ...currentAccount, phone: e.target.value })}
-              />
-            </div>
-          </DialogBody>
-          <DialogFooter>
-            <Button variant="text" color="red" onClick={() => setOpenDialog(false)}>
-              Cancel
+    <div>
+      <h1 className="text-2xl font-bold mb-4">Quản lý tài khoản</h1>
+      <div className="bg-white p-4 rounded-lg shadow-md">
+        <h2 className="text-xl font-semibold mb-2">Thông tin cá nhân</h2>
+        {editingProfile ? (
+          <div>
+            <Input
+              type="text"
+              name="name"
+              label="Tên"
+              value={formData.name}
+              onChange={handleInputChange}
+            />
+            <Input
+              type="email"
+              name="email"
+              label="Email"
+              value={formData.email}
+              onChange={handleInputChange}
+            />
+            <Input
+              type="text"
+              name="phone"
+              label="Số điện thoại"
+              value={formData.phone}
+              onChange={handleInputChange}
+            />
+            <Button onClick={handleProfileUpdate} className="mt-2">
+              Cập nhật
             </Button>
-            <Button variant="gradient" color="green" onClick={handleSave}>
-              Save
+            <Button
+              onClick={() => setEditingProfile(false)}
+              className="mt-2 ml-2"
+            >
+              Hủy
             </Button>
-          </DialogFooter>
-        </Dialog>
+          </div>
+        ) : (
+          <div>
+            <p>Tên: {profile.name}</p>
+            <p>Email: {profile.email}</p>
+            <p>Số điện thoại: {profile.phone}</p>
+            <Button onClick={() => setEditingProfile(true)} className="mt-2">
+              Chỉnh sửa
+            </Button>
+          </div>
+        )}
       </div>
-    </Layout>
+      <div className="bg-white p-4 rounded-lg shadow-md mt-4">
+        <h2 className="text-xl font-semibold mb-2">Danh sách người dùng</h2>
+        <ul>
+          {users.map((user) => (
+            <li
+              key={user.id}
+              className="flex items-center justify-between p-2 border-b"
+            >
+              <div className="flex items-center">
+                <UserCircleIcon className="h-6 w-6 mr-2" />
+                <span>
+                  {user.name} - {user.email}
+                </span>
+              </div>
+              <div className="flex items-center">
+                <PencilIcon className="h-5 w-5 text-blue-500 mr-2 cursor-pointer" />
+                <TrashIcon className="h-5 w-5 text-red-500 cursor-pointer" />
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
   );
 };
 

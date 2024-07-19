@@ -1,112 +1,115 @@
 "use client";
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { getServices, createService, updateService, deleteService } from "../../../api/route";
+import { useSession } from "next-auth/react";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
-import {
-  Button,
-  Input,
-  Card,
-  CardBody,
-  Typography,
-} from "@material-tailwind/react";
-import Layout from "../components/Layout";
+import { Button, Input, Textarea } from "@material-tailwind/react";
 
-const sampleData = {
-  Service: [
-    {
-      id: 1,
-      name: "Kien",
-      category: "Service",
-      description: "Basic haircut",
-      price: 15,
-    },
-    {
-      id: 2,
-      name: "Mic",
-      category: "Service",
-      description: "Shampoo for all hair types",
-      price: 10,
-    },
-  ],
-};
+const ServicesPage = () => {
+  const { data: session } = useSession();
+  const [services, setServices] = useState([]);
+  const [formData, setFormData] = useState({ name: "", description: "", price: "" });
+  const [editingId, setEditingId] = useState(null);
 
-const SearchPage = () => {
-  const [items, setItems] = useState(sampleData.Service);
-  const [searchQuery, setSearchQuery] = useState("");
+  useEffect(() => {
+    if (session) {
+      const fetchServices = async () => {
+        const servicesData = await getServices(session.token);
+        setServices(servicesData);
+      };
+      fetchServices();
+    }
+  }, [session]);
 
-  const handleSearch = (e) => {
-    setSearchQuery(e.target.value);
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevState) => ({ ...prevState, [name]: value }));
   };
 
-  const filteredItems = items.filter((item) => {
-    return item.name.toLowerCase().includes(searchQuery.toLowerCase());
-  });
-
-  const handleEditClick = (item) => {
-    // Logic for editing an item
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    if (editingId) {
+      await updateService(editingId, formData, session.token);
+      setEditingId(null);
+    } else {
+      await createService(formData, session.token);
+    }
+    const servicesData = await getServices(session.token);
+    setServices(servicesData);
+    setFormData({ name: "", description: "", price: "" });
   };
 
-  const handleDeleteClick = (itemId) => {
-    setItems(items.filter((item) => item.id !== itemId));
+  const handleEdit = (service) => {
+    setEditingId(service.id);
+    setFormData({ name: service.name, description: service.description, price: service.price });
+  };
+
+  const handleDelete = async (id) => {
+    await deleteService(id, session.token);
+    const servicesData = await getServices(session.token);
+    setServices(servicesData);
   };
 
   return (
-    <Layout>
-      <div className="container mx-auto p-4">
-        <Typography variant="h1">Services</Typography>
-        <div className="flex justify-between items-center mb-4">
+    <div>
+      <h1 className="text-2xl font-bold mb-4">Quản lý dịch vụ và sản phẩm</h1>
+      <div className="bg-white p-4 rounded-lg shadow-md mb-4">
+        <h2 className="text-xl font-semibold mb-2">{editingId ? "Chỉnh sửa dịch vụ" : "Tạo dịch vụ mới"}</h2>
+        <form onSubmit={handleFormSubmit}>
           <Input
             type="text"
-            placeholder="Search..."
-            value={searchQuery}
-            onChange={handleSearch}
-            className="mr-4"
+            name="name"
+            label="Tên dịch vụ"
+            value={formData.name}
+            onChange={handleInputChange}
+            required
           />
-        </div>
-        <Card>
-          <CardBody>
-            <table className="min-w-full bg-white">
-              <thead>
-                <tr>
-                  <th className="w-1/4 px-4 py-2">Name</th>
-                  <th className="w-1/4 px-4 py-2">Type</th>
-                  <th className="w-1/2 px-4 py-2">Description</th>
-                  <th className="w-1/4 px-4 py-2">Price</th>
-                  <th className="px-4 py-2">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredItems.map((item) => (
-                  <tr key={item.id}>
-                    <td className="border px-4 py-2">{item.name}</td>
-                    <td className="border px-4 py-2">{item.category}</td>
-                    <td className="border px-4 py-2">{item.description}</td>
-                    <td className="border px-4 py-2">{item.price}</td>
-                    <td className="border px-4 py-2 flex space-x-2">
-                      <Button
-                        color="blue"
-                        size="sm"
-                        onClick={() => handleEditClick(item)}
-                      >
-                        <PencilIcon className="h-5 w-5" />
-                      </Button>
-                      <Button
-                        color="red"
-                        size="sm"
-                        onClick={() => handleDeleteClick(item.id)}
-                      >
-                        <TrashIcon className="h-5 w-5" />
-                      </Button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </CardBody>
-        </Card>
+          <Textarea
+            name="description"
+            label="Mô tả"
+            value={formData.description}
+            onChange={handleInputChange}
+            required
+          />
+          <Input
+            type="number"
+            name="price"
+            label="Giá"
+            value={formData.price}
+            onChange={handleInputChange}
+            required
+          />
+          <Button type="submit" className="mt-2">
+            {editingId ? "Cập nhật" : "Tạo mới"}
+          </Button>
+        </form>
       </div>
-    </Layout>
+      <div className="bg-white p-4 rounded-lg shadow-md">
+        <h2 className="text-xl font-semibold mb-2">Danh sách dịch vụ</h2>
+        <ul>
+          {services.map((service) => (
+            <li key={service.id} className="flex items-center justify-between p-2 border-b">
+              <div>
+                <p className="font-semibold">{service.name}</p>
+                <p>{service.description}</p>
+                <p>Giá: {service.price}</p>
+              </div>
+              <div className="flex items-center">
+                <PencilIcon
+                  className="h-5 w-5 text-blue-500 mr-2 cursor-pointer"
+                  onClick={() => handleEdit(service)}
+                />
+                <TrashIcon
+                  className="h-5 w-5 text-red-500 cursor-pointer"
+                  onClick={() => handleDelete(service.id)}
+                />
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
   );
 };
 
-export default SearchPage;
+export default ServicesPage;

@@ -1,8 +1,5 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { useRouter } from 'next/navigation';
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import "../css/bootstrap.min.css";
 import "../css/mdb.min.css";
 import "jarallax";
@@ -28,7 +25,6 @@ import {
 } from "api/route";
 
 const ChooseService = () => {
-  const router = useRouter();
   const [categories, setCategories] = useState([]);
   const [combos, setCombos] = useState([]);
   const [selectedStaff, setSelectedStaff] = useState("Tinh");
@@ -45,7 +41,6 @@ const ChooseService = () => {
     phone: "",
     description: "",
   });
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -112,6 +107,7 @@ const ChooseService = () => {
     event.preventDefault();
 
     try {
+      // await new Promise((resolve) => setTimeout(resolve, 1000));
       let total = 0;
       selectedServices.forEach((ss) => (total += ss.price));
       selectedCombos.forEach((sc) => (total += sc.price));
@@ -126,21 +122,30 @@ const ChooseService = () => {
           services: selectedServices.map((ss) => ss._id),
           combos: selectedCombos.map((sc) => sc._id),
           staff: selectedTime.staff._id,
+          // paymentStatus: "Pending",
           paymentMethod: "Cash",
           paymentInfo,
+          // status: "Pending",
         },
         localStorage.getItem("accessToken")
       );
-
-      toast.success(
-        "Chúng tôi sẽ liên hệ lại bạn thông qua số điện thoại hoặc gmail của bạn trong thời gian sớm nhất!"
-      );
-      setTimeout(() => {
-        router.push("/history-booking");
-      }, 3000);
+      // console.log({
+      //   date: selectedTime.date,
+      //   timeStart: selectedTime.timeStart,
+      //   timeEnd: selectedTime.timeEnd,
+      //   totalPrice: total,
+      //   salon: "668fd6f1534953474fef9ac7",
+      //   customer: JSON.parse(localStorage.getItem("account"))?._id,
+      //   services: selectedServices.map((ss) => ss._id),
+      //   combos: selectedCombos.map((sc) => sc._id),
+      //   staff: selectedTime.staff,
+      //   // paymentStatus: "Pending",
+      //   // paymentMethod: "Cash",
+      //   paymentInfo,
+      //   // status: "Pending",
+      // });
     } catch (error) {
       console.error("Error submitting form:", error);
-      toast.error("Có lỗi xảy ra khi gửi biểu mẫu. Vui lòng thử lại.");
     }
   };
 
@@ -149,7 +154,6 @@ const ChooseService = () => {
       <div id="de-loader"></div>
       <div className="no-bottom no-top" id="content">
         <div id="top"></div>
-        <ToastContainer />
 
         <section id="subheader" className="jarallax">
           <div className="jarallax-img">

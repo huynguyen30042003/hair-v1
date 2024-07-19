@@ -7,10 +7,17 @@ import { toast } from "react-toastify";
 import banner from "@data/img/bannerFG.webp";
 import { forgotPassword, resetPassword } from "api/route";
 
+
+
+
+
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
+  const [step, setStep] = useState(1); // 1: Email input, 2: Code input, 3: Reset password
+  const [verificationCode, setVerificationCode] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [token, setToken] = useState(""); // Add token state to handle reset token
   const router = useRouter();
   const searchParams = useSearchParams();
   const forgetToken = searchParams.get("forgetToken");
@@ -19,15 +26,27 @@ const ForgotPassword = () => {
       toast("Please enter your email address");
       return;
     }
-
+  
     try {
       const data = await forgotPassword(email);
+      console.log(data); // Thêm dòng này để kiểm tra dữ liệu trả về từ API
       toast.success("Verification code sent to your email");
-     
+      setToken(data.token); // Assuming the API response includes a token
+      setStep(2);
     } catch (error) {
-      console.error(error); 
+      console.error(error); // Thêm dòng này để log lỗi
       toast.error("Email not found");
     }
+  };
+
+  const handleVerifyCode = async () => {
+    if (!verificationCode) {
+      toast("Please enter the verification code");
+      return;
+    }
+
+    // For demo purposes, we assume the code is always correct.
+    setStep(3);
   };
 
   const handleResetPassword = async () => {
@@ -42,7 +61,7 @@ const ForgotPassword = () => {
     }
 
     try {
-      await resetPassword(forgetToken, newPassword);
+      await resetPassword(token, newPassword);
       toast.success("Password reset successfully");
       router.push("/login-v2");
     } catch (error) {
@@ -63,7 +82,7 @@ const ForgotPassword = () => {
                 Forgot Password
               </h2>
             </div>
-            {!forgetToken ? (
+            {step === 1 && (
               <form className="w-full">
                 <div className="mb-4">
                   <label className="block text-gray-700 mb-2">
@@ -90,7 +109,31 @@ const ForgotPassword = () => {
                   </Link>
                 </div>
               </form>
-            ) : (
+            )}
+            {step === 2 && (
+              <form className="w-full">
+                <div className="mb-4">
+                  <label className="block text-gray-700 mb-2">
+                    Verification Code
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full p-2 border border-gray-300 rounded"
+                    onChange={(e) => setVerificationCode(e.target.value)}
+                  />
+                </div>
+                <div className="mb-4">
+                  <button
+                    className="w-full bg-gray-800 text-white p-2 rounded"
+                    type="button"
+                    onClick={handleVerifyCode}
+                  >
+                    Verify Code
+                  </button>
+                </div>
+              </form>
+            )}
+            {step === 3 && (
               <form className="w-full">
                 <div className="mb-4">
                   <label className="block text-gray-700 mb-2">

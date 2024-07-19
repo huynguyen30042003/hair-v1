@@ -19,10 +19,6 @@ const Login = () => {
   const handleLogin = async () => {
     try {
       const data = await login(email, password);
-      console.log(data)
-      localStorage.setItem("accessToken",data.accessToken);
-     localStorage.setItem("refreshToken",data.refreshToken);
-     localStorage.setItem("account",JSON.stringify(data));
       toast.success("Login successful!");
       router.push("/"); 
     } catch (error) {
