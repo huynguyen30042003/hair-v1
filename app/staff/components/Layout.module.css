@@ -1,0 +1,19 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    overflow-x: hidden; /* Ngăn chặn tràn ngang */
+  }
+  
+  .content {
+    display: flex;
+    width: 100%;
+  }
+  
+  .mainContent {
+    flex-grow: 1;
+    padding: 20px;
+    margin-top: 64px; /* Chiều cao của header */
+    overflow-x: hidden; /* Ngăn chặn tràn ngang */
+  }
+  

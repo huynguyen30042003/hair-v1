@@ -1,0 +1,24 @@
+.container {
+  display: flex;
+}
+
+.iconButton {
+  top: 10px;
+  left: 10px;
+  z-index: 1000;
+}
+
+.drawer {
+  transition: width 0.3s ease;
+  height: calc(100vh - 4rem);
+  margin-top: 4rem;
+  overflow-y: auto;
+}
+
+.drawer.open {
+  width: 250px;
+}
+
+.drawer.closed {
+  width: 0;
+}

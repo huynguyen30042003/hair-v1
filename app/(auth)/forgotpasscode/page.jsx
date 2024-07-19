@@ -2,7 +2,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { toast } from "react-toastify";
 import banner from "@data/img/bannerFG.webp";
 import { forgotPassword, resetPassword } from "api/route";
@@ -19,7 +19,8 @@ const ForgotPassword = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [token, setToken] = useState(""); // Add token state to handle reset token
   const router = useRouter();
-
+  const searchParams = useSearchParams();
+  const forgetToken = searchParams.get("forgetToken");
   const handleForgotPassword = async () => {
     if (!email) {
       toast("Please enter your email address");
