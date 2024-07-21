@@ -18,7 +18,6 @@ import Logo from "../data/img/keyLogo.jpg";
 const Navbar = () => {
   const [openNav, setOpenNav] = useState(false);
   const [session, setSession] = useState(null);
-
   useEffect(() => {
     async function fetchSession() {
       const sessionData = await getServerSession();
