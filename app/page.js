@@ -1,67 +1,480 @@
-"use client"
-import { socket } from "./socket";
+"use client";
+import React, { useEffect } from "react";
+import "wowjs/css/libs/animate.css"; // Import animate.css for Wow.js animations
+import WOW from "wowjs";
+import "jarallax";
+import "jarallax/dist/jarallax.css"; // Import the Jarallax CSS file
 import Image from "next/image";
-import About from "../components/About";
-import TableUser from "../components/TableUser";
-import TableService from "../components/TableService";
-import Footer from "../components/Footer";
-import ServicesHome from "../components/ServicesHome";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import React, { useEffect, useState } from 'react';
-import {
-  Button,
-} from "@material-tailwind/react";
+import Head from "next/head";
 
-export default function Home() {
-  const [open, setOpen] = useState(false);
-  const [isConnected, setIsConnected] = useState(false);
-  const [transport, setTransport] = useState("N/A");
-  
-  const notify = () => {toast.success("Wow so easy!")};
-  const handleOpen = () => {
-    setOpen(!open)
-    console.log(open)
-  };
+import "../css/bootstrap.min.css";
+import "../css/mdb.min.css";
+import "../css/plugins.css";
+import "../css/style.css";
+import "../css/coloring.css";
+import "../css/colors/scheme-01.css";
+import "../css/confictStyle.css";
+
+import logo from "@data/images/logo.png";
+import logoMobile from "@data/images/logo-mobile.png";
+import background1 from "@data/images/background/1.jpg";
+import background2 from "@data/images/background/2.jpg";
+import background8 from "@data/images/background/8.jpg";
+import man2 from "@data/images/misc/man-2.png";
+import man3 from "@data/images/misc/man-3.png";
+import hairstyle1 from "@data/images/hairstyles/1.jpg";
+import hairstyle2 from "@data/images/hairstyles/2.jpg";
+import hairstyle3 from "@data/images/hairstyles/3.jpg";
+import hairstyle4 from "@data/images/hairstyles/4.jpg";
+import hairstyle5 from "@data/images/hairstyles/5.jpg";
+import hairstyle6 from "@data/images/hairstyles/6.jpg";
+import service1 from "@data/images/services/1.jpg";
+import service2 from "@data/images/services/2.jpg";
+import service3 from "@data/images/services/3.jpg";
+import service4 from "@data/images/services/4.jpg";
+
+const Home = () => {
   useEffect(() => {
-    if (socket.connected) {
-      onConnect();
-    }
+    const wow = new WOW.WOW({
+      boxClass: "wow",
+      animateClass: "animated",
+      offset: 0,
+      mobile: true,
+      live: true,
+    });
+    wow.init();
 
-    function onConnect() {
-      setIsConnected(true);
-      setTransport(socket.io.engine.transport.name);
-
-      socket.io.engine.on("upgrade", (transport) => {
-        setTransport(transport.name);
+    if (typeof window !== "undefined") {
+      const { jarallax } = require("jarallax");
+      jarallax(document.querySelectorAll(".jarallax"), {
+        speed: 0.2,
       });
     }
-
-    function onDisconnect() {
-      setIsConnected(false);
-      setTransport("N/A");
-    }
-
-    socket.on("connect", onConnect);
-    socket.on("disconnect", onDisconnect);
-
-    return () => {
-      socket.off("connect", onConnect);
-      socket.off("disconnect", onDisconnect);
-    };
   }, []);
+
   return (
     <>
-      <button onClick={notify}>Notify!</button>
-      <div>
-      <p>Status: { isConnected ? "connected" : "disconnected" }</p>
-      <p>Transport: { transport }</p>
-    </div>
-      <About />
-      <ServicesHome />
-      <Footer />
-      <ToastContainer />
+      <Head>
+        <title>StyleCuts - Barbershop</title>
+        <link
+          rel="icon"
+          href="/images/icon.png"
+          type="image/gif"
+          sizes="16x16"
+        />
+        <meta content="text/html;charset=utf-8" http-equiv="Content-Type" />
+        <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+        <meta
+          content="Blaxcut - Barbershop Website Template"
+          name="description"
+        />
+      </Head>
+      <body className="dark-scheme">
+        <div id="wrapper">
+          {/* Page preloader */}
+          <div id="de-loader"></div>
+
+          {/* Header */}
+          <header className="transparent">
+            <div className="container">
+              <div className="row">
+                <div className="col-md-12">
+                  <div className="de-flex sm-pt10">
+                    <div className="de-flex-col">
+                      {/* Logo */}
+                      <div id="logo">
+                        <a href="index.html">
+                          <Image className="logo-main" src={logo} alt="" />
+                          <Image
+                            className="logo-mobile"
+                            src={logoMobile}
+                            alt=""
+                          />
+                        </a>
+                      </div>
+                    </div>
+                    <div className="de-flex-col header-col-mid">
+                      <ul id="mainmenu">
+                        <li>
+                          <a className="menu-item" href="/">
+                            Home
+                          </a>
+                        </li>
+                        <li>
+                          <a className="menu-item" href="/services">
+                            Services
+                          </a>
+                        </li>
+                        <li>
+                          <a className="menu-item" href="/about">
+                            About
+                          </a>
+                        </li>
+                        <li>
+                          <a className="menu-item" href="/booking">
+                            Book Now
+                          </a>
+                        </li>
+                        <li>
+                          <a className="menu-item" href="#">
+                            Extras
+                          </a>
+                          <ul>
+                            <li>
+                              <a className="menu-item" href="/contact">
+                                Contact
+                              </a>
+                            </li>
+                            <li>
+                              <a className="menu-item" href="/pricing">
+                                Pricing
+                              </a>
+                            </li>
+                          </ul>
+                        </li>
+                        <li>
+                          <a
+                            className="menu-item"
+                            href="/login-v2"
+                            style={{
+                              color: "#FF4500",
+                            }}
+                          >
+                            Login
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                    <div className="de-flex-col">
+                      <div className="menu_side_area">
+                        <a href="/booking" className="btn-main">
+                          Book Now
+                        </a>
+                        <span id="menu-btn"></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </header>
+
+          {/* Content */}
+          <div className="no-bottom no-top" id="content">
+            <div id="top"></div>
+            <section
+              id="section-hero"
+              className="jarallax no-top no-bottom v-center"
+            >
+              <Image src={background8} className="jarallax-img" alt="" />
+              <div className="container z1000">
+                <div className="row align-items-center">
+                  <div className="col-lg-6">
+                    <h1>
+                      Unleash Your <span className="id-color">Best Look</span>,
+                      Right in Our Chair!
+                    </h1>
+                    <p className="lead">
+                      Established with a passion for the art of barbering, we
+                      take great pride in our craft and strive to create an
+                      atmosphere that feels like home.
+                    </p>
+                    <div className="spacer-10"></div>
+                    <a className="btn-main" href="/booking">
+                      Book Now
+                    </a>
+                  </div>
+                  <div className="col-lg-6">
+                    <Image
+                      src={man3}
+                      className="img-fluid wow fadeInLeft"
+                      data-wow-delay=".3s"
+                      data-wow-duration="1.5s"
+                      alt=""
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="de-gradient-edge-bottom"></div>
+            </section>
+
+            <section aria-label="section" className="no-top no-bottom">
+              <div className="container">
+                <div className="row">
+                  <div className="col-lg-12" data-jarallax-element="-50">
+                    <p className="lead big wow fadeInUp">
+                      Established with a passion for the art of barbering, we
+                      take great pride in our craft and strive to create an
+                      atmosphere that feels like home. From the moment you walk
+                      through our doors, you'll be greeted by friendly smiles
+                      and a warm ambiance that instantly puts you at ease.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section id="section-trending" className="pt80">
+              <div className="container-fluid">
+                <div className="row">
+                  <div className="col-lg-8 offset-lg-2 text-center">
+                    <h2 className="wow fadeIn">Trending Styles</h2>
+                    <div className="de-separator"></div>
+                    <div className="spacer-single"></div>
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-lg-12" data-jarallax-element="-20">
+                    <div className="d-carousel wow fadeInRight">
+                      <div
+                        id="item-carousel-big"
+                        className="owl-carousel no-hide owl-center"
+                        data-wow-delay="1s"
+                      >
+                        {[
+                          hairstyle1,
+                          hairstyle2,
+                          hairstyle3,
+                          hairstyle4,
+                          hairstyle5,
+                          hairstyle6,
+                        ].map((src, index) => (
+                          <div className="c-item" key={index}>
+                            <a href="#">
+                              <span className="c-item_info">
+                                <span className="c-item_title">
+                                  Style {index + 1}
+                                </span>
+                                <span className="c-item_wm">#{index + 1}</span>
+                              </span>
+                              <div className="c-item_wrap">
+                                <Image
+                                  src={src}
+                                  className="lazy img-fluid"
+                                  alt=""
+                                />
+                              </div>
+                            </a>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="d-arrow-left mod-a">
+                        <i className="fa fa-angle-left"></i>
+                      </div>
+                      <div className="d-arrow-right mod-a">
+                        <i className="fa fa-angle-right"></i>
+                      </div>
+                    </div>
+                    <div className="spacer-double"></div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section className="no-top jarallax">
+              <div className="de-gradient-edge-top"></div>
+              <Image src={background1} className="jarallax-img" alt="" />
+              <div className="container relative z1000">
+                <div className="row align-items-center">
+                  <div className="col-lg-6" data-jarallax-element="-30">
+                    <Image
+                      src={man2}
+                      className="img-fluid wow fadeInRight"
+                      alt=""
+                    />
+                  </div>
+                  <div className="col-lg-6" data-jarallax-element="-60">
+                    <h2 className="wow fadeInRight" data-wow-delay=".3s">
+                      We’ll Crafting{" "}
+                      <span className="id-color">Confidence</span> Through Sharp
+                      Style
+                    </h2>
+                    <p className="wow fadeInRight" data-wow-delay=".4s">
+                      We take pride in providing top-notch grooming services
+                      that blend classic techniques with modern trends. Step
+                      into our warm and inviting space, where you'll find a team
+                      of skilled barbers dedicated to enhancing your style and
+                      confidence.
+                    </p>
+                    <a
+                      href="/booking"
+                      className="btn-main wow fadeInRight"
+                      data-wow-delay=".5s"
+                    >
+                      Book Now
+                    </a>
+                  </div>
+                </div>
+              </div>
+              <div className="de-gradient-edge-bottom"></div>
+            </section>
+
+            <section aria-label="section" className="no-top">
+              <div className="container">
+                <div className="row">
+                  <div className="col-lg-12 text-center">
+                    <h2 className="wow fadeIn">Our Services</h2>
+                    <div className="de-separator"></div>
+                  </div>
+                  {[service1, service2, service3, service4].map(
+                    (src, index) => (
+                      <div
+                        className="col-lg-3 text-center"
+                        data-jarallax-element={`-${(index + 1) * 20}`}
+                        key={index}
+                      >
+                        <div className="de-box-a">
+                          <div className="d-image">
+                            <Image src={src} alt="" />
+                          </div>
+                          <div className="d-deco-1"></div>
+                          <div className="d-deco-2"></div>
+                        </div>
+                        <div className="spacer-20"></div>
+                        <h4>
+                          {
+                            ["Haircuts", "Beard", "Shaving", "Razor Blade"][
+                              index
+                            ]
+                          }
+                        </h4>
+                      </div>
+                    )
+                  )}
+                </div>
+                <div className="spacer-single"></div>
+                <div className="text-center">
+                  <a href="/services" className="btn-main">
+                    All Services & Prices
+                  </a>
+                </div>
+              </div>
+            </section>
+
+            <section className="jarallax no-top">
+              <div className="de-gradient-edge-top"></div>
+              <Image src={background1} className="jarallax-img" alt="" />
+              <div className="container relative z1000">
+                <div className="row gx-5">
+                  <div
+                    className="col-lg-6 text-center"
+                    data-jarallax-element="-50"
+                  >
+                    <div className="d-sch-table">
+                      <h2 className="wow fadeIn">We're Open</h2>
+                      <div className="de-separator"></div>
+                      {[
+                        { day: "Mon - Thu", time: "7:30AM - 6:30PM" },
+                        { day: "Friday", time: "8:30AM - 8:30PM" },
+                        { day: "Sat - Sun", time: "9:30AM - 5:30PM" },
+                      ].map((schedule, index) => (
+                        <div className="d-col" key={index}>
+                          <div className="d-title">{schedule.day}</div>
+                          <div className="d-content id-color">
+                            {schedule.time}
+                          </div>
+                        </div>
+                      ))}
+                      <div className="d-deco"></div>
+                    </div>
+                  </div>
+
+                  <div
+                    className="col-lg-6 text-center"
+                    data-jarallax-element="-100"
+                  >
+                    <div className="d-sch-table">
+                      <h2 className="wow fadeIn">Location</h2>
+                      <div className="de-separator"></div>
+                      {[
+                        {
+                          label: "Address",
+                          content: "100 Mainstreet Center",
+                        },
+                        { label: "Phone", content: "+1 333 8080 1000" },
+                        { label: "Email", content: "contact@blaxcut.com" },
+                      ].map((info, index) => (
+                        <div className="d-col" key={index}>
+                          <div className="d-title">{info.label}</div>
+                          <div className="d-content id-color">
+                            {info.content}
+                          </div>
+                        </div>
+                      ))}
+                      <div className="d-deco"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="de-gradient-edge-bottom"></div>
+            </section>
+
+            <section aria-label="section" className="no-top">
+              <div className="wow fadeInRight d-flex">
+                <div className="de-marquee-list wow">
+                  <div className="d-item">
+                    {[
+                      "Haircut",
+                      "Shave",
+                      "Faded",
+                      "Hair Dye",
+                      "Beard Trim",
+                      "Hair Color",
+                      "Facial",
+                      "Massage",
+                      "Hair Wash",
+                    ].map((service, index) => (
+                      <React.Fragment key={index}>
+                        <span className="d-item-txt">{service}</span>
+                        <span className="d-item-display">
+                          <i className="d-item-block"></i>
+                        </span>
+                      </React.Fragment>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+          {/* Content close */}
+          <a href="#" id="back-to-top"></a>
+
+          {/* Footer */}
+          <footer>
+            <div className="container">
+              <div className="row g-4">
+                <div className="col-lg-4 text-lg-start text-center">
+                  <div className="social-icons">
+                    <a href="#">
+                      <i className="fa fa-facebook fa-lg"></i>
+                    </a>
+                    <a href="#">
+                      <i className="fa fa-twitter fa-lg"></i>
+                    </a>
+                    <a href="#">
+                      <i className="fa fa-linkedin fa-lg"></i>
+                    </a>
+                    <a href="#">
+                      <i className="fa fa-pinterest fa-lg"></i>
+                    </a>
+                    <a href="#">
+                      <i className="fa fa-rss fa-lg"></i>
+                    </a>
+                  </div>
+                </div>
+                <div className="col-lg-4 text-lg-center text-center">
+                  <Image src={logo} className="image" alt="" />
+                </div>
+                <div className="col-lg-4 text-lg-end text-center">
+                  Copyright 2024 - StyleCuts BaberShop
+                </div>
+              </div>
+            </div>
+          </footer>
+        </div>
+      </body>
     </>
   );
-}
+};
 
+export default Home;

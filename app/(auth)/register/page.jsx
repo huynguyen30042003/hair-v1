@@ -5,61 +5,33 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import banner from "@data/img/bannerFG.webp"
+import banner from "@data/img/bannerFG.webp";
+import { register } from "api/route";
 
 const Register = () => {
-  const [fullName, setFullName] = useState("");
-  const [username, setUsername] = useState("");
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
-  const router = useRouter();
+  const [phone, setPhone] = useState("");
+  const [role, setRole] = useState("Customer");
   const { data: session, status: sessionStatus } = useSession();
-
-  useEffect(() => {
-    if (sessionStatus === "authenticated") {
-      router.push("/");
-    }
-  }, [sessionStatus, router]);
+  const router = useRouter();
 
   const handleSubmit = async () => {
-    if (!fullName || !username || !email || !password || !confirmPassword) {
-      toast.error("Please fill all the input fields");
-      return;
-    } else if (password !== confirmPassword) {
-      toast.error("Passwords do not match");
+    if (password !== confirmPassword) {
+      toast.error("Passwords do not match!");
       return;
     }
 
     try {
-      const res = await fetch("/api/user", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          fullName,
-          username,
-          email,
-          password,
-          confirmPassword,
-        }),
-      });
-
-      if (res.status === 400) {
-        const errorData = await res.json();
-        toast.error(errorData.error);
-      } else if (res.status === 201) {
-        toast.success("register successful");
-        router.push("/login");
-      } else {
-        toast.error("Something went wrong, please try again");
-      }
+      await register(name, email, password, phone, role);
+      toast.success("Registration successful!");
+      router.push("/login-v2");
     } catch (error) {
-      toast.error("An error occurred: " + error.message);
+      toast.error("Registration failed!");
     }
   };
 
@@ -82,22 +54,12 @@ const Register = () => {
                     <form>
                       <div className="mb-4">
                         <label className="block text-gray-700 mb-2">
-                          Enter Full Name
+                          Enter Name
                         </label>
                         <input
                           type="text"
                           className="w-full p-2 border border-gray-300 rounded"
-                          onChange={(e) => setFullName(e.target.value)}
-                        />
-                      </div>
-                      <div className="mb-4">
-                        <label className="block text-gray-700 mb-2">
-                          Enter User Name
-                        </label>
-                        <input
-                          type="text"
-                          className="w-full p-2 border border-gray-300 rounded"
-                          onChange={(e) => setUsername(e.target.value)}
+                          onChange={(e) => setName(e.target.value)}
                         />
                       </div>
                       <div className="mb-4">
@@ -128,6 +90,16 @@ const Register = () => {
                           type="password"
                           className="w-full p-2 border border-gray-300 rounded"
                           onChange={(e) => setConfirmPassword(e.target.value)}
+                        />
+                      </div>
+                      <div className="mb-4">
+                        <label className="block text-gray-700 mb-2">
+                          Enter Phone
+                        </label>
+                        <input
+                          type="text"
+                          className="w-full p-2 border border-gray-300 rounded"
+                          onChange={(e) => setPhone(e.target.value)}
                         />
                       </div>
                       <div className="mb-4">
@@ -163,6 +135,7 @@ const Register = () => {
             </div>
           </div>
         </div>
+        <ToastContainer />
       </section>
     )
   );
