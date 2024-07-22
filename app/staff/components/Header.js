@@ -1,23 +1,33 @@
 "use client";
-import { useRouter } from 'next/navigation'; // Correct import for app directory
-import { ArrowRightOnRectangleIcon } from '@heroicons/react/24/outline';
 
+import { Button, Typography } from "@material-tailwind/react";
+import { ArrowRightOnRectangleIcon } from "@heroicons/react/24/outline";
+import Cookie from "js-cookie";
+import { useRouter } from "next/navigation";
 const Header = () => {
   const router = useRouter();
-
   const handleLogout = () => {
-    // Xử lý đăng xuất
-    router.push('/');
+    Cookie.set("accessToken", "", { expires: -1 });
+    Cookie.set("role", "", { expires: -1 });
+    localStorage.clear();
+    router.push("/");
   };
 
   return (
-    <header className="bg-gray-800 text-white p-4 flex justify-between items-center">
-      <h1 className="text-lg font-semibold">Dashboard</h1>
-      <button onClick={handleLogout} className="flex items-center">
-        <ArrowRightOnRectangleIcon className="h-6 w-6" />
-        <span className="ml-2">Logout</span>
-      </button>
-    </header>
+    <div className="flex justify-between items-center p-4 bg-gray-100 shadow-md w-full">
+      <Typography variant="h6" color="blue-gray">
+        Staff Dashboard
+      </Typography>
+      <Button
+        variant="gradient"
+        color="red"
+        onClick={handleLogout}
+        className="flex items-center"
+      >
+        <ArrowRightOnRectangleIcon className="h-5 w-5 mr-2" />
+        Logout
+      </Button>
+    </div>
   );
 };
 

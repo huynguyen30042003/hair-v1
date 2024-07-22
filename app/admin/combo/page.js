@@ -12,8 +12,6 @@ import {
   Card,
   CardBody,
   Typography,
-  Select,
-  Option,
 } from "@material-tailwind/react";
 import Layout from "../components/Layout";
 import axios from "axios";
@@ -22,34 +20,38 @@ import "react-toastify/dist/ReactToastify.css";
 
 const BASE_URL = "http://localhost:5000/api";
 
-const SearchPage = () => {
+const ComboPage = () => {
+  const [combos, setCombos] = useState([]);
   const [services, setServices] = useState([]);
-  const [allServices, setAllServices] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchOption, setSearchOption] = useState("name");
   const [openDialog, setOpenDialog] = useState(false);
-  const [currentService, setCurrentService] = useState(null);
+  const [currentCombo, setCurrentCombo] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [servicesPerPage] = useState(5);
+  const [combosPerPage] = useState(5);
 
   useEffect(() => {
+    const fetchCombos = async () => {
+      try {
+        const response = await axios.get(`${BASE_URL}/combos`);
+        setCombos(response.data);
+      } catch (error) {
+        console.error("Error fetching combos:", error);
+        toast.error("Error fetching combos.");
+      }
+    };
+
     const fetchServices = async () => {
       try {
-        const token = localStorage.getItem("accessToken");
-        const response = await axios.get(`${BASE_URL}/services`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await axios.get(`${BASE_URL}/services`);
         setServices(response.data);
-        setAllServices(response.data);
       } catch (error) {
         console.error("Error fetching services:", error);
         toast.error("Error fetching services.");
       }
     };
 
+    fetchCombos();
     fetchServices();
   }, []);
 
@@ -57,50 +59,36 @@ const SearchPage = () => {
     setSearchQuery(e.target.value);
   };
 
-  const filteredServices = services.filter((service) => {
-    if (searchOption === "name") {
-      return service.name.toLowerCase().includes(searchQuery.toLowerCase());
-    } else if (searchOption === "price") {
-      return service.price.toString().includes(searchQuery);
-    }
-    console.log(service)
-    return service;
-  });
+  const filteredCombos = combos.filter((combo) =>
+    combo.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const handleAddClick = () => {
     setIsEditing(false);
-    setCurrentService({
-      name: "",
-      price: "",
-      duration: "",
-      description: "",
-      selectedServices: [],
-    });
+    setCurrentCombo({ name: "", price: "", services: [] });
     setOpenDialog(true);
   };
 
-  const handleEditClick = (service) => {
+  const handleEditClick = (combo) => {
     setIsEditing(true);
-    setCurrentService({
-      ...service,
-      selectedServices: service.selectedServices || [],
-    });
+    setCurrentCombo(combo);
+    console.log(combo)
     setOpenDialog(true);
   };
 
-  const handleDeleteClick = async (serviceId) => {
+  const handleDeleteClick = async (comboId) => {
     try {
       const token = localStorage.getItem("accessToken");
-      await axios.delete(`${BASE_URL}/services/${serviceId}`, {
+      await axios.delete(`${BASE_URL}/combos/${comboId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      setServices(services.filter((service) => service._id !== serviceId));
-      toast.success("Service deleted successfully.");
+      setCombos(combos.filter((combo) => combo._id !== comboId));
+      toast.success("Combo deleted successfully.");
     } catch (error) {
-      console.error("Error deleting service:", error);
-      toast.error("Error deleting service.");
+      console.error("Error deleting combo:", error);
+      toast.error("Error deleting combo.");
     }
   };
 
@@ -109,45 +97,55 @@ const SearchPage = () => {
     try {
       if (isEditing) {
         await axios.put(
-          `${BASE_URL}/services/${currentService._id}`,
-          currentService,
+          `${BASE_URL}/combos/${currentCombo._id}`,
+          currentCombo,
           {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           }
         );
-        setServices(
-          services.map((service) =>
-            service._id === currentService._id ? currentService : service
+        setCombos(
+          combos.map((combo) =>
+            combo._id === currentCombo._id ? currentCombo : combo
           )
         );
-        toast.success("Service updated successfully.");
+        toast.success("Combo updated successfully.");
       } else {
         const response = await axios.post(
-          `${BASE_URL}/services`,
-          currentService,
+          `${BASE_URL}/combos`,
+          currentCombo,
           {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           }
         );
-        setServices([...services, response.data]);
-        toast.success("Service added successfully.");
+        console.log(response.data)
+        setCombos([...combos, { ...response.data, ...currentCombo }]);
+        toast.success("Combo added successfully.");
       }
       setOpenDialog(false);
     } catch (error) {
-      console.error("Error saving service:", error);
-      toast.error("Error saving service.");
+      console.error("Error saving combo:", error);
+      toast.error("Error saving combo.");
     }
   };
 
-  const indexOfLastService = currentPage * servicesPerPage;
-  const indexOfFirstService = indexOfLastService - servicesPerPage;
-  const currentServices = filteredServices.slice(
-    indexOfFirstService,
-    indexOfLastService
+  const handleCheckboxChange = (serviceString) => {
+    const service = JSON.parse(serviceString);
+    console.log(currentCombo.services?.some(ser => ser._id === service._id))
+    const updatedServices = currentCombo.services?.some(ser => ser._id === service._id)
+      ? currentCombo.services.filter((ser) => ser._id !== service._id)
+      : [...currentCombo.services, { ...service }];
+    setCurrentCombo({ ...currentCombo, services: updatedServices });
+  };
+
+  const indexOfLastCombo = currentPage * combosPerPage;
+  const indexOfFirstCombo = indexOfLastCombo - combosPerPage;
+  const currentCombos = filteredCombos.slice(
+    indexOfFirstCombo,
+    indexOfLastCombo
   );
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
@@ -156,26 +154,17 @@ const SearchPage = () => {
     <Layout>
       <div className="container mx-auto p-4">
         <div className="flex justify-between items-center mb-4">
-          <Typography variant="h1">Services</Typography>
+          <Typography variant="h1">Combo Management</Typography>
           <Button color="green" onClick={handleAddClick}>
             <PlusIcon className="h-5 w-5 mr-2" />
-            Add Service
+            Add Combo
           </Button>
         </div>
         <div className="flex justify-center mb-4">
           <div className="flex space-x-2 items-center">
-            <Select
-              label="Search By"
-              value={searchOption}
-              onChange={(e) => setSearchOption(e)}
-              className="w-full lg:w-48"
-            >
-              <Option value="name">Name</Option>
-              <Option value="price">Price</Option>
-            </Select>
             <Input
               type="text"
-              placeholder={`Search by ${searchOption}`}
+              placeholder="Search by name"
               value={searchQuery}
               onChange={handleSearch}
               className="w-full lg:w-64"
@@ -189,33 +178,31 @@ const SearchPage = () => {
                 <thead>
                   <tr>
                     <th className="w-1/4 px-4 py-2">Name</th>
-                    <th className="w-1/4 px-4 py-2">Category</th>
-                    <th className="w-1/4 px-4 py-2">Description</th>
                     <th className="w-1/4 px-4 py-2">Price</th>
+                    <th className="w-1/2 px-4 py-2">Services</th>
                     <th className="px-4 py-2">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {currentServices.map((service) => (
-                    <tr key={service._id}>
-                      <td className="border px-4 py-2">{service.name}</td>
-                      <td className="border px-4 py-2">Service</td>
+                  {currentCombos.map((combo) => (
+                    <tr key={combo._id}>
+                      <td className="border px-4 py-2">{combo.name}</td>
+                      <td className="border px-4 py-2">{combo.price}</td>
                       <td className="border px-4 py-2">
-                        {service.description}
+                        {combo.services.map(service => service.name).join(", ")}
                       </td>
-                      <td className="border px-4 py-2">{service.price}</td>
                       <td className="border px-4 py-2 flex space-x-2">
                         <Button
                           color="blue"
                           size="sm"
-                          onClick={() => handleEditClick(service)}
+                          onClick={() => handleEditClick(combo)}
                         >
                           <PencilIcon className="h-5 w-5" />
                         </Button>
                         <Button
                           color="red"
                           size="sm"
-                          onClick={() => handleDeleteClick(service._id)}
+                          onClick={() => handleDeleteClick(combo._id)}
                         >
                           <TrashIcon className="h-5 w-5" />
                         </Button>
@@ -229,7 +216,7 @@ const SearchPage = () => {
                   <ul className="inline-flex items-center -space-x-px">
                     {[
                       ...Array(
-                        Math.ceil(filteredServices.length / servicesPerPage)
+                        Math.ceil(filteredCombos.length / combosPerPage)
                       ).keys(),
                     ].map((number) => (
                       <li key={number + 1}>
@@ -250,60 +237,51 @@ const SearchPage = () => {
         </div>
 
         <Dialog open={openDialog} handler={setOpenDialog}>
-          <DialogHeader>
-            {isEditing ? "Edit Service" : "Add Service"}
-          </DialogHeader>
+          <DialogHeader>{isEditing ? "Edit Combo" : "Add Combo"}</DialogHeader>
           <DialogBody divider>
             <div className="space-y-4">
               <Input
                 type="text"
                 label="Name"
-                value={currentService?.name || ""}
+                value={currentCombo?.name || ""}
                 onChange={(e) =>
-                  setCurrentService({ ...currentService, name: e.target.value })
+                  setCurrentCombo({ ...currentCombo, name: e.target.value })
                 }
+                className="w-full max-w-xs"
               />
               <Input
                 type="text"
                 label="Price"
-                value={currentService?.price || ""}
+                value={currentCombo?.price || ""}
                 onChange={(e) =>
-                  setCurrentService({
-                    ...currentService,
-                    price: e.target.value,
-                  })
+                  setCurrentCombo({ ...currentCombo, price: e.target.value })
                 }
+                className="w-full max-w-xs"
               />
-              <Input
-                type="text"
-                label="Duration"
-                value={currentService?.duration || ""}
-                onChange={(e) =>
-                  setCurrentService({
-                    ...currentService,
-                    duration: e.target.value,
-                  })
-                }
-              />
-              <Input
-                type="text"
-                label="Description"
-                value={currentService?.description || ""}
-                onChange={(e) =>
-                  setCurrentService({
-                    ...currentService,
-                    description: e.target.value,
-                  })
-                }
-              />
+              <div className="w-full max-w-xs">
+                <label className="block text-sm font-medium text-gray-700">Services</label>
+                <div className="mt-2 space-y-2">
+                  {services.map((service) => (
+                    <div key={service._id} className="flex items-center">
+                      <input
+                        type="checkbox"
+                        id={service._id}
+                        name={service.name}
+                        checked={Array.from(currentCombo?.services || []).some(ser => ser._id === service._id)}
+                        onChange={(e) => handleCheckboxChange(JSON.stringify(service))}
+                        className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                      />
+                      <label htmlFor={service._id} className="ml-2 block text-sm text-gray-900">
+                        {service.name}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </DialogBody>
           <DialogFooter>
-            <Button
-              variant="text"
-              color="red"
-              onClick={() => setOpenDialog(false)}
-            >
+            <Button variant="text" color="red" onClick={() => setOpenDialog(false)}>
               Cancel
             </Button>
             <Button variant="gradient" color="green" onClick={handleSave}>
@@ -317,4 +295,4 @@ const SearchPage = () => {
   );
 };
 
-export default SearchPage;
+export default ComboPage;

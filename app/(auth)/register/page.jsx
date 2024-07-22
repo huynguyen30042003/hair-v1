@@ -29,9 +29,16 @@ const Register = () => {
     try {
       await register(name, email, password, phone, role);
       toast.success("Registration successful!");
-      router.push("/login-v2");
+
+      setTimeout(() => {
+        router.push("/login-v2");
+      }, 2000); // 2-second delay before redirecting
     } catch (error) {
       toast.error("Registration failed!");
+
+      setTimeout(() => {
+        // Optional: Add any additional handling for the failure case here if needed
+      }, 2000); // 2-second delay
     }
   };
 

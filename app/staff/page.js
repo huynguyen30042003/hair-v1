@@ -1,18 +1,16 @@
-"use client";
+'use client';
 
-import Header from "./components/Header";
-import Sidebar from "./components/Sidebar";
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
-const StaffPage = ({ children }) => {
-  return (
-    <div>
-      <Header />
-      <div style={{ display: "flex" }}>
-        <Sidebar />
-        <main style={{ padding: "20px", flexGrow: 1 }}>{children}</main>
-      </div>
-    </div>
-  );
+const StaffHome = () => {
+  const router = useRouter();
+
+  useEffect(() => {
+    router.push('/staff/appointment');
+  }, [router]);
+
+  return null;
 };
 
-export default StaffPage;
+export default StaffHome;

@@ -1,12 +1,12 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import "wowjs/css/libs/animate.css"; // Import animate.css for Wow.js animations
 import WOW from "wowjs";
 import "jarallax";
 import "jarallax/dist/jarallax.css"; // Import the Jarallax CSS file
 import Image from "next/image";
 import Head from "next/head";
-
+import axios from "axios";
 import "../../css/bootstrap.min.css";
 import "../../css/mdb.min.css";
 import "../../css/plugins.css";
@@ -23,8 +23,14 @@ import service1 from "@data/images/services/1.jpg";
 import service2 from "@data/images/services/2.jpg";
 import service3 from "@data/images/services/3.jpg";
 import service4 from "@data/images/services/4.jpg";
+import Cookie from "js-cookie";
+import Link from "next/link";
+import router from "next/navigation";
+const BASE_URL = "http://localhost:5000/api";
 
 const Home = () => {
+  const [services, setServices] = useState([]);
+  const isLogin = localStorage.getItem("accessToken");
   useEffect(() => {
     const wow = new WOW.WOW({
       boxClass: "wow",
@@ -41,8 +47,24 @@ const Home = () => {
         speed: 0.2,
       });
     }
-  }, []);
 
+    const fetchServices = async () => {
+      try {
+        const response = await axios.get(`${BASE_URL}/services`);
+        setServices(response.data);
+      } catch (error) {
+        console.error("Error fetching services:", error);
+      }
+    };
+
+    fetchServices();
+  }, []);
+  const handleLogout = () => {
+    Cookie.set("accessToken", "", { expires: -1 });
+    Cookie.set("role", "", { expires: -1 });
+    localStorage.clear();
+    router.push("/");
+  };
   return (
     <>
       <Head>
@@ -70,7 +92,7 @@ const Home = () => {
                   <div className="de-flex sm-pt10">
                     <div className="de-flex-col">
                       <div id="logo">
-                        <a href="index.html">
+                        <a href="/">
                           <Image className="logo-main" src={logo} alt="" />
                           <Image
                             className="logo-mobile"
@@ -83,111 +105,87 @@ const Home = () => {
                     <div className="de-flex-col header-col-mid">
                       <ul id="mainmenu">
                         <li>
-                          <a className="menu-item" href="index.html">
+                          <a className="menu-item" href="/">
                             Home
                           </a>
-                          <ul>
-                            <li>
-                              <a className="menu-item" href="index.html">
-                                Home 1
-                              </a>
-                            </li>
-                            <li>
-                              <a className="menu-item" href="index-2.html">
-                                Home 2
-                              </a>
-                            </li>
-                            <li>
-                              <a className="menu-item" href="index-3.html">
-                                Home 3
-                              </a>
-                            </li>
-                            <li>
-                              <a className="menu-item" href="index-4.html">
-                                Home 4
-                              </a>
-                            </li>
-                          </ul>
                         </li>
                         <li>
-                          <a className="menu-item" href="services.html">
+                          <a className="menu-item" href="/services">
                             Services
                           </a>
-                          <ul>
-                            <li>
-                              <a className="menu-item" href="services.html">
-                                All Services
-                              </a>
-                            </li>
-                            <li>
-                              <a
-                                className="menu-item"
-                                href="service-single.html"
-                              >
-                                Service Single
-                              </a>
-                            </li>
-                          </ul>
                         </li>
                         <li>
-                          <a className="menu-item" href="about.html">
+                          <a className="menu-item" href="/about">
                             About
                           </a>
-                          <ul>
-                            <li>
-                              <a className="menu-item" href="about.html">
-                                About Us
-                              </a>
-                            </li>
-                            <li>
-                              <a className="menu-item" href="team.html">
-                                Our Team
-                              </a>
-                            </li>
-                          </ul>
                         </li>
-                        <li>
-                          <a className="menu-item" href="book.html">
-                            Book Now
-                          </a>
-                        </li>
-                        <li>
-                          <a className="menu-item" href="blog.html">
-                            Blog
-                          </a>
-                        </li>
+                        {isLogin && (
+                          <li>
+                            <a className="menu-item" href="/profiles">
+                              Profiles
+                            </a>
+                          </li>
+                        )}
                         <li>
                           <a className="menu-item" href="#">
                             Extras
                           </a>
                           <ul>
                             <li>
-                              <a className="menu-item" href="contact.html">
+                              <a className="menu-item" href="/contact">
                                 Contact
                               </a>
                             </li>
                             <li>
-                              <a className="menu-item" href="gallery.html">
-                                Gallery
-                              </a>
-                            </li>
-                            <li>
-                              <a className="menu-item" href="pricing.html">
+                              <a className="menu-item" href="/pricing">
                                 Pricing
                               </a>
                             </li>
                             <li>
-                              <a className="menu-item" href="testimonials.html">
-                                Testimonials
+                              <a className="menu-item" href="/feedback">
+                                Feedback
+                              </a>
+                            </li>
+
+                            <li>
+                              <a className="menu-item" href="/history-booking">
+                                History-booking
                               </a>
                             </li>
                           </ul>
                         </li>
+                        {!isLogin ? (
+                          <li>
+                            <a
+                              className="menu-item"
+                              href="/login-v2"
+                              style={{
+                                color: "#FF4500",
+                              }}
+                            >
+                              Login
+                            </a>
+                          </li>
+                        ) : (
+                          <li>
+                            <Link
+                              href="/"
+                              passHref
+                              className="menu-item"
+                              onClick={handleLogout}
+                              style={{
+                                color: "#FF4500",
+                              }}
+                            >
+                              Logout
+                            </Link>
+                          </li>
+                        )}
                       </ul>
                     </div>
                     <div className="de-flex-col">
                       <div className="menu_side_area">
-                        <a href="book.html" className="btn-main">
+                        <a href="/booking" className="btn-main">
                           Book Now
                         </a>
                         <span id="menu-btn"></span>
@@ -234,145 +232,21 @@ const Home = () => {
             <section id="section-pricing" aria-label="section">
               <div className="container">
                 <div className="row g-5" id="gallery">
-                  <div className="col-lg-6 item">
-                    <div className="sc-wrap">
-                      <h3>Haircut</h3>
-                      <div className="def-list-dots">
-                        <dl>
-                          <dt>
-                            <span>Regular Haircut</span>
-                          </dt>
-                          <dd>$37</dd>
-                        </dl>
-                        <dl>
-                          <dt>
-                            <span>Scissors Haircut</span>
-                          </dt>
-                          <dd>$40</dd>
-                        </dl>
-                        <dl>
-                          <dt>
-                            <span>Kids Haircut</span>
-                          </dt>
-                          <dd>$30</dd>
-                        </dl>
+                  {services.map((service) => (
+                    <div className="col-lg-6 item" key={service._id}>
+                      <div className="sc-wrap">
+                        <h3>{service.name}</h3>
+                        <div className="def-list-dots">
+                          <dl>
+                            <dt>
+                              <span>{service.name}</span>
+                            </dt>
+                            <dd>${service.price}</dd>
+                          </dl>
+                        </div>
                       </div>
                     </div>
-                  </div>
-
-                  <div className="col-lg-6 item">
-                    <div className="sc-wrap">
-                      <h3>Shave</h3>
-                      <div className="def-list-dots">
-                        <dl>
-                          <dt>
-                            <span>Head Shave</span>
-                          </dt>
-                          <dd>$27</dd>
-                        </dl>
-                        <dl>
-                          <dt>
-                            <span>Royal Shave</span>
-                          </dt>
-                          <dd>$33</dd>
-                        </dl>
-                        <dl>
-                          <dt>
-                            <span>Royal Head Shave</span>
-                          </dt>
-                          <dd>$33</dd>
-                        </dl>
-                        <dl>
-                          <dt>
-                            <span>Beard Trim No Shave</span>
-                          </dt>
-                          <dd>$35</dd>
-                        </dl>
-                        <dl>
-                          <dt>
-                            <span>Beard Trim Shave</span>
-                          </dt>
-                          <dd>$35</dd>
-                        </dl>
-                        <dl>
-                          <dt>
-                            <span>Beard Shave Up</span>
-                          </dt>
-                          <dd>$30</dd>
-                        </dl>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="col-lg-6 item">
-                    <div className="sc-wrap">
-                      <h3>Facial</h3>
-                      <div className="def-list-dots">
-                        <dl>
-                          <dt>
-                            <span>Deep Pore Cleansing</span>
-                          </dt>
-                          <dd>$50</dd>
-                        </dl>
-                        <dl>
-                          <dt>
-                            <span>Aromatherapy Facial</span>
-                          </dt>
-                          <dd>$45</dd>
-                        </dl>
-                        <dl>
-                          <dt>
-                            <span>Acne Problem Facial</span>
-                          </dt>
-                          <dd>$60</dd>
-                        </dl>
-                        <dl>
-                          <dt>
-                            <span>European Facial</span>
-                          </dt>
-                          <dd>$50</dd>
-                        </dl>
-                        <dl>
-                          <dt>
-                            <span>Glycolic Peel Facial</span>
-                          </dt>
-                          <dd>$35</dd>
-                        </dl>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="col-lg-6 item">
-                    <div className="sc-wrap">
-                      <h3>Package</h3>
-                      <div className="def-list-dots">
-                        <dl>
-                          <dt>
-                            <span>Haircut + Shave</span>
-                          </dt>
-                          <dd>$50</dd>
-                        </dl>
-                        <dl>
-                          <dt>
-                            <span>Haircut + Beard Trim</span>
-                          </dt>
-                          <dd>$50</dd>
-                        </dl>
-                        <dl>
-                          <dt>
-                            <span>Haircut + Beard Trim Shave</span>
-                          </dt>
-                          <dd>$55</dd>
-                        </dl>
-                        <dl>
-                          <dt>
-                            <span>Haircut + Beard Shape Up</span>
-                          </dt>
-                          <dd>$60</dd>
-                        </dl>
-                      </div>
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </div>
             </section>
@@ -450,7 +324,7 @@ const Home = () => {
                     data-jarallax-element="-50"
                   >
                     <div className="d-sch-table">
-                      <h2 className="wow fadeIn">We're Open</h2>
+                      <h2 className="wow fadeIn">We&apos;re Open</h2>
                       <div className="de-separator"></div>
                       <div className="d-col">
                         <div className="d-title">Mon - Thu</div>
@@ -483,7 +357,7 @@ const Home = () => {
                       <div className="d-col">
                         <div className="d-title">Address</div>
                         <div className="d-content id-color">
-                          100 Mainstreet Center, NY
+                          100 Mainstreet Center
                         </div>
                       </div>
                       <div className="d-col">
@@ -540,8 +414,8 @@ const Home = () => {
             </div>
           </footer>
         </div>
-        <script src="js/plugins.js"></script>
-        <script src="js/designesia.js"></script>
+        <script async src="js/plugins.js"></script>
+        <script async src="js/designesia.js"></script>
       </body>
     </>
   );

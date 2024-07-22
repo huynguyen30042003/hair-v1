@@ -14,6 +14,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Img from "next/image";
 import Link from "next/link";
 import Logo from "../data/img/keyLogo.jpg";
+import Image from "next/image";
 
 const Navbar = () => {
   const [openNav, setOpenNav] = useState(false);
@@ -28,9 +29,14 @@ const Navbar = () => {
     const handleResize = () => {
       if (window.innerWidth >= 960) setOpenNav(false);
     };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    if (typeof window !== "undefined") {
+      window.addEventListener("resize", handleResize);
+    }
+    return () => {
+      if (typeof window !== "undefined") {
+        window.removeEventListener("resize", handleResize);
+      }
+    };
   }, []);
 
   const navList = (
@@ -92,7 +98,7 @@ const Navbar = () => {
     <SessionProvider session={session}>
       <MaterialNavbar className="sticky top-0 z-10 h-max max-w-full rounded-none px-4 py-2 lg:px-8 lg:py-4 bg-[#9cc7db]">
         <div className="flex items-center justify-between text-blue-gray-900">
-          <Img
+          <Image
             src={Logo}
             alt="StyleCuts Logo"
             className="mr-2 w-10 h-10 rounded-full"
@@ -180,5 +186,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-
-

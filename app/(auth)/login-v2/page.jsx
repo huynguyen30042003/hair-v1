@@ -9,18 +9,26 @@ import "react-toastify/dist/ReactToastify.css";
 import Logo from "@data/img/LogoLG.jpg";
 import banner from "@data/img/bannerFG.webp";
 import { login } from "api/route";
+import Cookie from "js-cookie";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { data: session, status: sessionStatus } = useSession();
   const router = useRouter();
-
   const handleLogin = async () => {
     try {
       const data = await login(email, password);
+      localStorage.setItem("accessToken", data.accessToken);
+      localStorage.setItem("refreshToken", data.refreshToken);
+      localStorage.setItem("account", JSON.stringify(data));
+      Cookie.set("accessToken", data.accessToken, { expires: 30 });
+      // Cookie.set("refreshToken", data.refreshToken, { expires: 15 });
+      Cookie.set("role", data.role, { expires: 30 });
       toast.success("Login successful!");
-      router.push("/"); 
+      router.push(
+        "/" + (data?.role == "Customer" ? "" : data.role || "").toLowerCase()
+      );
     } catch (error) {
       toast.error("Login failed!");
     }
@@ -94,7 +102,7 @@ const Login = () => {
                       </div>
                       <div className="text-center">
                         <p className="text-gray-700">
-                          Don't have an account?{" "}
+                          Don&apos;t have an account?
                           <Link href="/register" className="text-blue-500">
                             Register here
                           </Link>

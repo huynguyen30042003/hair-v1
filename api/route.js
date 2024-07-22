@@ -51,9 +51,12 @@ export const forgotPassword = async (email) => {
 
 export const resetPassword = async (token, password) => {
   try {
-    const response = await axios.put(`${BASE_URL}/auth/reset-password/${token}`, {
-      password,
-    });
+    const response = await axios.put(
+      `${BASE_URL}/auth/reset-password/${token}`,
+      {
+        password,
+      }
+    );
     console.log(response.data); // Thêm dòng này để kiểm tra dữ liệu trả về
     return response.data;
   } catch (error) {
@@ -73,7 +76,31 @@ export const getAppointments = async (token) => {
   });
   return response.data;
 };
+export const GetAppointmentByAccountId = async (userId, token) => {
+  const myHeaders = new Headers();
+  myHeaders.append("Authorization", `Bearer ${token}`);
 
+  const requestOptions = {
+    method: "GET",
+    headers: myHeaders,
+    redirect: "follow",
+  };
+
+  try {
+    const response = await fetch(
+      `http://localhost:5000/api/appointments/getByAccountId/${userId}`,
+      requestOptions
+    );
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error("Error fetching appointment:", error);
+    throw error;
+  }
+};
 export const getAppointmentById = async (id, token) => {
   const response = await axios.get(`${BASE_URL}/appointments/${id}`, {
     headers: {
@@ -128,7 +155,7 @@ export const getUserProfile = async (token) => {
       Authorization: `Bearer ${token}`,
     },
   });
-  return response.data.data;
+  return response.data;
 };
 
 export const updateUserProfile = async (userData, token) => {
@@ -138,7 +165,7 @@ export const updateUserProfile = async (userData, token) => {
       "Content-Type": "application/json",
     },
   });
-  return response.data.data;
+  return response.data;
 };
 
 export const getUsers = async (token) => {
@@ -147,7 +174,16 @@ export const getUsers = async (token) => {
       Authorization: `Bearer ${token}`,
     },
   });
-  return response.data.data;
+  return response.data;
+};
+
+export const createUser = async (user, token) => {
+  const response = await axios.post(`${BASE_URL}/accounts`, user, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
 };
 
 export const getUserById = async (id, token) => {
@@ -168,7 +204,15 @@ export const updateUser = async (id, userData, token) => {
   });
   return response.data.data;
 };
-
+export const changePassword = async (data, token) => {
+  const response = await axios.put(`${BASE_URL}/accounts/change-password`, data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+  return response.data.data;
+};
 export const deleteUser = async (id, token) => {
   const response = await axios.delete(`${BASE_URL}/accounts/${id}`, {
     headers: {
@@ -242,7 +286,7 @@ export const createCombo = async (comboData, token) => {
       "Content-Type": "application/json",
     },
   });
-  return response.data.data;
+  return response.data;
 };
 
 export const updateCombo = async (id, comboData, token) => {
@@ -252,7 +296,7 @@ export const updateCombo = async (id, comboData, token) => {
       "Content-Type": "application/json",
     },
   });
-  return response.data.data;
+  return response.data;
 };
 
 export const deleteCombo = async (id, token) => {
@@ -261,7 +305,7 @@ export const deleteCombo = async (id, token) => {
       Authorization: `Bearer ${token}`,
     },
   });
-  return response.data.data;
+  return response.data;
 };
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -272,7 +316,7 @@ export const getContacts = async (token) => {
       Authorization: `Bearer ${token}`,
     },
   });
-  return response.data.data;
+  return response.data;
 };
 
 export const getContactById = async (id, token) => {
@@ -281,7 +325,7 @@ export const getContactById = async (id, token) => {
       Authorization: `Bearer ${token}`,
     },
   });
-  return response.data.data;
+  return response.data;
 };
 
 export const createContact = async (contactData, token) => {
@@ -291,7 +335,7 @@ export const createContact = async (contactData, token) => {
       "Content-Type": "application/json",
     },
   });
-  return response.data.data;
+  return response.data;
 };
 
 export const updateContact = async (id, contactData, token) => {
@@ -301,7 +345,7 @@ export const updateContact = async (id, contactData, token) => {
       "Content-Type": "application/json",
     },
   });
-  return response.data.data;
+  return response.data;
 };
 
 export const deleteContact = async (id, token) => {
@@ -310,7 +354,7 @@ export const deleteContact = async (id, token) => {
       Authorization: `Bearer ${token}`,
     },
   });
-  return response.data.data;
+  return response.data;
 };
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -419,7 +463,7 @@ export const getReviews = async (token) => {
       Authorization: `Bearer ${token}`,
     },
   });
-  return response.data.data;
+  return response.data;
 };
 
 export const getReviewById = async (id, token) => {
@@ -428,7 +472,7 @@ export const getReviewById = async (id, token) => {
       Authorization: `Bearer ${token}`,
     },
   });
-  return response.data.data;
+  return response.data;
 };
 
 export const createReview = async (reviewData, token) => {
@@ -438,7 +482,7 @@ export const createReview = async (reviewData, token) => {
       "Content-Type": "application/json",
     },
   });
-  return response.data.data;
+  return response.data;
 };
 
 export const updateReview = async (id, reviewData, token) => {
@@ -448,7 +492,7 @@ export const updateReview = async (id, reviewData, token) => {
       "Content-Type": "application/json",
     },
   });
-  return response.data.data;
+  return response.data;
 };
 
 export const deleteReview = async (id, token) => {
@@ -457,7 +501,7 @@ export const deleteReview = async (id, token) => {
       Authorization: `Bearer ${token}`,
     },
   });
-  return response.data.data;
+  return response.data;
 };
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -528,49 +572,41 @@ export const searchInSalon = async (salonId, query) => {
 
 //Service
 export const getAllServices = async () => {
-  const response = await axios.get(`${BASE_URL}/services`, {
-    headers: {
-      Authorization: `Bearer ${process.env.TOKEN}`,
-    },
-  });
+  const response = await axios.get(`${BASE_URL}/services`);
   return response.data;
 };
 
 export const getServiceById = async (serviceId) => {
-  const response = await axios.get(`${BASE_URL}/services/${serviceId}`, {
-    headers: {
-      Authorization: `Bearer ${process.env.TOKEN}`,
-    },
-  });
+  const response = await axios.get(`${BASE_URL}/services/${serviceId}`);
   return response.data;
 };
 
-export const createService = async (serviceData) => {
+export const createService = async (serviceData, token) => {
   const response = await axios.post(`${BASE_URL}/services`, serviceData, {
     headers: {
-      Authorization: `Bearer ${process.env.TOKEN}`,
+      Authorization: `Bearer ${token}`,
     },
   });
   return response.data;
 };
 
-export const updateService = async (serviceId, serviceData) => {
+export const updateService = async (serviceId, serviceData, token) => {
   const response = await axios.put(
     `${BASE_URL}/services/${serviceId}`,
     serviceData,
     {
       headers: {
-        Authorization: `Bearer ${process.env.TOKEN}`,
+        Authorization: `Bearer ${token}`,
       },
     }
   );
   return response.data;
 };
 
-export const deleteService = async (serviceId) => {
+export const deleteService = async (serviceId, token) => {
   await axios.delete(`${BASE_URL}/services/${serviceId}`, {
     headers: {
-      Authorization: `Bearer ${process.env.TOKEN}`,
+      Authorization: `Bearer ${token}`,
     },
   });
 };
@@ -583,103 +619,94 @@ export const getAllShowTimes = async (date) => {
 };
 
 export const getShowTimeById = async (showTimeId) => {
-  const response = await axios.get(`${BASE_URL}/show-times/${showTimeId}`, {
-    headers: {
-      Authorization: `Bearer ${process.env.TOKEN}`,
-    },
-  });
+  const response = await axios.get(`${BASE_URL}/show-times/${showTimeId}`);
   return response.data;
 };
 
-export const createShowTime = async (showTimeData) => {
+export const createShowTime = async (showTimeData, token) => {
   const response = await axios.post(`${BASE_URL}/show-times`, showTimeData, {
     headers: {
-      Authorization: `Bearer ${process.env.TOKEN}`,
+      Authorization: `Bearer ${token}`,
     },
   });
   return response.data;
 };
 
-export const updateShowTime = async (showTimeId, showTimeData) => {
+export const updateShowTime = async (showTimeId, showTimeData, token) => {
   const response = await axios.put(
     `${BASE_URL}/show-times/${showTimeId}`,
     showTimeData,
     {
       headers: {
-        Authorization: `Bearer ${process.env.TOKEN}`,
+        Authorization: `Bearer ${token}`,
       },
     }
   );
   return response.data;
 };
 
-export const deleteShowTime = async (showTimeId) => {
+export const deleteShowTime = async (showTimeId, token) => {
   await axios.delete(`${BASE_URL}/show-times/${showTimeId}`, {
     headers: {
-      Authorization: `Bearer ${process.env.TOKEN}`,
+      Authorization: `Bearer ${token}`,
     },
   });
 };
 //////////////////////////////////////////////////////////////////////////////////////////
 
 //Statistic
-
-export const getRevenue = async (startDate, endDate) => {
-  const response = await axios.get(`${BASE_URL}/statistics/revenue`, {
-    params: { startDate, endDate },
+const fetchDataWithDates = async (endpoint, startDate, endDate, token) => {
+  let url = `${BASE_URL}/statistics/${endpoint}`;
+  if (startDate) {
+    url += `?startDate=${startDate}`;
+  }
+  if (endDate) {
+    url += `${startDate ? "&" : "?"}endDate=${endDate}`;
+  }
+  const response = await axios.get(url, {
     headers: {
-      Authorization: `Bearer ${process.env.TOKEN}`,
+      Authorization: `Bearer ${token}`,
     },
   });
   return response.data;
 };
 
-export const getRevenueInSalon = async (startDate, endDate) => {
-  const response = await axios.get(`${BASE_URL}/statistics/revenue`, {
-    params: { startDate, endDate },
-    headers: {
-      Authorization: `Bearer ${process.env.TOKEN}`,
-    },
-  });
-  return response.data;
+export const GetFinancialStats = async (startDate, endDate, token) => {
+  return fetchDataWithDates("financial-stats", startDate, endDate, token);
 };
 
-export const getProfitInSalon = async (startDate, endDate) => {
-  const response = await axios.get(`${BASE_URL}/statistics/profit`, {
-    params: { startDate, endDate },
-    headers: {
-      Authorization: `Bearer ${process.env.TOKEN}`,
-    },
-  });
-  return response.data;
+export const GetRegistrationStats = async (startDate, endDate, token) => {
+  return fetchDataWithDates("registration-stats", startDate, endDate, token);
 };
 
-export const getFinancialReportInSalon = async (startDate, endDate) => {
-  const response = await axios.get(`${BASE_URL}/statistics/financial-report`, {
-    params: { startDate, endDate },
-    headers: {
-      Authorization: `Bearer ${process.env.TOKEN}`,
-    },
-  });
-  return response.data;
+export const GetMostSelectedService = async (startDate, endDate, token) => {
+  return fetchDataWithDates("most-service", startDate, endDate, token);
 };
 
-export const getProfit = async (startDate, endDate) => {
-  const response = await axios.get(`${BASE_URL}/statistics/profit`, {
-    params: { startDate, endDate },
-    headers: {
-      Authorization: `Bearer ${process.env.TOKEN}`,
-    },
-  });
-  return response.data;
+export const GetAverageRevenuePerAppointment = async (
+  startDate,
+  endDate,
+  token
+) => {
+  return fetchDataWithDates(
+    "average-revenue-per-appointment",
+    startDate,
+    endDate,
+    token
+  );
 };
+
 //////////////////////////////////////////////////////////////////////////////////////
 
 //Upload
-export const displayImage = async (imageName) => {
-  const url = `${BASE_URL}/images/${imageName}`;
-  const response = await axios.get(url);
-  return response.data;
+export const displayImage = (imageName) => {
+  const url = imageName
+    ? `${BASE_URL}/images/${imageName}`
+    : "https://i.pinimg.com/originals/f1/0f/f7/f10ff70a7155e5ab666bcdd1b45b726d.jpg";
+  // const response = await axios.get(url);
+  // return response.data;
+
+  return url;
 };
 
 export const uploadImage = async (file) => {
