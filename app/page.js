@@ -1,9 +1,8 @@
 "use client";
 import React, { useEffect } from "react";
-import "wowjs/css/libs/animate.css"; // Import animate.css for Wow.js animations
-import WOW from "wowjs";
-import "jarallax";
-import "jarallax/dist/jarallax.css"; // Import the Jarallax CSS file
+import "animate.css";
+import { jarallax } from "jarallax";
+import "jarallax/dist/jarallax.css";
 import Image from "next/image";
 import Head from "next/head";
 
@@ -32,26 +31,34 @@ import service1 from "@data/images/services/1.jpg";
 import service2 from "@data/images/services/2.jpg";
 import service3 from "@data/images/services/3.jpg";
 import service4 from "@data/images/services/4.jpg";
+import Link from "next/link";
+import Cookie from "js-cookie";
 
 const Home = () => {
+  const isLogin = localStorage.getItem("accessToken");
   useEffect(() => {
-    const wow = new WOW.WOW({
-      boxClass: "wow",
-      animateClass: "animated",
-      offset: 0,
-      mobile: true,
-      live: true,
-    });
-    wow.init();
-
     if (typeof window !== "undefined") {
-      const { jarallax } = require("jarallax");
+      const WOW = require("wowjs");
+      const wow = new WOW.WOW({
+        boxClass: "wow",
+        animateClass: "animated",
+        offset: 0,
+        mobile: true,
+        live: true,
+      });
+      wow.init();
+
       jarallax(document.querySelectorAll(".jarallax"), {
         speed: 0.2,
       });
     }
   }, []);
-
+  const handleLogout = () => {
+    Cookie.set("accessToken", "", { expires: -1 });
+    Cookie.set("role", "", { expires: -1 });
+    localStorage.clear();
+    router.push("/");
+  };
   return (
     <>
       <Head>
@@ -62,8 +69,8 @@ const Home = () => {
           type="image/gif"
           sizes="16x16"
         />
-        <meta content="text/html;charset=utf-8" http-equiv="Content-Type" />
-        <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+        <meta charSet="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta
           content="Blaxcut - Barbershop Website Template"
           name="description"
@@ -71,24 +78,21 @@ const Home = () => {
       </Head>
       <body className="dark-scheme">
         <div id="wrapper">
-          {/* Page preloader */}
           <div id="de-loader"></div>
 
-          {/* Header */}
           <header className="transparent">
             <div className="container">
               <div className="row">
                 <div className="col-md-12">
                   <div className="de-flex sm-pt10">
                     <div className="de-flex-col">
-                      {/* Logo */}
                       <div id="logo">
-                        <a href="index.html">
-                          <Image className="logo-main" src={logo} alt="" />
+                        <a href="/">
+                          <Image className="logo-main" src={logo} alt="Logo" />
                           <Image
                             className="logo-mobile"
                             src={logoMobile}
-                            alt=""
+                            alt="Logo Mobile"
                           />
                         </a>
                       </div>
@@ -110,11 +114,7 @@ const Home = () => {
                             About
                           </a>
                         </li>
-                        <li>
-                          <a className="menu-item" href="/booking">
-                            Book Now
-                          </a>
-                        </li>
+
                         <li>
                           <a className="menu-item" href="#">
                             Extras
@@ -130,19 +130,53 @@ const Home = () => {
                                 Pricing
                               </a>
                             </li>
+                            <li>
+                              <a className="menu-item" href="/feedback">
+                                Feedback
+                              </a>
+                            </li>
+
+                            <li>
+                              <a className="menu-item" href="/history-booking">
+                                History-booking
+                              </a>
+                            </li>
                           </ul>
                         </li>
-                        <li>
-                          <a
-                            className="menu-item"
-                            href="/login-v2"
-                            style={{
-                              color: "#FF4500",
-                            }}
-                          >
-                            Login
-                          </a>
-                        </li>
+                        {isLogin && (
+                          <li>
+                            <a className="menu-item" href="/profiles">
+                              Profiles
+                            </a>
+                          </li>
+                        )}
+                        {!isLogin ? (
+                          <li>
+                            <a
+                              className="menu-item"
+                              href="/login-v2"
+                              style={{
+                                color: "#FF4500",
+                              }}
+                            >
+                              Login
+                            </a>
+                          </li>
+                        ) : (
+                          <li>
+                            <Link
+                              href="/"
+                              passHref
+                              className="menu-item"
+                              onClick={handleLogout}
+                              style={{
+                                color: "#FF4500",
+                              }}
+                            >
+                              Logout
+                            </Link>
+                          </li>
+                        )}
                       </ul>
                     </div>
                     <div className="de-flex-col">
@@ -159,14 +193,17 @@ const Home = () => {
             </div>
           </header>
 
-          {/* Content */}
           <div className="no-bottom no-top" id="content">
             <div id="top"></div>
             <section
               id="section-hero"
               className="jarallax no-top no-bottom v-center"
             >
-              <Image src={background8} className="jarallax-img" alt="" />
+              <Image
+                src={background8}
+                className="jarallax-img"
+                alt="Background"
+              />
               <div className="container z1000">
                 <div className="row align-items-center">
                   <div className="col-lg-6">
@@ -190,7 +227,7 @@ const Home = () => {
                       className="img-fluid wow fadeInLeft"
                       data-wow-delay=".3s"
                       data-wow-duration="1.5s"
-                      alt=""
+                      alt="Man"
                     />
                   </div>
                 </div>
@@ -206,8 +243,9 @@ const Home = () => {
                       Established with a passion for the art of barbering, we
                       take great pride in our craft and strive to create an
                       atmosphere that feels like home. From the moment you walk
-                      through our doors, you'll be greeted by friendly smiles
-                      and a warm ambiance that instantly puts you at ease.
+                      through our doors, you&apos;ll be greeted by friendly
+                      smiles and a warm ambiance that instantly puts you at
+                      ease.
                     </p>
                   </div>
                 </div>
@@ -251,7 +289,7 @@ const Home = () => {
                                 <Image
                                   src={src}
                                   className="lazy img-fluid"
-                                  alt=""
+                                  alt={`Hairstyle ${index + 1}`}
                                 />
                               </div>
                             </a>
@@ -273,28 +311,32 @@ const Home = () => {
 
             <section className="no-top jarallax">
               <div className="de-gradient-edge-top"></div>
-              <Image src={background1} className="jarallax-img" alt="" />
+              <Image
+                src={background1}
+                className="jarallax-img"
+                alt="Background"
+              />
               <div className="container relative z1000">
                 <div className="row align-items-center">
                   <div className="col-lg-6" data-jarallax-element="-30">
                     <Image
                       src={man2}
                       className="img-fluid wow fadeInRight"
-                      alt=""
+                      alt="Man"
                     />
                   </div>
                   <div className="col-lg-6" data-jarallax-element="-60">
                     <h2 className="wow fadeInRight" data-wow-delay=".3s">
-                      We’ll Crafting{" "}
+                      We’ll Crafting
                       <span className="id-color">Confidence</span> Through Sharp
                       Style
                     </h2>
                     <p className="wow fadeInRight" data-wow-delay=".4s">
                       We take pride in providing top-notch grooming services
                       that blend classic techniques with modern trends. Step
-                      into our warm and inviting space, where you'll find a team
-                      of skilled barbers dedicated to enhancing your style and
-                      confidence.
+                      into our warm and inviting space, where you&apos;ll find a
+                      team of skilled barbers dedicated to enhancing your style
+                      and confidence.
                     </p>
                     <a
                       href="/booking"
@@ -325,7 +367,7 @@ const Home = () => {
                       >
                         <div className="de-box-a">
                           <div className="d-image">
-                            <Image src={src} alt="" />
+                            <Image src={src} alt={`Service ${index + 1}`} />
                           </div>
                           <div className="d-deco-1"></div>
                           <div className="d-deco-2"></div>
@@ -353,7 +395,11 @@ const Home = () => {
 
             <section className="jarallax no-top">
               <div className="de-gradient-edge-top"></div>
-              <Image src={background1} className="jarallax-img" alt="" />
+              <Image
+                src={background1}
+                className="jarallax-img"
+                alt="Background"
+              />
               <div className="container relative z1000">
                 <div className="row gx-5">
                   <div
@@ -361,7 +407,7 @@ const Home = () => {
                     data-jarallax-element="-50"
                   >
                     <div className="d-sch-table">
-                      <h2 className="wow fadeIn">We're Open</h2>
+                      <h2 className="wow fadeIn">We&apos;re Open</h2>
                       <div className="de-separator"></div>
                       {[
                         { day: "Mon - Thu", time: "7:30AM - 6:30PM" },
@@ -463,7 +509,7 @@ const Home = () => {
                   </div>
                 </div>
                 <div className="col-lg-4 text-lg-center text-center">
-                  <Image src={logo} className="image" alt="" />
+                  <Image src={logo} className="image" alt="Logo" />
                 </div>
                 <div className="col-lg-4 text-lg-end text-center">
                   Copyright 2024 - StyleCuts BaberShop

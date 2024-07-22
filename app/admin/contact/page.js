@@ -12,8 +12,6 @@ import {
   Card,
   CardBody,
   Typography,
-  Select,
-  Option,
 } from "@material-tailwind/react";
 import Layout from "../components/Layout";
 import axios from "axios";
@@ -22,85 +20,67 @@ import "react-toastify/dist/ReactToastify.css";
 
 const BASE_URL = "http://localhost:5000/api";
 
-const SearchPage = () => {
-  const [services, setServices] = useState([]);
-  const [allServices, setAllServices] = useState([]);
+const ContactPage = () => {
+  const [contacts, setContacts] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchOption, setSearchOption] = useState("name");
   const [openDialog, setOpenDialog] = useState(false);
-  const [currentService, setCurrentService] = useState(null);
+  const [currentContact, setCurrentContact] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [servicesPerPage] = useState(5);
+  const [contactsPerPage] = useState(5);
 
   useEffect(() => {
-    const fetchServices = async () => {
+    const fetchContacts = async () => {
       try {
         const token = localStorage.getItem("accessToken");
-        const response = await axios.get(`${BASE_URL}/services`, {
+        const response = await axios.get(`${BASE_URL}/contacts`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-        setServices(response.data);
-        setAllServices(response.data);
+        setContacts(response.data);
       } catch (error) {
-        console.error("Error fetching services:", error);
-        toast.error("Error fetching services.");
+        console.error("Error fetching contacts:", error);
+        toast.error("Error fetching contacts.");
       }
     };
 
-    fetchServices();
+    fetchContacts();
   }, []);
 
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
   };
 
-  const filteredServices = services.filter((service) => {
-    if (searchOption === "name") {
-      return service.name.toLowerCase().includes(searchQuery.toLowerCase());
-    } else if (searchOption === "price") {
-      return service.price.toString().includes(searchQuery);
-    }
-    console.log(service)
-    return service;
-  });
+  const filteredContacts = contacts.filter((contact) =>
+    contact.question.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const handleAddClick = () => {
     setIsEditing(false);
-    setCurrentService({
-      name: "",
-      price: "",
-      duration: "",
-      description: "",
-      selectedServices: [],
-    });
+    setCurrentContact({ question: "", answer: "" });
     setOpenDialog(true);
   };
 
-  const handleEditClick = (service) => {
+  const handleEditClick = (contact) => {
     setIsEditing(true);
-    setCurrentService({
-      ...service,
-      selectedServices: service.selectedServices || [],
-    });
+    setCurrentContact(contact);
     setOpenDialog(true);
   };
 
-  const handleDeleteClick = async (serviceId) => {
+  const handleDeleteClick = async (contactId) => {
     try {
       const token = localStorage.getItem("accessToken");
-      await axios.delete(`${BASE_URL}/services/${serviceId}`, {
+      await axios.delete(`${BASE_URL}/contacts/${contactId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      setServices(services.filter((service) => service._id !== serviceId));
-      toast.success("Service deleted successfully.");
+      setContacts(contacts.filter((contact) => contact._id !== contactId));
+      toast.success("Contact deleted successfully.");
     } catch (error) {
-      console.error("Error deleting service:", error);
-      toast.error("Error deleting service.");
+      console.error("Error deleting contact:", error);
+      toast.error("Error deleting contact.");
     }
   };
 
@@ -109,45 +89,45 @@ const SearchPage = () => {
     try {
       if (isEditing) {
         await axios.put(
-          `${BASE_URL}/services/${currentService._id}`,
-          currentService,
+          `${BASE_URL}/contacts/${currentContact._id}`,
+          currentContact,
           {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           }
         );
-        setServices(
-          services.map((service) =>
-            service._id === currentService._id ? currentService : service
+        setContacts(
+          contacts.map((contact) =>
+            contact._id === currentContact._id ? currentContact : contact
           )
         );
-        toast.success("Service updated successfully.");
+        toast.success("Contact updated successfully.");
       } else {
         const response = await axios.post(
-          `${BASE_URL}/services`,
-          currentService,
+          `${BASE_URL}/contacts`,
+          currentContact,
           {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           }
         );
-        setServices([...services, response.data]);
-        toast.success("Service added successfully.");
+        setContacts([...contacts, response.data]);
+        toast.success("Contact added successfully.");
       }
       setOpenDialog(false);
     } catch (error) {
-      console.error("Error saving service:", error);
-      toast.error("Error saving service.");
+      console.error("Error saving contact:", error);
+      toast.error("Error saving contact.");
     }
   };
 
-  const indexOfLastService = currentPage * servicesPerPage;
-  const indexOfFirstService = indexOfLastService - servicesPerPage;
-  const currentServices = filteredServices.slice(
-    indexOfFirstService,
-    indexOfLastService
+  const indexOfLastContact = currentPage * contactsPerPage;
+  const indexOfFirstContact = indexOfLastContact - contactsPerPage;
+  const currentContacts = filteredContacts.slice(
+    indexOfFirstContact,
+    indexOfLastContact
   );
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
@@ -156,26 +136,17 @@ const SearchPage = () => {
     <Layout>
       <div className="container mx-auto p-4">
         <div className="flex justify-between items-center mb-4">
-          <Typography variant="h1">Services</Typography>
+          <Typography variant="h1">Contact Management</Typography>
           <Button color="green" onClick={handleAddClick}>
             <PlusIcon className="h-5 w-5 mr-2" />
-            Add Service
+            Add Contact
           </Button>
         </div>
         <div className="flex justify-center mb-4">
           <div className="flex space-x-2 items-center">
-            <Select
-              label="Search By"
-              value={searchOption}
-              onChange={(e) => setSearchOption(e)}
-              className="w-full lg:w-48"
-            >
-              <Option value="name">Name</Option>
-              <Option value="price">Price</Option>
-            </Select>
             <Input
               type="text"
-              placeholder={`Search by ${searchOption}`}
+              placeholder="Search by question"
               value={searchQuery}
               onChange={handleSearch}
               className="w-full lg:w-64"
@@ -188,34 +159,40 @@ const SearchPage = () => {
               <table className="min-w-full bg-white">
                 <thead>
                   <tr>
-                    <th className="w-1/4 px-4 py-2">Name</th>
-                    <th className="w-1/4 px-4 py-2">Category</th>
-                    <th className="w-1/4 px-4 py-2">Description</th>
-                    <th className="w-1/4 px-4 py-2">Price</th>
+                    <th className="px-4 py-2">Question</th>
+                    <th className="px-4 py-2">Answer</th>
+                    <th className="px-4 py-2">Name</th>
+                    <th className="px-4 py-2">Phone</th>
+                    <th className="px-4 py-2">Email</th>
                     <th className="px-4 py-2">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {currentServices.map((service) => (
-                    <tr key={service._id}>
-                      <td className="border px-4 py-2">{service.name}</td>
-                      <td className="border px-4 py-2">Service</td>
+                  {currentContacts.map((contact) => (
+                    <tr key={contact._id}>
+                      <td className="border px-4 py-2">{contact.question}</td>
+                      <td className="border px-4 py-2">{contact.answer}</td>
                       <td className="border px-4 py-2">
-                        {service.description}
+                        {contact.customer?.name}
                       </td>
-                      <td className="border px-4 py-2">{service.price}</td>
+                      <td className="border px-4 py-2">
+                        {contact.customer?.phone}
+                      </td>
+                      <td className="border px-4 py-2">
+                        {contact.customer?.email}
+                      </td>
                       <td className="border px-4 py-2 flex space-x-2">
                         <Button
                           color="blue"
                           size="sm"
-                          onClick={() => handleEditClick(service)}
+                          onClick={() => handleEditClick(contact)}
                         >
                           <PencilIcon className="h-5 w-5" />
                         </Button>
                         <Button
                           color="red"
                           size="sm"
-                          onClick={() => handleDeleteClick(service._id)}
+                          onClick={() => handleDeleteClick(contact._id)}
                         >
                           <TrashIcon className="h-5 w-5" />
                         </Button>
@@ -229,13 +206,14 @@ const SearchPage = () => {
                   <ul className="inline-flex items-center -space-x-px">
                     {[
                       ...Array(
-                        Math.ceil(filteredServices.length / servicesPerPage)
+                        Math.ceil(filteredContacts.length / contactsPerPage)
                       ).keys(),
                     ].map((number) => (
                       <li key={number + 1}>
                         <Button
-                          className={`py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 ${currentPage === number + 1 ? "bg-gray-200" : ""
-                            }`}
+                          className={`py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 ${
+                            currentPage === number + 1 ? "bg-gray-200" : ""
+                          }`}
                           onClick={() => paginate(number + 1)}
                         >
                           {number + 1}
@@ -251,50 +229,33 @@ const SearchPage = () => {
 
         <Dialog open={openDialog} handler={setOpenDialog}>
           <DialogHeader>
-            {isEditing ? "Edit Service" : "Add Service"}
+            {isEditing ? "Edit Contact" : "Add Contact"}
           </DialogHeader>
           <DialogBody divider>
             <div className="space-y-4">
               <Input
                 type="text"
-                label="Name"
-                value={currentService?.name || ""}
+                label="Question"
+                value={currentContact?.question || ""}
                 onChange={(e) =>
-                  setCurrentService({ ...currentService, name: e.target.value })
+                  setCurrentContact({
+                    ...currentContact,
+                    question: e.target.value,
+                  })
                 }
+                className="w-full max-w-xs"
               />
               <Input
                 type="text"
-                label="Price"
-                value={currentService?.price || ""}
+                label="Answer"
+                value={currentContact?.answer || ""}
                 onChange={(e) =>
-                  setCurrentService({
-                    ...currentService,
-                    price: e.target.value,
+                  setCurrentContact({
+                    ...currentContact,
+                    answer: e.target.value,
                   })
                 }
-              />
-              <Input
-                type="text"
-                label="Duration"
-                value={currentService?.duration || ""}
-                onChange={(e) =>
-                  setCurrentService({
-                    ...currentService,
-                    duration: e.target.value,
-                  })
-                }
-              />
-              <Input
-                type="text"
-                label="Description"
-                value={currentService?.description || ""}
-                onChange={(e) =>
-                  setCurrentService({
-                    ...currentService,
-                    description: e.target.value,
-                  })
-                }
+                className="w-full max-w-xs"
               />
             </div>
           </DialogBody>
@@ -317,4 +278,4 @@ const SearchPage = () => {
   );
 };
 
-export default SearchPage;
+export default ContactPage;

@@ -1,47 +1,127 @@
 "use client";
-import { useState } from 'react';
-import Link from 'next/link';
-import { Bars3Icon, XMarkIcon, ClipboardDocumentListIcon, UserGroupIcon, UsersIcon, CurrencyDollarIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+
+import { useState } from "react";
+import Link from "next/link";
+import { Drawer, IconButton, Typography } from "@material-tailwind/react";
+import {
+  Bars3Icon,
+  XMarkIcon,
+  Cog6ToothIcon,
+  UserCircleIcon,
+  CurrencyDollarIcon,
+  MagnifyingGlassIcon,
+} from "@heroicons/react/24/outline";
+import styles from "./Sidebar.module.css";
 
 const Sidebar = () => {
-  const [isOpen, setIsOpen] = useState(true);
+  const [open, setOpen] = useState(false);
 
-  const toggleSidebar = () => {
-    setIsOpen(!isOpen);
+  const toggleDrawer = () => {
+    setOpen(!open);
   };
 
   return (
-    <aside className={`bg-gray-800 text-white ${isOpen ? 'w-64' : 'w-20'} h-screen transition-width duration-300`}>
-      <div className="flex items-center justify-between p-4">
-        <button onClick={toggleSidebar}>
-          {isOpen ? <XMarkIcon className="h-6 w-6" /> : <Bars3Icon className="h-6 w-6" />}
-        </button>
+    <div className={styles.container}>
+      <IconButton onClick={toggleDrawer} className={styles.iconButton}>
+        {open ? (
+          <XMarkIcon className="h-6 w-6" />
+        ) : (
+          <Bars3Icon className="h-6 w-6" />
+        )}
+      </IconButton>
+      <div className={`${styles.drawer} ${open ? styles.open : styles.closed}`}>
+        <div className="p-4 bg-gray-100 h-full">
+          <div className="mb-6">
+            <Typography variant="h5" color="blue-gray" className="text-center">
+              Menu
+            </Typography>
+          </div>
+          <ul>
+            <li className="mb-4 flex items-center hover:bg-gray-200 p-2 rounded-md">
+              <UserCircleIcon className="h-5 w-5 mr-2" />
+              <Link
+                href="/Admin/account"
+                className="text-blue-500 hover:underline"
+              >
+                Quản lý tài khoản
+              </Link>
+            </li>
+            <li className="mb-4 flex items-center hover:bg-gray-200 p-2 rounded-md">
+              <Cog6ToothIcon className="h-5 w-5 mr-2" />
+              <Link
+                href="/admin/services"
+                className="text-blue-500 hover:underline"
+              >
+                Quản lý dịch vụ
+              </Link>
+            </li>
+            <li className="mb-4 flex items-center hover:bg-gray-200 p-2 rounded-md">
+              <UserCircleIcon className="h-5 w-5 mr-2" />
+              <Link
+                href="/admin/appointment"
+                className="text-blue-500 hover:underline"
+              >
+                AppointmentPage
+              </Link>
+            </li>
+            <li className="mb-4 flex items-center hover:bg-gray-200 p-2 rounded-md">
+              <UserCircleIcon className="h-5 w-5 mr-2" />
+              <Link
+                href="/admin/category"
+                className="text-blue-500 hover:underline"
+              >
+                CategoryPage
+              </Link>
+            </li>
+            <li className="mb-4 flex items-center hover:bg-gray-200 p-2 rounded-md">
+              <UserCircleIcon className="h-5 w-5 mr-2" />
+              <Link
+                href="/admin/combo"
+                className="text-blue-500 hover:underline"
+              >
+                ComboPage
+              </Link>
+            </li>
+            <li className="mb-4 flex items-center hover:bg-gray-200 p-2 rounded-md">
+              <UserCircleIcon className="h-5 w-5 mr-2" />
+              <Link
+                href="/admin/contact"
+                className="text-blue-500 hover:underline"
+              >
+                ContactPage
+              </Link>
+            </li>
+            <li className="mb-4 flex items-center hover:bg-gray-200 p-2 rounded-md">
+              <UserCircleIcon className="h-5 w-5 mr-2" />
+              <Link
+                href="/admin/review"
+                className="text-blue-500 hover:underline"
+              >
+                ReviewtPage
+              </Link>
+            </li>
+            <li className="mb-4 flex items-center hover:bg-gray-200 p-2 rounded-md">
+              <UserCircleIcon className="h-5 w-5 mr-2" />
+              <Link
+                href="/admin/showtime"
+                className="text-blue-500 hover:underline"
+              >
+                ShowTimePage
+              </Link>
+            </li>
+            <li className="mb-4 flex items-center hover:bg-gray-200 p-2 rounded-md">
+              <CurrencyDollarIcon className="h-5 w-5 mr-2" />
+              <Link
+                href="/admin/dashboard"
+                className="text-blue-500 hover:underline"
+              >
+                Thống kê
+              </Link>
+            </li>
+          </ul>
+        </div>
       </div>
-      <nav className="mt-5">
-        <ul>
-          <li className="flex items-center p-2 hover:bg-gray-700">
-            <ClipboardDocumentListIcon className="h-6 w-6" />
-            {isOpen && <Link href="/admin/services" className="ml-3">Quản lý dịch vụ</Link>}
-          </li>
-          <li className="flex items-center p-2 hover:bg-gray-700">
-            <UserGroupIcon className="h-6 w-6" />
-            {isOpen && <Link href="/admin/employees" className="ml-3">Quản lý nhân viên</Link>}
-          </li>
-          <li className="flex items-center p-2 hover:bg-gray-700">
-            <UsersIcon className="h-6 w-6" />
-            {isOpen && <Link href="/admin/customers" className="ml-3">Quản lý khách hàng</Link>}
-          </li>
-          <li className="flex items-center p-2 hover:bg-gray-700">
-            <CurrencyDollarIcon className="h-6 w-6" />
-            {isOpen && <Link href="/admin/finance" className="ml-3">Quản lý tài chính</Link>}
-          </li>
-          <li className="flex items-center p-2 hover:bg-gray-700">
-            <MagnifyingGlassIcon className="h-6 w-6" />
-            {isOpen && <Link href="/admin/search" className="ml-3">Chức năng tìm kiếm</Link>}
-          </li>
-        </ul>
-      </nav>
-    </aside>
+    </div>
   );
 };
 

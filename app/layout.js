@@ -5,9 +5,8 @@ import SessionProvider from "../utils/SessionProvider";
 import Navbar from "components/Navbar";
 // import Nav from "components/Nav";
 
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -24,7 +23,7 @@ export default async function RootLayout({ children }) {
         <SessionProvider session={session}>
           {/* <Navbar session={session}/> */}
           <ToastContainer />
-          {children }
+          {children}
         </SessionProvider>
       </body>
     </html>

@@ -1,5 +1,8 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "../css/bootstrap.min.css";
 import "../css/mdb.min.css";
 import "jarallax";
@@ -11,26 +14,79 @@ import "../css/confictStyle.css";
 import Image from "next/image";
 import axios from "axios";
 import logo from "@data/images/logo.png";
+import logoMobile from "@data/images/logo-mobile.png";
 import background6 from "@data/images/background/6.jpg";
 import team1 from "@data/images/team/1.jpg";
 import team2 from "@data/images/team/2.jpg";
 import team3 from "@data/images/team/3.jpg";
 import team4 from "@data/images/team/4.jpg";
 import Link from "next/link";
-import {
-  getAllShowTimes,
-  getCategories,
-  getCombos,
-  createAppointment,
-} from "api/route";
+import { getAllShowTimes, getCategories, getCombos, createAppointment } from "api/route";
+
+const Header = ({ isLogin, handleLogout }) => (
+  <header className="transparent">
+    <div className="container">
+      <div className="row">
+        <div className="col-md-12">
+          <div className="de-flex sm-pt10">
+            <div className="de-flex-col">
+              <div id="logo">
+                <a href="/">
+                  <Image className="logo-main" src={logo} alt="Logo" />
+                  <Image className="logo-mobile" src={logoMobile} alt="Logo Mobile" />
+                </a>
+              </div>
+            </div>
+            <div className="de-flex-col header-col-mid">
+              <ul id="mainmenu">
+                <li><a className="menu-item" href="/">Home</a></li>
+                <li><a className="menu-item" href="/services">Services</a></li>
+                <li><a className="menu-item" href="/about">About</a></li>
+                <li>
+                  <a className="menu-item" href="#">Extras</a>
+                  <ul>
+                    <li><a className="menu-item" href="/contact">Contact</a></li>
+                    <li><a className="menu-item" href="/pricing">Pricing</a></li>
+                    <li><a className="menu-item" href="/feedback">Feedback</a></li>
+                    <li><a className="menu-item" href="/history-booking">History-booking</a></li>
+                  </ul>
+                </li>
+                {isLogin && <li><a className="menu-item" href="/profiles">Profiles</a></li>}
+                {!isLogin ? (
+                  <li>
+                    <a className="menu-item" href="/login-v2" style={{ color: "#FF4500" }}>
+                      Login
+                    </a>
+                  </li>
+                ) : (
+                  <li>
+                    <Link href="/" passHref className="menu-item" onClick={handleLogout} style={{ color: "#FF4500" }}>
+                      Logout
+                    </Link>
+                  </li>
+                )}
+              </ul>
+            </div>
+            <div className="de-flex-col">
+              <div className="menu_side_area">
+                <a href="/booking" className="btn-main">Book Now</a>
+                <span id="menu-btn"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+);
 
 const ChooseService = () => {
+  const [minDate, setMinDate] = useState('');
+  const router = useRouter();
   const [categories, setCategories] = useState([]);
   const [combos, setCombos] = useState([]);
   const [selectedStaff, setSelectedStaff] = useState("Tinh");
-  const [selectedDate, setSelectedDate] = useState(
-    new Date().toISOString().split("T")[0]
-  );
+  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0]);
   const [availableTimes, setAvailableTimes] = useState([]);
   const [selectedTime, setSelectedTime] = useState(null);
   const [selectedServices, setSelectedServices] = useState([]);
@@ -41,6 +97,18 @@ const ChooseService = () => {
     phone: "",
     description: "",
   });
+
+  const isLogin = typeof window !== "undefined" && localStorage.getItem("accessToken");
+
+  useEffect(() => {
+    const today = new Date();
+    today.setDate(today.getDate() + 1);
+    const day = String(today.getDate()).padStart(2, '0');
+    const month = String(today.getMonth() + 1).padStart(2, '0'); 
+    const year = today.getFullYear();
+    setMinDate(`${year}-${month}-${day}`);
+  }, []);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -93,6 +161,7 @@ const ChooseService = () => {
         : prevSelectedServices.filter((service) => service._id !== value._id)
     );
   };
+
   const handleChangeCombos = (event) => {
     const checked = event.target.checked;
     const value = JSON.parse(event.target.value);
@@ -103,11 +172,17 @@ const ChooseService = () => {
     );
   };
 
+  const handleLogout = () => {
+    Cookie.set("accessToken", "", { expires: -1 });
+    Cookie.set("role", "", { expires: -1 });
+    localStorage.clear();
+    router.push("/");
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     try {
-      // await new Promise((resolve) => setTimeout(resolve, 1000));
       let total = 0;
       selectedServices.forEach((ss) => (total += ss.price));
       selectedCombos.forEach((sc) => (total += sc.price));
@@ -122,30 +197,19 @@ const ChooseService = () => {
           services: selectedServices.map((ss) => ss._id),
           combos: selectedCombos.map((sc) => sc._id),
           staff: selectedTime.staff._id,
-          // paymentStatus: "Pending",
           paymentMethod: "Cash",
           paymentInfo,
-          // status: "Pending",
         },
         localStorage.getItem("accessToken")
       );
-      // console.log({
-      //   date: selectedTime.date,
-      //   timeStart: selectedTime.timeStart,
-      //   timeEnd: selectedTime.timeEnd,
-      //   totalPrice: total,
-      //   salon: "668fd6f1534953474fef9ac7",
-      //   customer: JSON.parse(localStorage.getItem("account"))?._id,
-      //   services: selectedServices.map((ss) => ss._id),
-      //   combos: selectedCombos.map((sc) => sc._id),
-      //   staff: selectedTime.staff,
-      //   // paymentStatus: "Pending",
-      //   // paymentMethod: "Cash",
-      //   paymentInfo,
-      //   // status: "Pending",
-      // });
+
+      toast.success("Chúng tôi sẽ liên hệ lại bạn thông qua số điện thoại hoặc gmail của bạn trong thời gian sớm nhất!");
+      setTimeout(() => {
+        router.push("/history-booking");
+      }, 3000);
     } catch (error) {
       console.error("Error submitting form:", error);
+      toast.error("Có lỗi xảy ra khi gửi biểu mẫu. Vui lòng thử lại.");
     }
   };
 
@@ -154,6 +218,9 @@ const ChooseService = () => {
       <div id="de-loader"></div>
       <div className="no-bottom no-top" id="content">
         <div id="top"></div>
+        <ToastContainer />
+
+        <Header isLogin={isLogin} handleLogout={handleLogout} />
 
         <section id="subheader" className="jarallax">
           <div className="jarallax-img">
@@ -176,16 +243,9 @@ const ChooseService = () => {
           <div className="container">
             <div className="row">
               <div className="col-md-10 offset-md-1"></div>
-              <form
-                name="contactForm"
-                id="contact_form"
-                className="form-border"
-                method="post"
-                onSubmit={handleSubmit}
-              >
+              <form name="contactForm" id="contact_form" className="form-border" method="post" onSubmit={handleSubmit}>
                 <div id="step-1" className="row">
                   <h3 className="s2">Choose Services</h3>
-
                   <div className="row">
                     {categories.map((category) => (
                       <div key={category._id} className="col-xl-3 col-lg-6">
@@ -200,15 +260,12 @@ const ChooseService = () => {
                                 value={JSON.stringify(service)}
                                 onChange={handleChangeServices}
                               />
-                              <label htmlFor={`s_${service._id}`}>
-                                {service.name}
-                              </label>
+                              <label htmlFor={`s_${service._id}`}>{service.name}</label>
                             </div>
                           ))}
                         </div>
                       </div>
                     ))}
-
                     <div className="col-xl-3 col-lg-6">
                       <div className="sc-group">
                         <h5>Package</h5>
@@ -229,13 +286,10 @@ const ChooseService = () => {
                       </div>
                     </div>
                   </div>
-
                   <div className="spacer-single"></div>
-
                   <div className="row">
                     <div className="col-lg-6 mb-sm-30">
                       <h3 className="s2">Choose Staff</h3>
-
                       <div className="de_form de_radio">
                         <div className="radio-img">
                           <input
@@ -246,11 +300,8 @@ const ChooseService = () => {
                             checked={selectedStaff === "Tinh"}
                             onChange={handleStaffChange}
                           />
-                          <label htmlFor="radio-1a">
-                            <Image src={team1} alt="" /> Tinh
-                          </label>
+                          <label htmlFor="radio-1a"><Image src={team1} alt="" /> Tinh</label>
                         </div>
-
                         <div className="radio-img">
                           <input
                             id="radio-1b"
@@ -260,11 +311,8 @@ const ChooseService = () => {
                             checked={selectedStaff === "Minh"}
                             onChange={handleStaffChange}
                           />
-                          <label htmlFor="radio-1b">
-                            <Image src={team2} alt="" /> Minh
-                          </label>
+                          <label htmlFor="radio-1b"><Image src={team2} alt="" /> Minh</label>
                         </div>
-
                         <div className="radio-img">
                           <input
                             id="radio-1c"
@@ -274,11 +322,8 @@ const ChooseService = () => {
                             checked={selectedStaff === "Mich"}
                             onChange={handleStaffChange}
                           />
-                          <label htmlFor="radio-1c">
-                            <Image src={team3} alt="" /> Mich
-                          </label>
+                          <label htmlFor="radio-1c"><Image src={team3} alt="" /> Mich</label>
                         </div>
-
                         <div className="radio-img">
                           <input
                             id="radio-1d"
@@ -288,16 +333,14 @@ const ChooseService = () => {
                             checked={selectedStaff === "Khanh"}
                             onChange={handleStaffChange}
                           />
-                          <label htmlFor="radio-1d">
-                            <Image src={team4} alt="" /> Khanh
-                          </label>
+                          <label htmlFor="radio-1d"><Image src={team4} alt="" /> Khanh</label>
                         </div>
                       </div>
                     </div>
-
                     <div className="col-lg-6">
                       <h3 className="s2">Choose Date & Time</h3>
                       <input
+                        min={minDate}
                         type="date"
                         name="date"
                         id="date"
@@ -316,16 +359,11 @@ const ChooseService = () => {
                                 id={`choose_${time.timeStart}`}
                                 value={JSON.stringify(time)}
                                 name="select_time"
-                                checked={
-                                  selectedTime?.timeStart === time.timeStart
-                                }
+                                checked={selectedTime?.timeStart === time.timeStart}
                                 onChange={handleTimeChange}
                               />
                               <label htmlFor={`choose_${time.timeStart}`}>
-                                {time.timeStart.slice(
-                                  0,
-                                  time.timeStart.length - 3
-                                )}
+                                {time.timeStart.slice(0, time.timeStart.length - 3)}
                               </label>
                             </div>
                           ))
@@ -335,16 +373,11 @@ const ChooseService = () => {
                       </div>
                     </div>
                   </div>
-
                   <div className="spacer-single"></div>
-
                   <div className="row">
                     <h3 className="s2">Your details</h3>
-
                     <div className="col-lg-6">
-                      <div id="name_error" className="error">
-                        Please enter your name.
-                      </div>
+                      <div id="name_error" className="error">Please enter your name.</div>
                       <div className="mb25">
                         <input
                           type="text"
@@ -353,18 +386,10 @@ const ChooseService = () => {
                           className="form-control"
                           placeholder="Your Name"
                           required
-                          onChange={(e) =>
-                            setPaymentInfo({
-                              ...paymentInfo,
-                              name: e.target.value,
-                            })
-                          }
+                          onChange={(e) => setPaymentInfo({ ...paymentInfo, name: e.target.value })}
                         />
                       </div>
-
-                      <div id="email_error" className="error">
-                        Please enter your valid E-mail ID.
-                      </div>
+                      <div id="email_error" className="error">Please enter your valid E-mail ID.</div>
                       <div className="mb25">
                         <input
                           type="email"
@@ -373,18 +398,10 @@ const ChooseService = () => {
                           className="form-control"
                           placeholder="Your Email"
                           required
-                          onChange={(e) =>
-                            setPaymentInfo({
-                              ...paymentInfo,
-                              email: e.target.value,
-                            })
-                          }
+                          onChange={(e) => setPaymentInfo({ ...paymentInfo, email: e.target.value })}
                         />
                       </div>
-
-                      <div id="phone_error" className="error">
-                        Please enter your phone number.
-                      </div>
+                      <div id="phone_error" className="error">Please enter your phone number.</div>
                       <div className="mb25">
                         <input
                           type="text"
@@ -393,55 +410,33 @@ const ChooseService = () => {
                           className="form-control"
                           placeholder="Your Phone"
                           required
-                          onChange={(e) =>
-                            setPaymentInfo({
-                              ...paymentInfo,
-                              phone: e.target.value,
-                            })
-                          }
+                          onChange={(e) => setPaymentInfo({ ...paymentInfo, phone: e.target.value })}
                         />
                       </div>
                     </div>
                     <div className="col-lg-6">
-                      <div id="message_error" className="error">
-                        Please enter your message.
-                      </div>
+                      <div id="message_error" className="error">Please enter your message.</div>
                       <div>
                         <textarea
                           name="message"
                           id="message"
                           className="form-control"
                           placeholder="Your Message"
-                          onChange={(e) =>
-                            setPaymentInfo({
-                              ...paymentInfo,
-                              description: e.target.value,
-                            })
-                          }
+                          onChange={(e) => setPaymentInfo({ ...paymentInfo, description: e.target.value })}
                         ></textarea>
                       </div>
                     </div>
-
                     <div className="col-lg-12">
-                      <div
-                        className="g-recaptcha"
-                        data-sitekey="copy-your-site-key-here"
-                      ></div>
+                      <div className="g-recaptcha" data-sitekey="copy-your-site-key-here"></div>
                       <p id="submit" className="mt20">
-                        <input
-                          type="submit"
-                          id="send_message"
-                          value="Submit Form"
-                          className="btn-main"
-                        />
+                        <input type="submit" id="send_message" value="Submit Form" className="btn-main" />
                       </p>
                     </div>
                   </div>
                 </div>
               </form>
               <div id="success_message" className="success">
-                Your message has been sent successfully. Refresh this page if
-                you want to send more messages.
+                Your message has been sent successfully. Refresh this page if you want to send more messages.
               </div>
               <div id="error_message" className="error">
                 Sorry there was an error sending your form.
@@ -456,21 +451,11 @@ const ChooseService = () => {
           <div className="row g-4">
             <div className="col-lg-4 text-lg-start text-center">
               <div className="social-icons">
-                <a href="#">
-                  <i className="fa fa-facebook fa-lg"></i>
-                </a>
-                <a href="#">
-                  <i className="fa fa-twitter fa-lg"></i>
-                </a>
-                <a href="#">
-                  <i className="fa fa-linkedin fa-lg"></i>
-                </a>
-                <a href="#">
-                  <i className="fa fa-pinterest fa-lg"></i>
-                </a>
-                <Link href="#">
-                  <i className="fa fa-rss fa-lg"></i>
-                </Link>
+                <a href="#"><i className="fa fa-facebook fa-lg"></i></a>
+                <a href="#"><i className="fa fa-twitter fa-lg"></i></a>
+                <a href="#"><i className="fa fa-linkedin fa-lg"></i></a>
+                <a href="#"><i className="fa fa-pinterest fa-lg"></i></a>
+                <Link href="#"><i className="fa fa-rss fa-lg"></i></Link>
               </div>
             </div>
             <div className="col-lg-4 text-lg-center text-center">

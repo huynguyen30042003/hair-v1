@@ -12,8 +12,6 @@ import {
   Card,
   CardBody,
   Typography,
-  Select,
-  Option,
 } from "@material-tailwind/react";
 import Layout from "../components/Layout";
 import axios from "axios";
@@ -22,85 +20,67 @@ import "react-toastify/dist/ReactToastify.css";
 
 const BASE_URL = "http://localhost:5000/api";
 
-const SearchPage = () => {
-  const [services, setServices] = useState([]);
-  const [allServices, setAllServices] = useState([]);
+const ReviewPage = () => {
+  const [reviews, setReviews] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchOption, setSearchOption] = useState("name");
   const [openDialog, setOpenDialog] = useState(false);
-  const [currentService, setCurrentService] = useState(null);
+  const [currentReview, setCurrentReview] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [servicesPerPage] = useState(5);
+  const [reviewsPerPage] = useState(5);
 
   useEffect(() => {
-    const fetchServices = async () => {
+    const fetchReviews = async () => {
       try {
         const token = localStorage.getItem("accessToken");
-        const response = await axios.get(`${BASE_URL}/services`, {
+        const response = await axios.get(`${BASE_URL}/reviews`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-        setServices(response.data);
-        setAllServices(response.data);
+        setReviews(response.data);
       } catch (error) {
-        console.error("Error fetching services:", error);
-        toast.error("Error fetching services.");
+        console.error("Error fetching reviews:", error);
+        toast.error("Error fetching reviews.");
       }
     };
 
-    fetchServices();
+    fetchReviews();
   }, []);
 
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
   };
 
-  const filteredServices = services.filter((service) => {
-    if (searchOption === "name") {
-      return service.name.toLowerCase().includes(searchQuery.toLowerCase());
-    } else if (searchOption === "price") {
-      return service.price.toString().includes(searchQuery);
-    }
-    console.log(service)
-    return service;
-  });
+  const filteredReviews = reviews.filter((review) =>
+    review.comment.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const handleAddClick = () => {
     setIsEditing(false);
-    setCurrentService({
-      name: "",
-      price: "",
-      duration: "",
-      description: "",
-      selectedServices: [],
-    });
+    setCurrentReview({ rating: 1, comment: "", status: "pending" });
     setOpenDialog(true);
   };
 
-  const handleEditClick = (service) => {
+  const handleEditClick = (review) => {
     setIsEditing(true);
-    setCurrentService({
-      ...service,
-      selectedServices: service.selectedServices || [],
-    });
+    setCurrentReview(review);
     setOpenDialog(true);
   };
 
-  const handleDeleteClick = async (serviceId) => {
+  const handleDeleteClick = async (reviewId) => {
     try {
       const token = localStorage.getItem("accessToken");
-      await axios.delete(`${BASE_URL}/services/${serviceId}`, {
+      await axios.delete(`${BASE_URL}/reviews/${reviewId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      setServices(services.filter((service) => service._id !== serviceId));
-      toast.success("Service deleted successfully.");
+      setReviews(reviews.filter((review) => review._id !== reviewId));
+      toast.success("Review deleted successfully.");
     } catch (error) {
-      console.error("Error deleting service:", error);
-      toast.error("Error deleting service.");
+      console.error("Error deleting review:", error);
+      toast.error("Error deleting review.");
     }
   };
 
@@ -109,45 +89,45 @@ const SearchPage = () => {
     try {
       if (isEditing) {
         await axios.put(
-          `${BASE_URL}/services/${currentService._id}`,
-          currentService,
+          `${BASE_URL}/reviews/${currentReview._id}`,
+          currentReview,
           {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           }
         );
-        setServices(
-          services.map((service) =>
-            service._id === currentService._id ? currentService : service
+        setReviews(
+          reviews.map((review) =>
+            review._id === currentReview._id ? currentReview : review
           )
         );
-        toast.success("Service updated successfully.");
+        toast.success("Review updated successfully.");
       } else {
         const response = await axios.post(
-          `${BASE_URL}/services`,
-          currentService,
+          `${BASE_URL}/reviews`,
+          currentReview,
           {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           }
         );
-        setServices([...services, response.data]);
-        toast.success("Service added successfully.");
+        setReviews([...reviews, response.data]);
+        toast.success("Review added successfully.");
       }
       setOpenDialog(false);
     } catch (error) {
-      console.error("Error saving service:", error);
-      toast.error("Error saving service.");
+      console.error("Error saving review:", error);
+      toast.error("Error saving review.");
     }
   };
 
-  const indexOfLastService = currentPage * servicesPerPage;
-  const indexOfFirstService = indexOfLastService - servicesPerPage;
-  const currentServices = filteredServices.slice(
-    indexOfFirstService,
-    indexOfLastService
+  const indexOfLastReview = currentPage * reviewsPerPage;
+  const indexOfFirstReview = indexOfLastReview - reviewsPerPage;
+  const currentReviews = filteredReviews.slice(
+    indexOfFirstReview,
+    indexOfLastReview
   );
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
@@ -156,26 +136,17 @@ const SearchPage = () => {
     <Layout>
       <div className="container mx-auto p-4">
         <div className="flex justify-between items-center mb-4">
-          <Typography variant="h1">Services</Typography>
+          <Typography variant="h1">Review Management</Typography>
           <Button color="green" onClick={handleAddClick}>
             <PlusIcon className="h-5 w-5 mr-2" />
-            Add Service
+            Add Review
           </Button>
         </div>
         <div className="flex justify-center mb-4">
           <div className="flex space-x-2 items-center">
-            <Select
-              label="Search By"
-              value={searchOption}
-              onChange={(e) => setSearchOption(e)}
-              className="w-full lg:w-48"
-            >
-              <Option value="name">Name</Option>
-              <Option value="price">Price</Option>
-            </Select>
             <Input
               type="text"
-              placeholder={`Search by ${searchOption}`}
+              placeholder="Search by comment"
               value={searchQuery}
               onChange={handleSearch}
               className="w-full lg:w-64"
@@ -188,34 +159,30 @@ const SearchPage = () => {
               <table className="min-w-full bg-white">
                 <thead>
                   <tr>
-                    <th className="w-1/4 px-4 py-2">Name</th>
-                    <th className="w-1/4 px-4 py-2">Category</th>
-                    <th className="w-1/4 px-4 py-2">Description</th>
-                    <th className="w-1/4 px-4 py-2">Price</th>
+                    <th className="w-1/4 px-4 py-2">Rating</th>
+                    <th className="w-1/2 px-4 py-2">Comment</th>
+                    {/* <th className="w-1/4 px-4 py-2">Status</th> */}
                     <th className="px-4 py-2">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {currentServices.map((service) => (
-                    <tr key={service._id}>
-                      <td className="border px-4 py-2">{service.name}</td>
-                      <td className="border px-4 py-2">Service</td>
-                      <td className="border px-4 py-2">
-                        {service.description}
-                      </td>
-                      <td className="border px-4 py-2">{service.price}</td>
+                  {currentReviews.map((review) => (
+                    <tr key={review._id}>
+                      <td className="border px-4 py-2">{review.rating}</td>
+                      <td className="border px-4 py-2">{review.comment}</td>
+                      {/* <td className="border px-4 py-2">{review.status}</td> */}
                       <td className="border px-4 py-2 flex space-x-2">
                         <Button
                           color="blue"
                           size="sm"
-                          onClick={() => handleEditClick(service)}
+                          onClick={() => handleEditClick(review)}
                         >
                           <PencilIcon className="h-5 w-5" />
                         </Button>
                         <Button
                           color="red"
                           size="sm"
-                          onClick={() => handleDeleteClick(service._id)}
+                          onClick={() => handleDeleteClick(review._id)}
                         >
                           <TrashIcon className="h-5 w-5" />
                         </Button>
@@ -229,7 +196,7 @@ const SearchPage = () => {
                   <ul className="inline-flex items-center -space-x-px">
                     {[
                       ...Array(
-                        Math.ceil(filteredServices.length / servicesPerPage)
+                        Math.ceil(filteredReviews.length / reviewsPerPage)
                       ).keys(),
                     ].map((number) => (
                       <li key={number + 1}>
@@ -250,60 +217,40 @@ const SearchPage = () => {
         </div>
 
         <Dialog open={openDialog} handler={setOpenDialog}>
-          <DialogHeader>
-            {isEditing ? "Edit Service" : "Add Service"}
-          </DialogHeader>
+          <DialogHeader>{isEditing ? "Edit Review" : "Add Review"}</DialogHeader>
           <DialogBody divider>
             <div className="space-y-4">
               <Input
-                type="text"
-                label="Name"
-                value={currentService?.name || ""}
+                type="number"
+                label="Rating"
+                value={currentReview?.rating || ""}
                 onChange={(e) =>
-                  setCurrentService({ ...currentService, name: e.target.value })
+                  setCurrentReview({ ...currentReview, rating: e.target.value })
                 }
+                className="w-full max-w-xs"
               />
               <Input
                 type="text"
-                label="Price"
-                value={currentService?.price || ""}
+                label="Comment"
+                value={currentReview?.comment || ""}
                 onChange={(e) =>
-                  setCurrentService({
-                    ...currentService,
-                    price: e.target.value,
-                  })
+                  setCurrentReview({ ...currentReview, comment: e.target.value })
                 }
+                className="w-full max-w-xs"
               />
-              <Input
+              {/* <Input
                 type="text"
-                label="Duration"
-                value={currentService?.duration || ""}
+                label="Status"
+                value={currentReview?.status || ""}
                 onChange={(e) =>
-                  setCurrentService({
-                    ...currentService,
-                    duration: e.target.value,
-                  })
+                  setCurrentReview({ ...currentReview, status: e.target.value })
                 }
-              />
-              <Input
-                type="text"
-                label="Description"
-                value={currentService?.description || ""}
-                onChange={(e) =>
-                  setCurrentService({
-                    ...currentService,
-                    description: e.target.value,
-                  })
-                }
-              />
+                className="w-full max-w-xs"
+              /> */}
             </div>
           </DialogBody>
           <DialogFooter>
-            <Button
-              variant="text"
-              color="red"
-              onClick={() => setOpenDialog(false)}
-            >
+            <Button variant="text" color="red" onClick={() => setOpenDialog(false)}>
               Cancel
             </Button>
             <Button variant="gradient" color="green" onClick={handleSave}>
@@ -317,4 +264,4 @@ const SearchPage = () => {
   );
 };
 
-export default SearchPage;
+export default ReviewPage;
